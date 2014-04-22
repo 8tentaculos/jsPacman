@@ -6,19 +6,25 @@ Javascript version of the classic arcade.
 Development
 -----------
 
-You need node, npm and grunt-cli installed globally. Then:
+You need node and npm.
+Then install globally [mocha-phantomjs](https://github.com/metaskills/mocha-phantomjs) and [grunt-cli](http://gruntjs.com/getting-started):
 ```
-npm install
+$ npm install -g mocha-phantomjs phantomjs
+$ npm install -g grunt-cli
 ```
-Run tests once:
+Then:
 ```
-grunt test
+$ npm install
+```
+Run tests and lint once:
+```
+$ grunt test
 ```
 Run server:
 ```
-grunt &
+$ grunt &
 ```
-Watch changes and run tests and livereload:
+Watch changes and run tests, lint and livereload:
 ```
-grunt watch
+$ grunt watch
 ```
