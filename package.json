@@ -6,7 +6,7 @@
     "test": "grunt test"
   },
   "author": "Al",
-  "license": "BSD",
+  "license": "",
   "devDependencies": {
     "grunt": "^0.4.2",
     "grunt-contrib-watch": "^0.5.3",

@@ -1,13 +1,19 @@
-# jsPacman
+jsPacman
+========
 
 Javascript version of the classic arcade.
 
-# Development
+Development
+-----------
 
-Run tests once:
+#Run tests once:
+
 grunt test
 
-Run server:
+#Run server:
+
 grunt &
-Watch changes and run tests and livereload:
+
+#Watch changes and run tests and livereload:
+
 grunt watch
