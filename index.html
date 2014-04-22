@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>JsPacman</title>
+        
+        <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+        
+        <style>
+            body {
+                background : #222 url(img/back-out.jpg);
+            }
+            #container {
+                margin: 10px auto 10px auto;
+                position: relative;
+                width: 448px;
+                height: 576px;
+                padding : 6px;
+                background: #000;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                -moz-box-shadow: 0 0 20px 5px #efefef;
+                -webkit-box-shadow: 0 0 20px 5px #EFEFEF;
+                box-shadow: 0 0 20px 5px #efefef;
+                border: 1px solid #FFF;
+            }
+        
+            .playground {
+                background: url(img/level-1.png);
+                position: relative;
+                color: #EFEFEF;
+                font-family: 'Press Start 2P', cursive;
+                font-size: 16px;
+            }
+            
+            .splash {
+                background: url(img/start.png);
+                text-align: center;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                z-index: 1;
+            }
+            
+            .splash h1 {
+            }
+            
+            .splash a {
+                position: relative;
+                top: 370px;
+                text-transform: uppercase;
+                color: #DDDDDD;
+                font-size: 25px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            
+            .splash a:hover {
+                color: #FFF;
+            }
+            
+            .loadbar {
+                position: absolute;
+                top: 50px;
+            }
+
+            #fps {
+                color :#FFF;
+                position: absolute;
+                top: 4px;
+                right: 4px;
+            }
+
+            .score {
+                position: absolute;
+                top: 0;
+                right: 20px;
+                left: 20px;
+                text-align: center;
+                z-index: 2
+            }
+            
+            .score .p1-score {
+                position: absolute;
+                width: 22%;
+                top: 0;
+                left: 0;
+            }
+            
+            .score .high-score {
+                width: 40%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .score .p2-score {
+                position: absolute;
+                width: 22%;
+                top: 0;
+                right: 0;
+            }
+            
+            .score span {
+                text-align: right;
+                display: block;
+            }
+            
+            .score .high-score span {
+                text-align: center;
+            }
+
+            .start-p1 {
+                position: absolute;
+                top: 223px;
+                left: 0;
+                right: 0;
+                text-align: center;
+                color: #5EE;
+            }
+
+            .game-over, .start-ready, .sound-status {
+                position: absolute;
+                top: 320px;
+                left: 0;
+                right: 0;
+                text-align: center;
+                color: #F00;
+            }
+
+            .sound-status.on span.on,
+            .sound-status span.off {
+                display : inline;
+            }
+
+            .sound-status.on span.off,
+            .sound-status span.on {
+                display : none;
+            }
+            
+        </style>
+        
+        <script data-main="js/main.js" src="js/lib/require.js"></script>
+    </head>
+    <body>
+        <div id="container">
+            <div class="playground">
+                <div class="score">
+                    <div class="p1-score">1UP<br /><span></span></div>
+                    <div class="high-score">HIGH SCORE<br /><span></span></div>
+                    <div class="p2-score">2UP<br /><span>00</span></div>
+                </div>
+                <div class="start-p1" style="display: none">PLAYER ONE</div>
+                <div class="start-ready" style="display: none">READY!</div>
+                <div class="game-over" style="display: none">GAME OVER</div>
+                <div class="sound-status on" style="display: none">SOUND: <span class="on">ON</span><span class="off">OFF</span></div>
+                <div class="splash">
+                    <a class="start">Start</a>
+                    <div class="loadbar" style="background: 000; height: 32px; overflow: visible;"><span class="loadtext" style="color: red"></span></div>
+                    </div>
+                </div>
+            </div>
+        <div id="fps"></div>
+    </body>
+</html>
