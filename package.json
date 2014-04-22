@@ -1,7 +1,7 @@
 {
   "name": "jsPacman",
   "version": "0.0.1",
-  "description": "Another js version of the classic arcade.",
+  "description": "Javascript version of the classic arcade.",
   "scripts": {
     "test": "grunt test"
   },
