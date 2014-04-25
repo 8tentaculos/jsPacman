@@ -10,7 +10,7 @@ module.exports = function(grunt) {
                 options : {
                     keepalive : true,
                     livereload : true,
-                    debug : true
+                    debug : false
                 }
             },
             test : {

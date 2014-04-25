@@ -105,7 +105,7 @@
 
     $.extend(Ghost.prototype, Bot.prototype, { 
         // Options.
-        speed : 0.75,
+        speed : 75,
         dir : null,
         frightenedTime : 5,
         lastEatTimeLimit : 4,
