@@ -1,6 +1,7 @@
 ﻿define([
 'jquery', 
 'Helper',
+'Levels',
 'Map', 
 'maps/map1', 
 'FactoryMsPacman',
@@ -9,14 +10,39 @@
 'FactoryPill',
 'Lives',
 'SoundWrapper',
+'SoundPool',
 'gameQuery'
-], function($, Helper, Map, map1, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, Lives, SoundWrapper) {
+], function($, Helper, Levels, Map, map1, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, Lives, SoundWrapper, SoundPool) {
 
     var _times = [
         [{mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 1000000}]
     ];
 
+    var Sound = {
+        active : true,
+
+        init : function(active) {
+            this.active = active;
+            if (!this.active) return;
+
+            this.sounds = {
+                intro : new $.gQ.SoundWrapper('audio/intro.mp3'),
+                back : new SoundPool('audio/back.mp3', 20),
+                dot : new SoundPool('audio/dot.mp3', 20),
+                eaten : new $.gQ.SoundWrapper('audio/eaten.mp3')
+            };
+        },
+        
+        play : function(label) {
+            if (!this.active) return;
+            this.sounds[label].play();
+        }
+    };
+
     var Game = function(el) {
+
+        $.extend(this, Levels.get(this.level, 'game'));
+
         this.el = $(el);
 
         this.pg = this.el.playground({width : this.w, height : this.h, keyTracker : true});
@@ -79,6 +105,8 @@
 
         stickyTurn : false, // Remember last input direction when arriving to intersection.
 
+        sound : true,
+
         DEBUG : true,
         
         // End Options.
@@ -87,6 +115,8 @@
         score : 0,
         highScore : 0,
 
+        level : 1,
+
         
         start : function() {
 
@@ -94,20 +124,12 @@
                 this._gameOver = false;
                 this.reset();
                 this.$$.splash.hide();
-                this.sounds.intro.play();
+                Sound.play('intro');
                 return;
             }
 
             this.pg.startGame($.proxy(function() {
-                // Use dual mode (2 same audios alternate) on IE
-                var dual = window.ActiveXObject || "ActiveXObject" in window;
-
-                this.sounds = {
-                    intro : new $.gQ.SoundWrapper('audio/intro.mp3'),
-                    back : new $.gQ.SoundWrapper('audio/back.mp3', false, dual),
-                    dot : new $.gQ.SoundWrapper('audio/dot.mp3'),
-                    eaten : new $.gQ.SoundWrapper('audio/eaten.mp3')
-                };
+                Sound.init(this.sound);
 
                 this.addScore();
 
@@ -133,7 +155,7 @@
                 this._makeLevel();
 
                 this.$$.splash.hide();
-                this.sounds.intro.play();
+                Sound.play('intro');
             }, this));
             
             this.pg.registerCallback($.proxy(this.mainLoop, this), 40);
@@ -202,10 +224,10 @@
 
             this.totalItems = total;
         
-            this.pacman = FactoryMsPacman.make({
+            this.pacman = FactoryMsPacman.make($.extend(Levels.get(this.level, 'pacman'), {
                 map : this.map,
                 pg : this.pg
-            });
+            }));
 
             this.pacman.on('sprite:pill', $.proxy(function(ev, t) {
                 this._pauseFrames = 2;
@@ -226,7 +248,7 @@
             }, this));
 
             this.pacman.on('sprite:die', $.proxy(function(ev, ghost) {
-                this.sounds.eaten.play();
+                Sound.play('eaten');
             }, this));
 
             this.pacman.on('sprite:life', $.proxy(function(ev) {
@@ -263,7 +285,7 @@
             this.pacman.on('sprite:dot', $.proxy(function(ev, t) {
                 this.addScore(this.dotScore);
 
-                this.sounds.dot.play();
+                Sound.play('dot');
 
                 if (!(--this.totalItems)) {
                     this._pauseFrames = 120;
@@ -274,33 +296,27 @@
                 }
             }, this));
 
-            this.pinky = FactoryGhost.make({
+            var ghostAttrs = $.extend(Levels.get(this.level, 'ghost'), {
                 map : this.map,
                 pg : this.pg,
-                pacman : this.pacman,
+                pacman : this.pacman
+            });
+
+            this.pinky = FactoryGhost.make($.extend(ghostAttrs, {
                 id : 'bot-pinky'
-            });
+            }));
 
-            this.blinky = FactoryGhost.make({
-                map : this.map,
-                pg : this.pg,
-                pacman : this.pacman,
+            this.blinky = FactoryGhost.make($.extend(ghostAttrs, {
                 id : 'bot-blinky'
-            });
+            }));
 
-            this.inky = FactoryGhost.make({
-                map : this.map,
-                pg : this.pg,
-                pacman : this.pacman,
+            this.inky = FactoryGhost.make($.extend(ghostAttrs, {
                 id : 'bot-inky'
-            });
+            }));
 
-            this.sue = FactoryGhost.make({
-                map : this.map,
-                pg : this.pg,
-                pacman : this.pacman,
+            this.sue = FactoryGhost.make($.extend(ghostAttrs, {
                 id : 'bot-sue'
-            });
+            }));
 
             this.hideGhosts();
 
@@ -375,7 +391,7 @@
                     this.hideGhosts();
                 } else {
                     if (!this._soundBackPauseFrames) {
-                        this.sounds.back.play();
+                        Sound.play('back');
                         this._soundBackPauseFrames = 5;
                     } else this._soundBackPauseFrames--;
 

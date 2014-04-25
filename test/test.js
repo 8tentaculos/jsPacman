@@ -156,7 +156,7 @@ define([
 
         it('Should get step', function() {
             pacman.step = 10;
-            pacman.speed = 0.5;
+            pacman.speed = 50;
             pacman.getStep().should.equal(5);
         });
 
