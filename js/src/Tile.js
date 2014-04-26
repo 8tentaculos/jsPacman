@@ -30,6 +30,12 @@
 
         isOnlyRight : function() { return this.code === '>'; },
 
+        isTunnel : function() { return this.code === 't'; },
+
+        hasDot : function() { return this.item && this.code === '.'; },
+
+        hasPill : function() { return this.item && this.code === '*'; },
+
         get : function(dir) {
             if (dir === 'u') return this.getU();
             if (dir === 'd') return this.getD();

@@ -36,11 +36,11 @@ define(function() {
         '', 
         '', 
         '', 
-        'pacman.frightSpeed', 
-        'pacman.frightDotsSpeed', 
-        'ghost.frightSpeed', 
-        'ghost.frightTime', 
-        'ghost.frightFlashes'
+        'pacman.frightenedSpeed', 
+        'pacman.frightenedDotSpeed', 
+        'ghost.frightenedSpeed', 
+        'ghost.frightenedTime', 
+        'ghost.frightenedFlashes'
     ];
 
     return {

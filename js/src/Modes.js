@@ -45,10 +45,6 @@ define(['jquery', 'Bot'], function($, Bot) {
             //
         },
 
-        getStep : function() {
-            return Bot.prototype.getStep.call(this.ghost);
-        },
-
         setAnimation : function() {
             Bot.prototype._setAnimation.call(this.ghost);
         },
@@ -88,6 +84,7 @@ define(['jquery', 'Bot'], function($, Bot) {
     $.extend(House.prototype, Mode.prototype, {
         onEnter : function() {
             this.ghost._lastEatTime = this.ghost.ts();
+            this.ghost._speed = this.ghost.speed;
         },
 
         getNextDirection : function() {
@@ -181,6 +178,7 @@ define(['jquery', 'Bot'], function($, Bot) {
         },
         onExit : function() {
             if (!this.ghost.frightened) this.ghost.setMode();
+            this.ghost.pacman.frightened = false; // TODO: ugly solution for pacman to know when ghosts exits frightened mode
         }
     });
 
