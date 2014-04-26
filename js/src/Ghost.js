@@ -78,6 +78,11 @@
 
         // Change tile.
         this.on('sprite:tile', $.proxy(function(e, t) {
+            if (this.mode === this.modes.frightened) this._speed = this.frightenedSpeed;
+            else if (this.mode === this.modes.dead) this._speed = 180;
+            else if (t.isTunnel()) this._speed = this.tunnelSpeed;
+            // else if (t.isOnlyLeft() || t.isOnlyRight() || t.isHouse()) this._speed = 70;
+            else this._speed = this.speed;
 
             if (this._turnBack) {
                this.dir = this._getOpDirection(this.dir);
@@ -105,9 +110,11 @@
 
     $.extend(Ghost.prototype, Bot.prototype, { 
         // Options.
-        speed : 75,
         dir : null,
+        // Overriden by Level
+        speed : 75,
         frightenedTime : 5,
+
         lastEatTimeLimit : 4,
 
         aniBase : {
@@ -181,10 +188,6 @@
                     }
                 }
             }
-        },
-
-        getStep : function() {
-            return this.mode.getStep();
         },
 
         _setAnimation : function() {

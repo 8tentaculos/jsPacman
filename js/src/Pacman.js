@@ -21,16 +21,23 @@
 
         // Change tile. Set direction.
         this.on('sprite:tile', $.proxy(function(e, t) {
+            if (this.frightened) this._speed = this.frightenedSpeed;
+            else this._speed = this.speed;
+
             if (t.item) {
-                if (t.code === '*') { // Pill!
+                if (t.hasPill()) { // Pill!
                     this.trigger('sprite:pill', t);
+                    this.frightened = true;
                 }
-                if (t.code === '.') { // Dot!
+                else if (t.hasDot()) { // Dot!
                     this.trigger('sprite:dot', t);
+                    if (this.frightened) this._speed = this.frightenedDotSpeed;
+                    else this._speed = this.dotSpeed;
                 }
                 t.item.destroy();
                 delete t.item;
             }
+
         }, this));
 
         this.on('sprite:eaten', $.proxy(function(e, ghost) {

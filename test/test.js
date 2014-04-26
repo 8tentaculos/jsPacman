@@ -136,7 +136,8 @@ define([
         it('Should exist and be initialized', function() {
             pacman = FactoryMsPacman.make({
                 map : map,
-                pg : pg
+                pg : pg,
+                speed : 50
             });
             
             should.exist(pacman);
@@ -156,7 +157,7 @@ define([
 
         it('Should get step', function() {
             pacman.step = 10;
-            pacman.speed = 50;
+
             pacman.getStep().should.equal(5);
         });
 

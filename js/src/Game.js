@@ -9,39 +9,15 @@
 'FactoryDot', 
 'FactoryPill',
 'Lives',
-'SoundWrapper',
-'SoundPool',
+'Sound',
 'gameQuery'
-], function($, Helper, Levels, Map, map1, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, Lives, SoundWrapper, SoundPool) {
+], function($, Helper, Levels, Map, map1, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, Lives, Sound) {
 
     var _times = [
         [{mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 1000000}]
     ];
 
-    var Sound = {
-        active : true,
-
-        init : function(active) {
-            this.active = active;
-            if (!this.active) return;
-
-            this.sounds = {
-                intro : new $.gQ.SoundWrapper('audio/intro.mp3'),
-                back : new SoundPool('audio/back.mp3', 20),
-                dot : new SoundPool('audio/dot.mp3', 20),
-                eaten : new $.gQ.SoundWrapper('audio/eaten.mp3')
-            };
-        },
-        
-        play : function(label) {
-            if (!this.active) return;
-            this.sounds[label].play();
-        }
-    };
-
     var Game = function(el) {
-
-        $.extend(this, Levels.get(this.level, 'game'));
 
         this.el = $(el);
 
@@ -49,9 +25,9 @@
 
         $(document).keydown($.proxy(function(ev) {
             if (ev.which === 83) {
-               // Mute Sound.
+                // Mute Sound.
                 this._muted = !this._muted;
-                $.muteSound(this._muted);
+                Sound.muted(this._muted);
 
                 var el = this.$$.soundStatus;
 
@@ -105,7 +81,7 @@
 
         stickyTurn : false, // Remember last input direction when arriving to intersection.
 
-        sound : true,
+        sound : false,
 
         DEBUG : true,
         
@@ -117,12 +93,17 @@
 
         level : 1,
 
-        
         start : function() {
+            if (this._win) {
+                this.level++;
+                this.reset();
+                this._win = false;
+                return;
+            }
 
             if (this._gameOver) {
-                this._gameOver = false;
                 this.reset();
+                this._gameOver = false;
                 this.$$.splash.hide();
                 Sound.play('intro');
                 return;
@@ -168,8 +149,10 @@
             this.sue.destroy();
             this.pacman.destroy();
 
-            this.lives.set(this.defaultLives);
-            this.score = 0;
+            if (!this._win) {
+                this.lives.set(this.defaultLives);
+                this.score = 0;
+            }
 
             $.gQ.keyTracker = {};
 
@@ -183,7 +166,9 @@
         },
 
         _makeLevel : function() {
-            this.$$.startP1.show();
+            $.extend(this, Levels.get(this.level, 'game'));
+
+            if (!this._win) this.$$.startP1.show();
             this.$$.startReady.show();
 
             this.addScore();
@@ -286,10 +271,12 @@
                 this.addScore(this.dotScore);
 
                 Sound.play('dot');
-
+                // Win!!!
                 if (!(--this.totalItems)) {
                     this._pauseFrames = 120;
-                    this._gameOver = true;
+
+                    this._win = true;
+
                     this.hideGhosts();
                     
                     this.pacman.el.pauseAnimation();
@@ -318,11 +305,15 @@
                 id : 'bot-sue'
             }));
 
-            this.hideGhosts();
+            if (!this._win) { 
+                this.hideGhosts();
 
-            this.pacman.el.hide();
+                this.pacman.el.hide();
 
-            this._start = 2;
+                this._start = 2;
+            } else {
+                this._start = 1;
+            }
         },
         
         addScore : function(score) {
@@ -368,6 +359,13 @@
                 if (this._start === 1) {
                     this.$$.startReady.hide();
                     this._start--;
+
+                    return;
+                }
+
+                if (this._win) {
+                    this.start();
+
                     return;
                 }
 

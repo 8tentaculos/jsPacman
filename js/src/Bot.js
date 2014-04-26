@@ -13,24 +13,26 @@
         this.on('sprite:tile', $.proxy(function(e, t) {
             this._setAnimation();
         }, this));
+
+        this._speed = this.speed;
     };
 
     $.extend(Bot.prototype, Item.prototype);
 
     $.extend(Bot.prototype, {
         // Options.
-        w : 30,
-        h : 30,
-        step : 4,
-        speed : 80,
-        preturn : false,
-        scatterTarget : 3,
-        // End Options.
+        w                : 30,
+        h                : 30,
+        step             : 5,
+        speed            : 80,
+        preturn          : false,
+        scatterTarget    : 3,
+        // End Options.S
 
-        pg : null,
-        map : null,
+        pg               : null,
+        map              : null,
         
-        animations : null, 
+        animations       : null, 
         defaultAnimation : null,
 
         _saveDefaults : function() {
@@ -175,7 +177,7 @@
         },
 
         getStep : function() {
-            return parseInt(this.step * (this.speed / 100));
+            return parseInt(this.step * (this._speed / 100));
         },
 
         // Set animation according model conditions. Override on subclasses.
@@ -193,6 +195,7 @@
                 this.animation = this.animations.left;
             }
         },
+
         // Helper methods:
         _getOpDirection : function(dir) {
             dir = dir || this.dir;
