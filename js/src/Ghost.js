@@ -81,7 +81,6 @@
             if (this.mode === this.modes.frightened) this._speed = this.frightenedSpeed;
             else if (this.mode === this.modes.dead) this._speed = 180;
             else if (t.isTunnel()) this._speed = this.tunnelSpeed;
-            // else if (t.isOnlyLeft() || t.isOnlyRight() || t.isHouse()) this._speed = 70;
             else this._speed = this.speed;
 
             if (this._turnBack) {
