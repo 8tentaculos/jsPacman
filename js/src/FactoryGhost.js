@@ -6,7 +6,7 @@ define(['jquery', 'Ghost'], function($, Ghost) {
             // Pink Ghost
             if (attrs.id === 'bot-pinky') {
                 attrs = $.extend({
-                    x : 225,
+                    x : 223,
                     y : 281,
                     dir : 'd',
                     defaultAnimation : 'down',

@@ -11,24 +11,16 @@
         this.w = 16;
         this.h = 16;
         
-        if (this.isExit() || this.isHouse()) {
-            this.x = this.col * this.w +1; 
-        } else this.x = this.col * this.w + parseInt(this.w / 2);
+        this.x = this.col * this.w + this.w / 2;
 
-        this.y = this.row * this.h + parseInt(this.h / 2) + 1; // Original Pacman has tile's center at x : 4, y : 5 position.
+        this.y = this.row * this.h + this.h / 2 + 1; // Original Pacman has tile's center at x : 4, y : 5 position.
 
     };
 
     $.extend(Tile.prototype, {
         isWall : function() { return this.code === '='; },
 
-        isExit : function() { return this.code === 'e'; },
-
         isHouse : function() { return this.code === 'h'; },
-
-        isOnlyLeft : function() { return this.code === '<'; },
-
-        isOnlyRight : function() { return this.code === '>'; },
 
         isTunnel : function() { return this.code === 't'; },
 

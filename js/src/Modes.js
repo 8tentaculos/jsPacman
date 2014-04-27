@@ -55,13 +55,7 @@ define(['jquery', 'Bot'], function($, Bot) {
 
             if (!nt) return false;
 
-            if (dir === 'd' && (nt.isHouse() || t.isHouse())) return false;
-
-            if (dir === 'r' && (nt.isOnlyLeft() || t.isOnlyLeft())) return false;
-
-            if (dir === 'l' && (nt.isOnlyRight() || t.isOnlyRight())) return false;
-
-            return !nt.isWall();
+            return !nt.isWall() && !nt.isHouse();
         },
         exit : function() {
             if (this.ghost.mode != this.ghost.globalMode) return true;
@@ -69,7 +63,7 @@ define(['jquery', 'Bot'], function($, Bot) {
         },
         onExit : function() {
             var t = this.ghost.getTile();
-            if (!t.isExit() && !t.isHouse() && !t.isOnlyLeft() && !t.isOnlyRight()) {
+            if (!t.isHouse()) {
                 this.ghost._turnBack = true;
             }
             this.ghost.setMode();
@@ -83,8 +77,11 @@ define(['jquery', 'Bot'], function($, Bot) {
 
     $.extend(House.prototype, Mode.prototype, {
         onEnter : function() {
+            this._prepareExit = false;
             this.ghost._lastEatTime = this.ghost.ts();
             this.ghost._speed = this.ghost.speed;
+            if (!this._houseTop) this._houseTop = this.ghost.y - this.ghost.getTile().h / 2;
+            if (!this._houseBottom) this._houseBottom = this.ghost.y + this.ghost.getTile().h / 2;
         },
 
         getNextDirection : function() {
@@ -92,22 +89,49 @@ define(['jquery', 'Bot'], function($, Bot) {
         },
         
         move : function() {
-            if (this.exit()) this.onExit();
-            else {
-                if (!this._houseTop) this._houseTop = this.ghost.y - this.ghost.getTile().h / 2;
-                if (!this._houseBottom) this._houseBottom = this.ghost.y + this.ghost.getTile().h / 2;
+            var t = this.ghost.getTile();
+
+            if (!this._prepareExit && this.ghost.ts() - this.ghost._lastEatTime > this.ghost.lastEatTimeLimit && !t.isWall()) {
+                this._prepareExit = true;
+
+                this.ghost.x = t.x;
+                this.ghost.y = t.y;
+            }
+
+            if (this.exit()) {
+
+                this.onExit();
+
+            } else if (this._prepareExit) {
+                if (this.ghost.x < this.ghost.map.house.x) this.ghost.dir = 'r';
+                else if (this.ghost.x > this.ghost.map.house.x) this.ghost.dir = 'l';
+                else this.ghost.dir = 'u';
+
+                if (this.ghost.dir === 'u') 
+                    this.ghost.y -= this.ghost.getMin(this.ghost.getStep(), this.ghost.y - this.ghost.map.house.getU().y);
+                if (this.ghost.dir === 'r') 
+                    this.ghost.x += this.ghost.getMin(this.ghost.getStep(), this.ghost.map.houseCenter.x - this.ghost.x);
+                if (this.ghost.dir === 'l') 
+                    this.ghost.x -= this.ghost.getMin(this.ghost.getStep(), this.ghost.x - this.ghost.map.houseCenter.x );
+
+                this.setAnimation();
+
+                this.ghost.render();
+
+            } else {
 
                 if (this.ghost.y <= this._houseTop && this.ghost.dir === 'u') this.ghost.dir = 'd';
                 if (this.ghost.y >= this._houseBottom && this.ghost.dir === 'd') this.ghost.dir = 'u'; 
                 
-                if (this.ghost.dir == 'u') 
+                if (this.ghost.dir === 'u') 
                     this.ghost.y -= this.ghost.getMin(this.ghost.getStep(), this.ghost.y - this._houseTop);
-                if (this.ghost.dir == 'd') 
+                if (this.ghost.dir === 'd') 
                     this.ghost.y += this.ghost.getMin(this.ghost.getStep(), this._houseBottom - this.ghost.y);
 
                 this.setAnimation();
 
                 this.ghost.render();
+
             }
         },
 
@@ -121,22 +145,15 @@ define(['jquery', 'Bot'], function($, Bot) {
                 this.ghost.frightened = null;
             }
 
-            var t = this.ghost.getTile();
-            if (this.ghost.ts() - this.ghost._lastEatTime > this.ghost.lastEatTimeLimit && !t.isWall()) {
-                return true;
-            }
-            return false;
+            return this.ghost.getTile() === this.ghost.map.house.getU();
+
         },
 
         onExit : function() {
-            this.ghost.x = this.ghost.defaults.x;
-            this.ghost.y = this.ghost.defaults.y;
             var t = this.ghost.getTile();
-            if (t.isOnlyLeft()) { this.ghost._dir = 'l'; this.ghost._nextDir = 'u'; }
-            if (t.isOnlyRight()) { this.ghost._dir = 'r'; this.ghost._nextDir = 'r'; }
-            if (t.isHouse()) { this.ghost._dir = 'u'; this.ghost._nextDir = 'u'; }
-            this.ghost._lastTile = t;
-
+            this.ghost._dir = 'l';
+            this.ghost._nextDir = 'l';
+            this.ghost._lastTile = t.getD();
             this.ghost.setMode();
         }
     });
@@ -207,7 +224,7 @@ define(['jquery', 'Bot'], function($, Bot) {
     // DEAD
     var Dead = function(ghost) {
         Mode.apply(this, arguments);
-        this.target = this.ghost.map.getTile(this.ghost.defaults.x, this.ghost.defaults.y, true);
+        this.target = this.ghost.map.getTile(this.ghost.map.houseCenter.x, this.ghost.map.houseCenter.y, true);
     };
 
     $.extend(Dead.prototype, Mode.prototype, {

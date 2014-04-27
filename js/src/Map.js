@@ -17,14 +17,22 @@
             var r = data[y];
             for (var x = 0; x < this.w; x++) {
                 var code = r.charAt(x);
-                this.tiles.push(new Tile(code, x, y, this));
+                var t = new Tile(code, x, y, this);
+                this.tiles.push(t);
+                if (t.isHouse()) {
+                    this.house = t;
+                }
             }
         }
 
+        this.houseCenter = this.house.getD().getD();
+        var ht = this.house.w / 2 - 1;
+        this.house.x += ht;
+        this.houseCenter.x += ht;
+
         // Cache tile dimensions
-        var t = this.tiles[0];
-        this.tw = t.w;
-        this.th = t.h;
+        this.tw = this.tiles[0].w;
+        this.th = this.tiles[0].h;
     };
 
     $.extend(Map.prototype, {
