@@ -23,7 +23,7 @@
         // Options.
         w                : 30,
         h                : 30,
-        step             : 5,
+        step             : 4,
         speed            : 80,
         preturn          : false,
         scatterTarget    : 3,
@@ -177,7 +177,7 @@
         },
 
         getStep : function() {
-            return parseInt(this.step * (this._speed / 100));
+            return this.step * (this._speed / 100);
         },
 
         // Set animation according model conditions. Override on subclasses.
