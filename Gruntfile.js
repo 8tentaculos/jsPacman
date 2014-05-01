@@ -44,14 +44,14 @@ module.exports = function(grunt) {
                 },
                 src : ['test/*.js']
             },
-            src : ['js/src/*.js']
+            src : ['js/src/**/*.js']
         },
         watch : {
             js : {
                 options : {
                     livereload : true
                 },
-                files : ['js/src/*.js', 'test/*.js'],
+                files : ['js/src/**/*.js', 'test/*.js'],
                 tasks : ['jshint', 'shell:mocha-phantomjs']
             }
         },

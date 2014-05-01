@@ -219,14 +219,14 @@
                 this.addScore(this.pillScore);
                 if (!(--this.totalItems)) this._gameOver = true;
             }, this));
-
+            // Pacman eats ghost
             this.pacman.on('sprite:eat', $.proxy(function(ev, ghost) {
                 ghost.pacman.el.hide();
-                this._pauseFrames = 8;
+                this._pauseFrames = 10;
                 this._showPacman = true;
                 this.addScore(parseInt(ghost.score));
             }, this));
-
+            // Ghost eats Pacman
             this.pacman.on('sprite:eaten', $.proxy(function(ev, ghost) {
                 this._pauseFrames = this.defaultPauseFrames;
                 this._pacmanEaten = true;
@@ -289,20 +289,32 @@
                 pacman : this.pacman
             });
 
+            var pinkyT = this.map.houseCenter.getR();
             this.pinky = FactoryGhost.make($.extend(ghostAttrs, {
-                id : 'bot-pinky'
+                id : 'bot-pinky',
+                x : pinkyT.x,
+                y : pinkyT.y
             }));
 
+            var blinkyT = this.map.house.getU().getR();
             this.blinky = FactoryGhost.make($.extend(ghostAttrs, {
-                id : 'bot-blinky'
+                id : 'bot-blinky',
+                x : blinkyT.x,
+                y : blinkyT.y
             }));
 
+            var inkyT = this.map.houseCenter.getL();
             this.inky = FactoryGhost.make($.extend(ghostAttrs, {
-                id : 'bot-inky'
+                id : 'bot-inky',
+                x : inkyT.x - 8,
+                y : inkyT.y
             }));
 
+            var sueT = this.map.houseCenter.getR().getR();
             this.sue = FactoryGhost.make($.extend(ghostAttrs, {
-                id : 'bot-sue'
+                id : 'bot-sue',
+                x : sueT.x + 8,
+                y : sueT.y
             }));
 
             if (!this._win) { 
