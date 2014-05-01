@@ -12,6 +12,7 @@
         // Set with and height according to data.
         this.w = data[0].length;
         this.h = data.length;
+
         // Instantiate tiles and store them.
         for (var y = 0; y < this.h; y++) {
             var r = data[y];
@@ -19,16 +20,23 @@
                 var code = r.charAt(x);
                 var t = new Tile(code, x, y, this);
                 this.tiles.push(t);
-                if (t.isHouse()) {
+                if (t.isHouse() && !this.house) { // Store left house door
                     this.house = t;
                 }
             }
         }
 
         this.houseCenter = this.house.getD().getD();
-        var ht = this.house.w / 2 - 1;
-        this.house.x += ht;
-        this.houseCenter.x += ht;
+        
+        var ht = this.house.w / 2;
+
+        this.house.getU().getR().x -= ht;
+        this.house.getR().x -= ht;
+        this.houseCenter.getR().x -= ht;
+
+        this.house.getU().x += ht - 1;
+        this.house.x += ht - 1;
+        this.houseCenter.x += ht - 1;
 
         // Cache tile dimensions
         this.tw = this.tiles[0].w;

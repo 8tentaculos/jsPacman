@@ -6,8 +6,6 @@ define(['jquery', 'Ghost'], function($, Ghost) {
             // Pink Ghost
             if (attrs.id === 'bot-pinky') {
                 attrs = $.extend({
-                    x : 223,
-                    y : 281,
                     dir : 'd',
                     defaultAnimation : 'down',
                     getChaseTarget : function() {
@@ -43,8 +41,6 @@ define(['jquery', 'Ghost'], function($, Ghost) {
                     dir : 'l',
                     lastEatTimeLimit : 0,
                     scatterTarget : 25,
-                    x : 225,
-                    y : 233,
                     defaultAnimation : 'left',
                     animations : {        
                         right : {
@@ -76,8 +72,6 @@ define(['jquery', 'Ghost'], function($, Ghost) {
                     dir : 'u',
                     lastEatTimeLimit : 6,
                     scatterTarget : 979,
-                    x : 192,
-                    y : 281,
                     defaultAnimation : 'up',
                     animations : {        
                         right : {
@@ -109,8 +103,6 @@ define(['jquery', 'Ghost'], function($, Ghost) {
                     dir : 'u',
                     lastEatTimeLimit : 8,
                     scatterTarget : 953,
-                    x : 255,
-                    y : 281,
                     defaultAnimation : 'up',
                     getChaseTarget : function() {
                         var t = this.pacman.getTile();
