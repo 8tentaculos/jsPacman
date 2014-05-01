@@ -81,7 +81,7 @@
 
         stickyTurn : false, // Remember last input direction when arriving to intersection.
 
-        sound : false,
+        sound : true,
 
         DEBUG : true,
         
@@ -102,6 +102,7 @@
             }
 
             if (this._gameOver) {
+                this.level = 1;
                 this.reset();
                 this._gameOver = false;
                 this.$$.splash.hide();
