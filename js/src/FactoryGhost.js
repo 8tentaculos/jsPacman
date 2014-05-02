@@ -73,6 +73,16 @@ define(['jquery', 'Ghost'], function($, Ghost) {
                     waitTime : 6,
                     scatterTarget : 979,
                     defaultAnimation : 'up',
+                    getChaseTarget : function() {
+                        var pt = this.pacman.getTile();
+                        var bt = this.blinky.getTile();
+                        var dir = this.pacman.dir;
+                        
+                        pt = pt.get(dir).get(dir); // Two tiles in front of pacman
+
+                        return this.map.getTile(pt.col + pt.col - bt.col, pt.row + pt.row - bt.row);
+
+                    },
                     animations : {        
                         right : {
                             offsety : 158,

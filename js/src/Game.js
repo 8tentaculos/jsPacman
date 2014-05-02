@@ -311,6 +311,7 @@
 
             var inkyT = this.map.houseCenter.getL();
             this.inky = FactoryGhost.make($.extend(ghostAttrs, {
+                blinky : this.blinky,
                 id : 'bot-inky',
                 x : inkyT.x - 8,
                 y : inkyT.y

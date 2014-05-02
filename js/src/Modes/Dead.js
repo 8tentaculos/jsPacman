@@ -84,7 +84,8 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
         },
 
         onExit : function() {
-            this.ghost.reset();
+            var attrs = this.ghost.id === 'bot-blinky' ? {x : this.ghost.x, y : this.ghost.y} : {};
+            this.ghost.reset(attrs);
         }
     });
 
