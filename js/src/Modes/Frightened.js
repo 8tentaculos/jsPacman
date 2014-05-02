@@ -36,7 +36,7 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
         },
         onExit : function() {
             if (!this.ghost.frightened) this.ghost.setMode();
-            this.ghost.pacman.frightened = false; // TODO: ugly solution for pacman to know when ghosts exits frightened mode
+            this.ghost.pacman.ghostFrightened = false; // TODO: ugly solution for pacman to know when ghosts exits frightened mode
         }
     });
 

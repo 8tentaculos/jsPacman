@@ -21,17 +21,17 @@
 
         // Change tile. Set direction.
         this.on('sprite:tile', $.proxy(function(e, t) {
-            if (this.frightened) this._speed = this.frightenedSpeed;
+            if (this.ghostFrightened) this._speed = this.frightenedSpeed;
             else this._speed = this.speed;
 
             if (t.item) {
                 if (t.hasPill()) { // Pill!
                     this.trigger('sprite:pill', t);
-                    this.frightened = true;
+                    this.ghostFrightened = true;
                 }
                 else if (t.hasDot()) { // Dot!
                     this.trigger('sprite:dot', t);
-                    if (this.frightened) this._speed = this.frightenedDotSpeed;
+                    if (this.ghostFrightened) this._speed = this.frightenedDotSpeed;
                     else this._speed = this.dotSpeed;
                 }
                 t.item.destroy();

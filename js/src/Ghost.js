@@ -161,6 +161,14 @@
             if (typeof mode.onEnter === 'function') mode.onEnter();
         },
 
+        isFrightened : function() {
+            return this.frightened || this.mode === this.modes.frightened;
+        },
+
+        isDead : function() {
+            return this.mode === this.modes.dead;
+        },
+
         getChaseTarget : function() {
             return this.pacman.getTile();
         },
