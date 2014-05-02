@@ -93,7 +93,20 @@
             
             .loadbar {
                 position: absolute;
-                top: 50px;
+                top: 450px;
+                left: 35px;
+                right: 35px;
+                background: #FFF;
+                height: 10px; 
+                overflow: visible;
+                padding: 2px;
+            }
+
+            .loadbar .inner {
+                position: relative;
+                background: #FF0000;
+                height: 10px;
+                width: 0;
             }
 
             .score {
@@ -186,8 +199,8 @@
                 <div class="splash">
                     <span class="title">"JS PAC-MAN"</span>
                     <p class="nerd">HTML5 - CSS3<br><br><span>JAVASCRIPT</span></p>
-                    <a class="start">START</a>
-                    <div class="loadbar" style="background: 000; height: 32px; overflow: visible;"><span class="loadtext" style="color: red"></span></div>
+                    <a class="start" style="display: none">START</a>
+                    <div class="loadbar"><div class="inner"></div></div>
                     <p class="keys"><span>ARROWS</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
                 </div>
             </div>
