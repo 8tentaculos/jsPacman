@@ -23,6 +23,7 @@
 
         this.pg = this.el.playground({width : this.w, height : this.h, keyTracker : true});
 
+        // Sound on/off
         $(document).keydown($.proxy(function(ev) {
             if (ev.which === 83) {
                 // Mute Sound.
@@ -40,6 +41,14 @@
                 this._hideSoundStatusTimeout = setTimeout(function() { el.hide(); }, 2000);
             }
         }, this));
+        // Pause Game
+        $(document).keydown($.proxy(function(ev) {
+            if (ev.which === 80) {
+                this._paused = !this._paused;
+                if (this._paused) this.pause();
+                else this.resume();
+            }
+        }, this));
 
         this.$$ = {
             splash : this.$('.splash'),
@@ -50,16 +59,16 @@
             score : this.$('.p1-score span'),
             gameOver : this.$('.game-over'),
             soundStatus : this.$('.sound-status'),
-            fps : $('#fps')
+            paused : this.$('.paused')
         };
         // sets the div to use to display the game and its dimension
         
 
         // configure the loading bar
-        //$.loadCallback(function(percent){
-        //   $('#loadBar').width(400*percent);
-        //   $('#loadtext').html(''+percent+'%')
-        //});
+        $.loadCallback(function(percent){
+           $('.loadBar').width(400*percent);
+           $('.loadtext').html(''+percent+'%');
+        });
 
         // register the start button and remove the splash screen once the game is ready to starts
         this.$$.start.click($.proxy(function() {
@@ -220,7 +229,7 @@
             // Pacman eats ghost
             this.pacman.on('sprite:eat', $.proxy(function(ev, ghost) {
                 ghost.pacman.el.hide();
-                this._pauseFrames = 10;
+                this._pauseFrames = 15;
                 this._showPacman = true;
                 this.addScore(parseInt(ghost.score));
                 Sound.play('eat');
@@ -338,10 +347,6 @@
         },
         
         mainLoop : function() {
-            // if (this._lastTime) {
-            //     this.$$.fps.text(parseInt(1000 / ((new Date().getTime()) - this._lastTime)) + 'fps');
-            // } this._lastTime = (new Date().getTime());
-
             // Global mode.
             var globalMode = this._getGlobalMode();
             if (this._lastGlobalMode !== globalMode) {
@@ -430,6 +435,36 @@
             }
         },
 
+        pause : function() {
+            this._pauseTime = this.ts();
+
+            this.pinky.pause();
+            this.blinky.pause();
+            this.inky.pause();
+            this.sue.pause();
+
+            Sound.muted(true);
+
+            this.pg.pauseGame();
+
+            this.$$.paused.show();
+        },
+
+        resume : function() {
+            this._globalModeTime = this.ts() - this._pauseTime;
+
+            this.pinky.resume();
+            this.blinky.resume();
+            this.inky.resume();
+            this.sue.resume();
+
+            Sound.muted(this._muted);
+
+            this.pg.resumeGame();
+
+            this.$$.paused.hide();
+        },
+
         hideGhosts : function() {
             this.pinky.el.hide();
             this.blinky.el.hide();
@@ -446,14 +481,14 @@
 
         _isGhostFrightened : function() {
             return this.blinky.isFrightened() ||
-                    this.inky.isFrightened() ||
+                    this.inky.isFrightened()  ||
                     this.pinky.isFrightened() ||
                     this.sue.isFrightened();
         },
 
         _isGhostDead : function() {
             return this.blinky.isDead() ||
-                    this.inky.isDead() ||
+                    this.inky.isDead()  ||
                     this.pinky.isDead() ||
                     this.sue.isDead();
         },

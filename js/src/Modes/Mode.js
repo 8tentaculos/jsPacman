@@ -11,6 +11,14 @@ define(['jquery', 'Bot'], function($, Bot) {
             }
         },
 
+        pause : function() {
+            this._pauseTime = this.ghost.ts();
+        },
+
+        resume : function() {
+            
+        },
+
         getNextDirection : function() {
             var targetTile = this._getTarget(); // Target Tile
 

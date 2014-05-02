@@ -69,17 +69,31 @@
                 text-align: center;
                 color: #FCB644;
             }
+
+            .splash p.nerd {
+                position: absolute;
+                top: 191px;
+                left: 158px;
+                text-align: center;
+                color: #FFF;
+            }
+
+            .splash p span {
+                color : #FFFF00;
+            }
+
+            .splash .keys {
+                position: absolute;
+                top: 520px;
+                left: 0;
+                right: 0;
+                text-align: center;
+                color: #FFF;
+            }
             
             .loadbar {
                 position: absolute;
                 top: 50px;
-            }
-
-            #fps {
-                color :#FFF;
-                position: absolute;
-                top: 4px;
-                right: 4px;
             }
 
             .score {
@@ -129,7 +143,7 @@
                 color: #5EE;
             }
 
-            .game-over, .start-ready, .sound-status {
+            .game-over, .start-ready, .sound-status, .paused {
                 position: absolute;
                 top: 320px;
                 left: 0;
@@ -148,7 +162,7 @@
                 display : none;
             }
 
-            .sound-status .wrap {
+            .sound-status .wrap, .paused .wrap {
                 background: #000;
             }
             
@@ -168,13 +182,15 @@
                 <div class="start-ready" style="display: none">READY!</div>
                 <div class="game-over" style="display: none">GAME OVER</div>
                 <div class="sound-status on" style="display: none"><span class="wrap">SOUND: <span class="on">ON</span><span class="off">OFF</span></span></div>
+                <div class="paused" style="display: none"><span class="wrap">PAUSED</span></div>
                 <div class="splash">
                     <span class="title">"JS PAC-MAN"</span>
-                    <a class="start">Start</a>
+                    <p class="nerd">HTML5 - CSS3<br><br><span>JAVASCRIPT</span></p>
+                    <a class="start">START</a>
                     <div class="loadbar" style="background: 000; height: 32px; overflow: visible;"><span class="loadtext" style="color: red"></span></div>
-                    </div>
+                    <p class="keys"><span>ARROWS</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
                 </div>
             </div>
-        <div id="fps"></div>
+        </div>
     </body>
 </html>

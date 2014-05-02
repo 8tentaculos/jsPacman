@@ -8,6 +8,11 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
         onEnter : function() {
             this._startTime = this.ghost.ts();
         },
+
+        resume : function() {
+            this._startTime += this.ghost.ts() - this._pauseTime;
+        },
+
         getNextDirection : function() {
             var nextTile = this.ghost.getTile().get(this.ghost._dir); // Next tile.
 
@@ -24,16 +29,19 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
 
             return nextDirection;
         },
+
         setAnimation : function() {
             if (this.ghost.frightenedTime - this.ghost.frightenedTime * 0.2 > this.ghost.ts() - this._startTime) {
                 this.ghost.animation = this.ghost.animations.frightened;
             } else 
                 this.ghost.animation = this.ghost.animations.frightenedBlink;
         },
+
         exit : function() {
             if (this.ghost.frightenedTime > this.ghost.ts() - this._startTime) return false;
             return true;
         },
+
         onExit : function() {
             if (!this.ghost.frightened) this.ghost.setMode();
             this.ghost.pacman.ghostFrightened = false; // TODO: ugly solution for pacman to know when ghosts exits frightened mode

@@ -2,60 +2,65 @@
     var Ghost = function(attrs) {        
         this.animations = {
             frightened : {
-                offsety : 188
+                offsety : 188,
+                offsetx : -1
             },
              
             frightenedBlink : {
                 offsety : 188,
+                offsetx : -1,
                 numberOfFrame : 4
             },
             
             deadRight : {
                 offsety : 188,
-                offsetx : 32 * 4,
+                offsetx : 32 * 4 - 1,
                 numberOfFrame : 1
             },
 
             deadDown : {
                 offsety : 188,
-                offsetx : 32 * 5,
+                offsetx : 32 * 5 - 1,
                 numberOfFrame : 1
             },
             
             deadUp : {
                 offsety : 188,
-                offsetx : 32 * 6,
+                offsetx : 32 * 6 - 1,
                 numberOfFrame : 1
             },
             
             deadLeft : {
                 offsety : 188,
-                offsetx : 32 * 7,
+                offsetx : 32 * 7 - 1,
                 numberOfFrame : 1
             },
 
             score_200 : {
                 imageURL : 'img/misc.png',
                 numberOfFrame : 1,
-                offsetx : 0,
+                offsetx : -1,
                 offsety : 55
             },
+
             score_400 : {
                 imageURL : 'img/misc.png',
                 numberOfFrame : 1,
-                offsetx : 32 * 1,
+                offsetx : 32 * 1 - 1,
                 offsety : 55
             },
+
             score_800 : {
                 imageURL : 'img/misc.png',
                 numberOfFrame : 1,
-                offsetx : 32 * 2,
+                offsetx : 32 * 2 - 1,
                 offsety : 55
             },
+
             score_1600 : {
                 imageURL : 'img/misc.png',
                 numberOfFrame : 1,
-                offsetx : 32 * 3 + 1,
+                offsetx : 32 * 3,
                 offsety : 55
             }
         };
@@ -108,13 +113,14 @@
     };
 
     $.extend(Ghost.prototype, Bot.prototype, { 
+        w : 32,
         // Options.
         dir : null,
         // Overriden by Level
         speed : 75,
         frightenedTime : 5,
 
-        lastEatTimeLimit : 4,
+        waitTime : 4,
 
         aniBase : {
             imageURL : 'img/bots.png',
@@ -135,6 +141,14 @@
             this.setMode(this.mode);
             //this._nextDir = this.mode.getNextDirection();
             this.render(true);
+        },
+
+        pause : function() {
+            this.mode.pause();
+        },
+
+        resume : function() {
+            this.mode.resume();
         },
 
         setMode : function(mode) {

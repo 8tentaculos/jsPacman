@@ -15,22 +15,23 @@ define(['jquery', 'Ghost'], function($, Ghost) {
                     },
                     animations : {
                         right : {
-                            offsety : 126
+                            offsety : 126,
+                            offsetx : -1
                         },
                     
                         down : {
                             offsety : 126,
-                            offsetx : 32 * 2
+                            offsetx : 32 * 2 - 1
                         },
                     
                         up : {
                             offsety : 126,
-                             offsetx : 32 * 4
+                            offsetx : 32 * 4 - 1
                         },
                     
                         left : {
                             offsety : 126,
-                            offsetx : 32 * 6
+                            offsetx : 32 * 6 - 1
                         }
                     }
                 }, attrs);
@@ -39,58 +40,58 @@ define(['jquery', 'Ghost'], function($, Ghost) {
             if (attrs.id === 'bot-blinky') {
                 attrs = $.extend({
                     dir : 'l',
-                    lastEatTimeLimit : 0,
+                    waitTime : 0,
                     scatterTarget : 25,
                     defaultAnimation : 'left',
                     animations : {        
                         right : {
-                            offsety : 62
+                            offsety : 62,
+                            offsetx : -1
                         },
                     
                         down : {
                             offsety : 62,
-                            offsetx : 32 * 2
+                            offsetx : 32 * 2 - 1
                         },
                     
                         up : {
                             offsety : 62,
-                            offsetx : 32 * 4
+                            offsetx : 32 * 4 - 1
                         },
                     
                         left : {
                             offsety : 62,
-                            offsetx : 32 * 6
+                            offsetx : 32 * 6 - 1
                         }
                     }
                 }, attrs);
             }
-
-
             // Cyan Ghost
             if (attrs.id === 'bot-inky') {
                 attrs = $.extend({
                     dir : 'u',
-                    lastEatTimeLimit : 6,
+                    waitTime : 6,
                     scatterTarget : 979,
                     defaultAnimation : 'up',
                     animations : {        
                         right : {
-                            offsety : 158
+                            offsety : 158,
+                            offsetx : -1
                         },
             
                         down : {
                             offsety : 158,
-                            offsetx : 32 * 2
+                            offsetx : 32 * 2 - 1
                         },
                 
                         up : {
                             offsety : 158,
-                            offsetx : 32 * 4
+                            offsetx : 32 * 4 - 1
                         },
                 
                         left : {
                             offsety : 158,
-                            offsetx : 32 * 6
+                            offsetx : 32 * 6 - 1
                         }
                     }
 
@@ -101,7 +102,7 @@ define(['jquery', 'Ghost'], function($, Ghost) {
             if (attrs.id === 'bot-sue') {
                 attrs = $.extend({
                     dir : 'u',
-                    lastEatTimeLimit : 8,
+                    waitTime : 8,
                     scatterTarget : 953,
                     defaultAnimation : 'up',
                     getChaseTarget : function() {
@@ -112,22 +113,23 @@ define(['jquery', 'Ghost'], function($, Ghost) {
                     },
                     animations : {
                         right : {
-                            offsety : 94
+                            offsety : 94,
+                            offsetx : -1
                         },
 
                         down : {
                             offsety : 94,
-                            offsetx : 32 * 2
+                            offsetx : 32 * 2 - 1
                         },
                     
                         up : {
                             offsety : 94,
-                            offsetx : 32 * 4
+                            offsetx : 32 * 4 - 1
                         },
                     
                         left : {
                             offsety : 94,
-                            offsetx : 32 * 6
+                            offsetx : 32 * 6 - 1
                         }
                    }
 
