@@ -23,8 +23,8 @@
 
         this.pg = this.el.playground({width : this.w, height : this.h, keyTracker : true});
 
-        // Sound on/off
         $(document).keydown($.proxy(function(ev) {
+            // Sound on/off
             if (ev.which === 83) {
                 // Mute Sound.
                 this._muted = !this._muted;
@@ -40,14 +40,13 @@
                 if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
                 this._hideSoundStatusTimeout = setTimeout(function() { el.hide(); }, 2000);
             }
-        }, this));
-        // Pause Game
-        $(document).keydown($.proxy(function(ev) {
+            // Pause Game
             if (ev.which === 80) {
                 this._paused = !this._paused;
                 if (this._paused) this.pause();
                 else this.resume();
             }
+
         }, this));
 
         this.$$ = {
@@ -59,23 +58,48 @@
             score : this.$('.p1-score span'),
             gameOver : this.$('.game-over'),
             soundStatus : this.$('.sound-status'),
-            paused : this.$('.paused')
+            paused : this.$('.paused'),
+            load : this.$('.loadbar')
         };
-        // sets the div to use to display the game and its dimension
         
-
         // configure the loading bar
-        $.loadCallback(function(percent){
-           $('.loadBar').width(400*percent);
-           $('.loadtext').html(''+percent+'%');
-        });
+        $.loadCallback($.proxy(function(percent){
+            $('.inner', this.$$.load).width(percent + '%');
+        }, this));
 
         // register the start button and remove the splash screen once the game is ready to starts
         this.$$.start.click($.proxy(function() {
             this.start();
         }, this));
 
-        this.addScore();
+        Sound.init(this.sound);
+
+        this.lives = new Lives({
+            lives : this.defaultLives,
+            x : 20,
+            y : 562,
+            pg : this.pg
+        });
+
+        this.lives.on('lives:gameover', $.proxy(function() { 
+            this.$$.gameOver.show();
+
+            this._gameOver = true;
+
+            this.hideGhosts();
+
+            this.pacman.el.hide();
+        }, this));
+
+        this.map = new Map(map1);
+
+        this._makeLevel();
+        
+        this.pg.startGame($.proxy(function() {
+            this.$$.load.hide();
+            this.$$.start.show();
+        }, this));
+        
     };
 
     $.extend(Game.prototype, Helper, {
@@ -121,34 +145,8 @@
                 return;
             }
 
-            this.pg.startGame($.proxy(function() {
-                Sound.init(this.sound);
-
-                this.lives = new Lives({
-                    lives : this.defaultLives,
-                    x : 20,
-                    y : 562,
-                    pg : this.pg
-                });
-
-                this.lives.on('lives:gameover', $.proxy(function() { 
-                    this.$$.gameOver.show();
-
-                    this._gameOver = true;
-
-                    this.hideGhosts();
-
-                    this.pacman.el.hide();
-                }, this));
-
-                this.map = new Map(map1);
-
-                this._makeLevel();
-
-                this.$$.splash.hide();
-                Sound.play('intro');
-            }, this));
-            
+            this.$$.splash.hide();
+            Sound.play('intro');
             this.pg.registerCallback($.proxy(this.mainLoop, this), 40);
         },
 
