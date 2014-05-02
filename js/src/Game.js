@@ -65,6 +65,8 @@
         this.$$.start.click($.proxy(function() {
             this.start();
         }, this));
+
+        this.addScore();
     };
 
     $.extend(Game.prototype, Helper, {
@@ -112,8 +114,6 @@
 
             this.pg.startGame($.proxy(function() {
                 Sound.init(this.sound);
-
-                this.addScore();
 
                 this.lives = new Lives({
                     lives : this.defaultLives,
@@ -189,10 +189,6 @@
                         y : t.y
                     });
 
-                    // t.item.el.addSound(
-                    //     new $.gQ.SoundWrapper('audio/dot.mp3')
-                    // );
-
                     total++;
                 }
 
@@ -219,6 +215,7 @@
                 this._pauseFrames = 2;
                 this.addScore(this.pillScore);
                 if (!(--this.totalItems)) this._gameOver = true;
+                Sound.play('frightened');
             }, this));
             // Pacman eats ghost
             this.pacman.on('sprite:eat', $.proxy(function(ev, ghost) {
@@ -226,6 +223,7 @@
                 this._pauseFrames = 10;
                 this._showPacman = true;
                 this.addScore(parseInt(ghost.score));
+                Sound.play('eat');
             }, this));
             // Ghost eats Pacman
             this.pacman.on('sprite:eaten', $.proxy(function(ev, ghost) {
@@ -351,6 +349,16 @@
                 this._lastGlobalMode = globalMode;
             }
 
+            if (!this._start) {
+                if (!this._isGhostFrightened()) {
+                    Sound.sounds.frightened.stop();
+                } else if (this._isGhostDead()) {
+                    Sound.sounds.frightened.audio.volume = 0;
+                } else {
+                    Sound.sounds.frightened.audio.volume = 1;
+                }
+            }
+
             // Input
             this._inputDir = this.stickyTurn ? this._getInputDir() || this._inputDir : this._getInputDir();
             
@@ -402,7 +410,12 @@
                     this.hideGhosts();
                 } else {
                     if (!this._soundBackPauseFrames) {
-                        Sound.play('back');
+                        if (this._isGhostDead()) {
+                            Sound.play('dead');
+                        }
+                        else if (!this._isGhostFrightened()) {
+                            Sound.play('back');
+                        }
                         this._soundBackPauseFrames = 5;
                     } else this._soundBackPauseFrames--;
 
@@ -429,6 +442,20 @@
             this.blinky.el.show();
             this.inky.el.show();
             this.sue.el.show();
+        },
+
+        _isGhostFrightened : function() {
+            return this.blinky.isFrightened() ||
+                    this.inky.isFrightened() ||
+                    this.pinky.isFrightened() ||
+                    this.sue.isFrightened();
+        },
+
+        _isGhostDead : function() {
+            return this.blinky.isDead() ||
+                    this.inky.isDead() ||
+                    this.pinky.isDead() ||
+                    this.sue.isDead();
         },
 
         _getGlobalMode : function() {
