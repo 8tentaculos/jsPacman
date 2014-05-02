@@ -136,10 +136,9 @@
         score : '200',
         scores : {'200' : '400', '400' : '800', '800' : '1600'},
 
-        reset : function() {
-            $.extend(this, this.defaults);
+        reset : function(attrs) {
+            $.extend(this, this.defaults, attrs || {});
             this.setMode(this.mode);
-            //this._nextDir = this.mode.getNextDirection();
             this.render(true);
         },
 
