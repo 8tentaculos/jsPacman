@@ -10,8 +10,12 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
     $.extend(House.prototype, Mode.prototype, {
         onEnter : function() {
             this._prepareExit = false;
-            this.ghost._lastEatTime = this.ghost.ts();
+            this._startTime = this.ghost.ts();
             this.ghost._speed = 70;
+        },
+
+        resume : function() {
+            if (!this._prepareExit) this._startTime += this.ghost.ts() - this._pauseTime;
         },
 
         getNextDirection : function() {
@@ -21,7 +25,7 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
         move : function() {
             var t = this.ghost.getTile();
 
-            if (!this._prepareExit && this.ghost.ts() - this.ghost._lastEatTime > this.ghost.lastEatTimeLimit && !t.isWall()) {
+            if (!this._prepareExit && this.ghost.ts() - this._startTime > this.ghost.waitTime && !t.isWall()) {
                 this._prepareExit = true;
                 this.ghost.y = t.y;
             }
