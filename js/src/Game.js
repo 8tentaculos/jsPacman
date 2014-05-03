@@ -88,7 +88,13 @@
             this.hideGhosts();
 
             this.pacman.el.hide();
+
+            if (window.localStorage) localStorage.jsPacmanHighScore = this.highScore;
         }, this));
+
+        if (window.localStorage && localStorage.jsPacmanHighScore) {
+            this.highScore = localStorage.jsPacmanHighScore;
+        }
 
         this._makeLevel();
         
@@ -341,10 +347,14 @@
         addScore : function(score) {
             this.score = this.score + (score || 0);
             this.$$.score.text(this.score || '00');
-            if (!this._addedHighscore || this.highScore < this.score) {
-                this._addedHighscore = true;
+            if (this.highScore < this.score) {
                 this.highScore = this.score;
-                this.$$.highScore.text(this.score || '00');
+                this._addedHighscore= false;
+            }
+
+            if (!this._addedHighscore) {
+                this._addedHighscore = true;
+                this.$$.highScore.text(this.highScore || '00');
             }
         },
         
