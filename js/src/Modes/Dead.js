@@ -30,8 +30,8 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
             } else if (this._prepareEnter) {
                 var endX = this._endX;
                 var endY = this._endY;
-                // Should go to center or to sides of house
-                if (this.ghost.y < endY) endX = this._target.x;
+                // Should go to center first
+                if (this.ghost.y < endY) endX = this._target.x - this.ghost.map.tw / 2;
                 // Set direction 
                 if (this.ghost.x < endX) this.ghost.dir = 'r';
                 else if (this.ghost.x > endX) this.ghost.dir = 'l';

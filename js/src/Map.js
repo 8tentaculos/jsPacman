@@ -27,16 +27,6 @@
         }
 
         this.houseCenter = this.house.getD().getD();
-        
-        var ht = this.house.w / 2;
-
-        this.house.getU().getR().x -= ht;
-        this.house.getR().x -= ht;
-        this.houseCenter.getR().x -= ht;
-
-        this.house.getU().x += ht - 1;
-        this.house.x += ht - 1;
-        this.houseCenter.x += ht - 1;
 
         // Cache tile dimensions
         this.tw = this.tiles[0].w;

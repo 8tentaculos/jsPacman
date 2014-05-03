@@ -3,10 +3,10 @@
 'Helper',
 'Levels',
 'Map', 
-'FactoryMsPacman',
-'FactoryGhost', 
-'FactoryDot', 
-'FactoryPill',
+'Factory/MsPacman',
+'Factory/Ghost', 
+'Factory/Dot', 
+'Factory/Pill',
 'Lives',
 'Sound',
 'gameQuery'
@@ -307,14 +307,14 @@
             var pinkyT = this.map.houseCenter.getR();
             this.pinky = FactoryGhost.make($.extend(ghostAttrs, {
                 id : 'bot-pinky',
-                x : pinkyT.x,
+                x : pinkyT.x - this.map.tw / 2,
                 y : pinkyT.y
             }));
 
             var blinkyT = this.map.house.getU().getR();
             this.blinky = FactoryGhost.make($.extend(ghostAttrs, {
                 id : 'bot-blinky',
-                x : blinkyT.x,
+                x : blinkyT.x - this.map.tw / 2,
                 y : blinkyT.y
             }));
 
