@@ -23,7 +23,7 @@
         // Options.
         w                : 30,
         h                : 30,
-        step             : 5,
+        step             : 4.2,
         speed            : 80,
         preturn          : false,
         scatterTarget    : 3,

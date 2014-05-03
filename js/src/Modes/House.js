@@ -5,12 +5,12 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
         this._houseTop = this.ghost.y - this.ghost.getTile().h / 2;
         this._houseBottom = this.ghost.y + this.ghost.getTile().h / 2;
         this._exitTile = this.ghost.map.house.getR();
+        this._exitTileX = this._exitTile.x  - this.ghost.map.tw / 2;
     };
 
     $.extend(House.prototype, Mode.prototype, {
         onEnter : function() {
             this._prepareExit = false;
-            this._startTime = this.ghost.ts();
             this.ghost._speed = 70;
         },
 
@@ -23,6 +23,8 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
         },
         
         move : function() {
+            if (!this._startTime) this._startTime = this.ghost.ts();
+
             var t = this.ghost.getTile();
 
             if (!this._prepareExit && this.ghost.ts() - this._startTime > this.ghost.waitTime && !t.isWall()) {
@@ -35,16 +37,16 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
                 this.onExit();
 
             } else if (this._prepareExit) {
-                if (this.ghost.x < this._exitTile.x) this.ghost.dir = 'r';
-                else if (this.ghost.x > this._exitTile.x) this.ghost.dir = 'l';
+                if (this.ghost.x < this._exitTileX) this.ghost.dir = 'r';
+                else if (this.ghost.x > this._exitTileX) this.ghost.dir = 'l';
                 else this.ghost.dir = 'u';
 
                 if (this.ghost.dir === 'u') 
                     this.ghost.y -= this.ghost.getMin(this.ghost.getStep(), this.ghost.y - this._exitTile.getU().y);
                 if (this.ghost.dir === 'r') 
-                    this.ghost.x += this.ghost.getMin(this.ghost.getStep(), this._exitTile.x - this.ghost.x);
+                    this.ghost.x += this.ghost.getMin(this.ghost.getStep(), this._exitTileX - this.ghost.x);
                 if (this.ghost.dir === 'l') 
-                    this.ghost.x -= this.ghost.getMin(this.ghost.getStep(), this.ghost.x - this._exitTile.x );
+                    this.ghost.x -= this.ghost.getMin(this.ghost.getStep(), this.ghost.x - this._exitTileX);
 
                 this.setAnimation();
 
@@ -82,7 +84,10 @@ define(['jquery', 'Bot', 'Modes/Mode'], function($, Bot, Mode) {
         },
 
         onExit : function() {
+            this._startTime = null;
+
             var t = this.ghost.getTile();
+
             this.ghost._dir = 'l';
             this.ghost._nextDir = 'l';
             this.ghost._lastTile = t.getD();

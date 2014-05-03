@@ -1,4 +1,4 @@
-define(['jquery', 'Helper', 'FactoryMsPacman'], function($, Helper, FactoryMsPacman) {
+define(['jquery', 'Helper', 'Factory/MsPacman'], function($, Helper, FactoryMsPacman) {
     var Lives = function(options) {
 
         this.pacmans = [];
