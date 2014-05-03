@@ -62,7 +62,6 @@ module.exports = function(grunt) {
                     paths: { // Relative to baseUrl.
                         jquery : '../lib/jquery-1.10.2.min',
                         gameQuery : '../lib/jquery.gamequery-0.7.1',
-                        maps : '../maps',
                         main : '../main'
                     },
                     shim : {

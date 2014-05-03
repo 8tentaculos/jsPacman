@@ -3,7 +3,6 @@
 'Helper',
 'Levels',
 'Map', 
-'maps/map1', 
 'FactoryMsPacman',
 'FactoryGhost', 
 'FactoryDot', 
@@ -11,7 +10,7 @@
 'Lives',
 'Sound',
 'gameQuery'
-], function($, Helper, Levels, Map, map1, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, Lives, Sound) {
+], function($, Helper, Levels, Map, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, Lives, Sound) {
 
     var _times = [
         [{mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 1000000}]
@@ -91,8 +90,6 @@
             this.pacman.el.hide();
         }, this));
 
-        this.map = new Map(map1);
-
         this._makeLevel();
         
         this.pg.startGame($.proxy(function() {
@@ -157,6 +154,8 @@
             this.sue.destroy();
             this.pacman.destroy();
 
+            this.map.destroy();
+
             if (!this._win) {
                 this.lives.set(this.defaultLives);
                 this.score = 0;
@@ -169,12 +168,17 @@
             this._globalModeTime = null;
 
             this._lastGlobalMode = null;
-            
+
             this._makeLevel();
         },
 
         _makeLevel : function() {
             $.extend(this, Levels.get(this.level, 'game'));
+
+            this.map = new Map(this.map);
+
+            this.pg.removeClass('maze-1 maze-2 maze-3 maze-4');
+            this.pg.addClass(this.maze);
 
             if (!this._win) this.$$.startP1.show();
             this.$$.startReady.show();
@@ -186,7 +190,6 @@
             var i = this.map.tiles.length, total = 0;
             while (i--) {
                 var t = this.map.tiles[i];
-                if (t.item) t.item.destroy();
                 if (t.code === '.') {
                     t.item = FactoryDot.make({
                         id : 'item-dot-' + i,
