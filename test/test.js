@@ -3,7 +3,7 @@ define([
   'chai',
   'jquery',
   'Map',
-  'maps/map1',
+  'Maps/map-1',
   'Game',
   'Item',
   'FactoryMsPacman'

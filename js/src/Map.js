@@ -59,6 +59,14 @@
             var idx = (row * this.w) + col;
 
             return this.tiles[idx] || null;
+        },
+
+        destroy : function() {
+            var i = this.tiles.length;
+            while (i--) {
+                var t = this.tiles[i];
+                if (t.item) t.item.destroy();
+            }
         }
        
     });
