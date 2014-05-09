@@ -31,22 +31,39 @@
                 color: #EFEFEF;
                 font-family: 'Press Start 2P', cursive;
                 font-size: 16px;
+                background: url(img/maze.png);
             }
 
             .js-pacman .playground.maze-1 {
-                background: url(img/maze-1.png);
+                background-position: 0 0;
             }
 
             .js-pacman .playground.maze-2 {
-                background: url(img/maze-2.png);
+                background-position: -448px 0;
             }
 
             .js-pacman .playground.maze-3 {
-                background: url(img/maze-3.png);
+                background-position: -896px 0;
             }
 
             .js-pacman .playground.maze-4 {
-                background: url(img/maze-4.png);
+                background-position: -1344px 0;
+            }
+
+            .js-pacman .playground.maze-1.blink {
+                background-position: 0 -576px;
+            }
+
+            .js-pacman .playground.maze-2.blink {
+                background-position: -448px -576px;
+            }
+
+            .js-pacman .playground.maze-3.blink {
+                background-position: -896px -576px;
+            }
+
+            .js-pacman .playground.maze-4.blink {
+                background-position: -1344px -576px;
             }
             
             .js-pacman .splash {
@@ -200,7 +217,7 @@
             
         </style>
         
-        <script data-main="js/main-build.js" src="js/lib/require.js"></script>
+        <script data-main="js/main.js" src="js/lib/require.js"></script>
     </head>
     <body>
         <div class="js-pacman container">

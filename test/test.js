@@ -6,7 +6,7 @@ define([
   'Maps/map-1',
   'Game',
   'Item',
-  'FactoryMsPacman'
+  'Factory/MsPacman'
 ], function(chai, $, Map, map1, Game, Item, FactoryMsPacman) {
     'use strict';
     

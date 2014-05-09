@@ -51,11 +51,19 @@
             return this.tiles[idx] || null;
         },
 
-        destroy : function() {
+        destroyItems : function() {
             var i = this.tiles.length;
             while (i--) {
                 var t = this.tiles[i];
                 if (t.item) t.item.destroy();
+            }
+        },
+
+        hideItems : function() {
+            var i = this.tiles.length;
+            while (i--) {
+                var t = this.tiles[i];
+                if (t.item) t.item.el.hide();
             }
         }
        
