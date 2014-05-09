@@ -160,7 +160,7 @@
             this.sue.destroy();
             this.pacman.destroy();
 
-            this.map.destroy();
+            this.map.destroyItems();
 
             if (!this._win) {
                 this.lives.set(this.defaultLives);
@@ -219,6 +219,8 @@
                     total++;
                 }
             }
+
+            //total = 10; //////////////////// REMOVE
 
             this.totalItems = total;
         
@@ -293,7 +295,7 @@
                     this._win = true;
 
                     this.hideGhosts();
-                    
+                    this.map.hideItems();
                     this.pacman.el.pauseAnimation();
                 }
             }, this));
@@ -359,6 +361,15 @@
         },
         
         mainLoop : function() {
+            if (this._win) {
+                if (!this._mazeBlinkPauseFrames) {
+                    if (this.pg.hasClass('blink')) {
+                        this.pg.removeClass('blink');
+                    } else this.pg.addClass('blink');
+                     
+                    this._mazeBlinkPauseFrames = 8;
+                } else this._mazeBlinkPauseFrames--;
+            }
             // Global mode.
             var globalMode = this._getGlobalMode();
             if (this._lastGlobalMode !== globalMode) {
@@ -402,6 +413,8 @@
                 }
 
                 if (this._win) {
+                    this.pg.removeClass('blink');
+
                     this.start();
 
                     return;
