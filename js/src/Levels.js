@@ -26,7 +26,7 @@ define(['Maps/map-1', 'Maps/map-2', 'Maps/map-3', 'Maps/map-4'], function(map1, 
     ];
 
     var keys = [
-        'game.bonus', 
+        'game.bonusId', 
         'game.bonusScore', 
         'pacman.speed', 
         'pacman.dotSpeed', 

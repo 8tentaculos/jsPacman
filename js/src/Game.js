@@ -7,10 +7,11 @@
 'Factory/Ghost', 
 'Factory/Dot', 
 'Factory/Pill',
+'Factory/Bonus',
 'Lives',
 'Sound',
 'gameQuery'
-], function($, Helper, Levels, Map, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, Lives, Sound) {
+], function($, Helper, Levels, Map, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, FactoryBonus, Lives, Sound) {
 
     var _times = [
         [{mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 1000000}]
@@ -150,7 +151,7 @@
 
             this.$$.splash.hide();
             Sound.play('intro');
-            this.pg.registerCallback($.proxy(this.mainLoop, this), 40);
+            this.pg.registerCallback($.proxy(this.mainLoop, this), 30);
         },
 
         reset : function() {
@@ -193,6 +194,9 @@
             
             this._pauseFrames = 80;
 
+            this._destroyBonus = 0;
+            this._showBonus = 50;
+
             var i = this.map.tiles.length, total = 0;
             while (i--) {
                 var t = this.map.tiles[i];
@@ -223,7 +227,7 @@
             //total = 10; //////////////////// REMOVE
 
             this.totalItems = total;
-        
+            // PACMAN
             this.pacman = FactoryMsPacman.make($.extend(Levels.get(this.level, 'pacman'), {
                 map : this.map,
                 pg : this.pg
@@ -248,11 +252,11 @@
                 this._pauseFrames = this.defaultPauseFrames;
                 this._pacmanEaten = true;
             }, this));
-
+            // Pacman make die turn arround
             this.pacman.on('sprite:die', $.proxy(function(ev, ghost) {
                 Sound.play('eaten');
             }, this));
-
+            // Pacman lose 
             this.pacman.on('sprite:life', $.proxy(function(ev) {
                 $.gQ.keyTracker = {};
 
@@ -269,6 +273,13 @@
                 this.inky.reset();
                 this.sue.reset();
 
+                if (this.bonus) {
+                    this._destroyBonus = 0;
+                    this._showBonus = 50;
+                    this.bonus.reset();
+                    this.bonus.el.hide();
+                }
+
                 this.showGhosts();
 
                 this.lives.die();
@@ -283,7 +294,7 @@
                 if (this.lives.lives) this._pauseFrames = this.defaultPauseFrames;
                 else this._pauseFrames = 120;
             }, this));
-
+            // Pacman eats dot
             this.pacman.on('sprite:dot', $.proxy(function(ev, t) {
                 this.addScore(this.dotScore);
 
@@ -298,8 +309,39 @@
                     this.map.hideItems();
                     this.pacman.el.pauseAnimation();
                 }
+
+            }, this));
+            // Pacman eats bonus
+            this.pacman.on('sprite:bonus', $.proxy(function(ev, bonus) {
+                if (this._showBonus) return; // Not yet in the maze
+                this._pauseFrames = 5;
+                this._destroyBonus = 25;
+                this.addScore(parseInt(bonus.score));
+                Sound.play('eat');
             }, this));
 
+            // BONUS
+            if (this.bonus) {
+                this.bonus.destroy();
+            }
+
+            this.bonus = FactoryBonus.make({
+                id : 'bot-bonus-1',
+                map : this.map,
+                pg : this.pg,
+                dir : 'l',
+                pacman : this.pacman,
+                x : this.map.tunnels[3].x,
+                y : this.map.tunnels[3].y
+            });
+
+            // Bonus reaches target and disappears
+            this.bonus.on('sprite:bonusdestroy', $.proxy(function(ev, bonus) {
+                this.bonus.destroy();
+                delete this.bonus;
+            }, this));
+
+            // GHOSTS
             var ghostAttrs = $.extend(Levels.get(this.level, 'ghost'), {
                 map : this.map,
                 pg : this.pg,
@@ -342,8 +384,10 @@
 
                 this._start = 2;
             } else {
+                this.bonus.el.hide();
                 this._start = 1;
             }
+
         },
         
         addScore : function(score) {
@@ -453,6 +497,23 @@
                     this.blinky.move();
                     this.inky.move();
                     this.sue.move();
+
+                    if (this._destroyBonus) {
+                        if (this._destroyBonus === 1) {
+                            this.bonus.destroy();
+                            delete this.bonus;
+                        }
+                        this._destroyBonus--;
+                    } else if (this.bonus) {
+                        if (this._showBonus) {
+                            if (this._showBonus === 1) {
+                                this.bonus.el.show();
+                            }
+                            this._showBonus--;
+                        } else {
+                            this.bonus.move();
+                        }
+                    }
                 }
 
             } else {
@@ -495,6 +556,8 @@
             this.blinky.el.hide();
             this.inky.el.hide();
             this.sue.el.hide();
+
+            if (this.bonus) this.bonus.el.hide();
         },
 
         showGhosts : function() {
@@ -502,6 +565,8 @@
             this.blinky.el.show();
             this.inky.el.show();
             this.sue.el.show();
+
+            if (this.bonus && !this._showBonus) this.bonus.el.show();
         },
 
         _isGhostFrightened : function() {
