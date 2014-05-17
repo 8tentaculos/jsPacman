@@ -23,7 +23,7 @@
         // Options.
         w                : 30,
         h                : 30,
-        step             : 4.4,
+        step             : 5,
         speed            : 80,
         preturn          : false,
         scatterTarget    : 3,
@@ -41,6 +41,8 @@
                 y : this.y,
                 animation : this.animations.default || this.animations[this.defaultAnimation],
                 dir : this.dir,
+                _dir : null,
+                _nextDirection : null,
                 mode : this.mode
             };
         },
@@ -55,9 +57,10 @@
             if (this.el) {
                 // Position change, move.
                 if (this._lastX !== this.x || this._lastY != this.y) {
-               
+                    // _offsetY stuff is for bonus movement up and down
+                    if (this._offsetY == null) this._offsetY = 0; // jshint ignore:line
                     // Actually move element.
-                    this.el.xy(this.x - this.hw, this.y - this.hh);
+                    this.el.xy(this.x - this.hw, this.y - this.hh + this._offsetY);
                     
                     this._lastX = this.x;
                     this._lastY = this.y;

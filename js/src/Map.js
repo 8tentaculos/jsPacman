@@ -13,6 +13,8 @@
         this.w = data[0].length;
         this.h = data.length;
 
+        this.tunnels = [];
+
         // Instantiate tiles and store them.
         for (var y = 0; y < this.h; y++) {
             var r = data[y];
@@ -22,6 +24,9 @@
                 this.tiles.push(t);
                 if (t.isHouse() && !this.house) { // Store left house door
                     this.house = t;
+                }
+                if (t.isTunnel() && (t.col === 0 || t.col === this.w - 1)) {
+                    this.tunnels.push(t);
                 }
             }
         }
