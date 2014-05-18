@@ -9,10 +9,12 @@
 'Factory/Pill',
 'Factory/Bonus',
 'Lives',
+'Bonuses',
 'Sound',
 'gameQuery'
-], function($, Helper, Levels, Map, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, FactoryBonus, Lives, Sound) {
+], function($, Helper, Levels, Map, FactoryMsPacman, FactoryGhost, FactoryDot, FactoryPill, FactoryBonus, Lives, Bonuses, Sound) {
 
+    // TODO: move this to Levels
     var _times = [
         [{mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 1000000}]
     ];
@@ -77,6 +79,13 @@
         this.lives = new Lives({
             lives : this.defaultLives,
             x : 20,
+            y : 562,
+            pg : this.pg
+        });
+
+        this.bonuses = new Bonuses({
+            level : this.level,
+            x : 430,
             y : 562,
             pg : this.pg
         });
@@ -182,6 +191,8 @@
         _makeLevel : function() {
             $.extend(this, Levels.get(this.level, 'game'));
 
+            this.bonuses.setLevel(this.level);
+
             this.map = new Map(this.map);
 
             this.pg.removeClass('maze-1 maze-2 maze-3 maze-4');
@@ -195,7 +206,7 @@
             this._pauseFrames = 80;
 
             this._destroyBonus = 0;
-            this._showBonus = 50;
+            this._showBonus = 500;
 
             var i = this.map.tiles.length, total = 0;
             while (i--) {
@@ -224,7 +235,7 @@
                 }
             }
 
-            //total = 10; //////////////////// REMOVE
+            // total = 10; //////////////////// REMOVE
 
             this.totalItems = total;
             // PACMAN
@@ -275,7 +286,7 @@
 
                 if (this.bonus) {
                     this._destroyBonus = 0;
-                    this._showBonus = 50;
+                    this._showBonus = 250;
                     this.bonus.reset();
                     this.bonus.el.hide();
                 }
@@ -325,14 +336,16 @@
                 this.bonus.destroy();
             }
 
+            var bonusT = this.map.tunnels[this.map.tunnels.length - 1];
             this.bonus = FactoryBonus.make({
-                id : 'bot-bonus-1',
+                id : this.bonusId,
                 map : this.map,
                 pg : this.pg,
                 dir : 'l',
                 pacman : this.pacman,
-                x : this.map.tunnels[3].x,
-                y : this.map.tunnels[3].y
+                score : this.bonusScore,
+                x : bonusT.x,
+                y : bonusT.y
             });
 
             // Bonus reaches target and disappears

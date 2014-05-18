@@ -4,37 +4,37 @@
             default : {},
 
             score_100 : {
-                offsety : 29
+                offsety : 30
             },
 
             score_200 : {
-                offsetx : 29,
-                offsety : 29
+                offsetx : 30,
+                offsety : 30
             },
 
             score_500 : {
-                offsetx : 29 * 2,
-                offsety : 29
+                offsetx : 30 * 2,
+                offsety : 30
             },
 
             score_700 : {
-                offsetx : 29 * 3,
-                offsety : 29
+                offsetx : 30 * 3,
+                offsety : 30
             },
 
             score_1000 : {
-                offsetx : 29 * 4,
-                offsety : 29
+                offsetx : 30 * 4,
+                offsety : 30
             },
 
             score_2000 : {
-                offsetx : 29 * 5,
-                offsety : 29
+                offsetx : 30 * 5,
+                offsety : 30
             },
 
             score_5000 : {
-                offsetx : 29 * 6,
-                offsety : 29
+                offsetx : 30 * 6,
+                offsety : 30
             }
         };
         // Call Parent.
@@ -51,13 +51,21 @@
             this._dir = this._nextDir;
             this._nextDir = this.getNextDirection();
             this._eatEvent = false;
+
+            if (this.getTile() === this._getTarget()) {
+                if (this._targetFound) {
+                    this._targetFound--;
+                } else {
+                    this.trigger('sprite:bonusdestroy');
+                }
+            }
             
         }, this));
          
+        this._targetFound = 2;
     };
 
     $.extend(Bonus.prototype, Bot.prototype, { 
-        w : 32,
         // Options.
         dir : null,
         // Overriden by Level
@@ -87,8 +95,6 @@
                     this.pacman.trigger('sprite:bonus', this);
                 }
             }
-
-            if (this.getTile() === this._getTarget()) this.trigger('sprite:bonusdestroy');
         },
 
         getNextDirection : function() {
