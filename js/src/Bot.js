@@ -55,6 +55,12 @@
         render : function(reset) {
             // Already rendered for first time.
             if (this.el) {
+                var t = this.getTile();
+
+                // Fix float point offset.
+                if (Math.abs(this.y - t.y) < 0.2) this.y = t.y;
+                if (Math.abs(this.x - t.x) < 0.2) this.x = t.x;
+
                 // Position change, move.
                 if (this._lastX !== this.x || this._lastY != this.y) {
                     // _offsetY stuff is for bonus movement up and down
