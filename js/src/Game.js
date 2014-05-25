@@ -77,7 +77,7 @@
         Sound.init(this.sound);
 
         this.lives = new Lives({
-            lives : this.defaultLives,
+            lives : this.defaultLives + 1,
             x : 20,
             y : 562,
             pg : this.pg
@@ -139,6 +139,9 @@
         score : 0,
         highScore : 0,
 
+        extraLifeScore : 10000,
+        extraLife : false,
+
         level : 1,
 
         start : function() {
@@ -173,8 +176,9 @@
             this.map.destroyItems();
 
             if (!this._win) {
-                this.lives.set(this.defaultLives);
+                this.lives.set(this.defaultLives + 1);
                 this.score = 0;
+                this.extraLife = false;
             }
 
             $.gQ.keyTracker = {};
@@ -412,6 +416,13 @@
         addScore : function(score) {
             this.score = this.score + (score || 0);
             this.$$.score.text(this.score || '00');
+
+            if (!this.extraLife && this.score >= this.extraLifeScore) {
+                this.extraLife = true;
+                this.lives.add();
+                Sound.play('life');
+            }
+
             if (this.highScore < this.score) {
                 this.highScore = this.score;
                 this._addedHighscore= false;
@@ -459,7 +470,9 @@
                     this.$$.startP1.hide();
                     
                     this.showGhosts();
-                    
+
+                    this.lives.set(this.defaultLives);
+
                     this.pacman.el.show();
                     
                     this._pauseFrames = 60;
