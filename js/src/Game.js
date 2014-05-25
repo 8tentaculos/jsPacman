@@ -334,7 +334,7 @@
                 this._pauseFrames = 5;
                 this._destroyBonus = 25;
                 this.addScore(parseInt(bonus.score));
-                Sound.play('eat');
+                Sound.play('bonus');
             }, this));
 
             // BONUS
