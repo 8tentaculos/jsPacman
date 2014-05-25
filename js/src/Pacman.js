@@ -54,7 +54,7 @@
             imageURL : 'img/bots.png',
             numberOfFrame : 4, 
             delta : 32, 
-            rate : 30, 
+            rate : 60, 
             offsety : 30,
             type : $.gQ.ANIMATION_HORIZONTAL 
         },

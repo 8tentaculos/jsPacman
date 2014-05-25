@@ -198,6 +198,10 @@
             this.pg.removeClass('maze-1 maze-2 maze-3 maze-4');
             this.pg.addClass(this.maze);
 
+            var dotColor = 'white';
+            if (this.maze === 'maze-2') dotColor = 'yellow';
+            if (this.maze === 'maze-3') dotColor = 'red';
+
             if (!this._win) this.$$.startP1.show();
             this.$$.startReady.show();
 
@@ -213,6 +217,7 @@
                 var t = this.map.tiles[i];
                 if (t.code === '.') {
                     t.item = FactoryDot.make({
+                        defaultAnimation : dotColor,
                         id : 'item-dot-' + i,
                         map : this.map,
                         pg : this.pg,
@@ -225,6 +230,7 @@
 
                 if (t.code === '*') {
                     t.item = FactoryPill.make({
+                        defaultAnimation : dotColor,
                         id : 'item-pill-' + i,
                         map : this.map,
                         pg : this.pg,

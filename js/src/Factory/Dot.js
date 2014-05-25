@@ -6,11 +6,23 @@
             return new Item($.extend({
                 w : 4,
                 h : 4,
+
+                aniBase  : {
+                    imageURL : 'img/pills.png',
+                    numberOfFrame : 1
+                },
+                
+                defaultAnimation : 'white',
+                
                 animations : {
-                    default : {
-                        imageURL : 'img/pills.png',
-                        numberOfFrame : 1,
+                    white : {
                         offsetx : 12
+                    },
+                    yellow : {
+                        offsetx : 12 + 16
+                    },
+                    red : {
+                        offsetx : 12 + 16 * 2
                     }
                 }
             }, attrs));
