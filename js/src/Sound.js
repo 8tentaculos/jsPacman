@@ -19,7 +19,8 @@ define([
                 eat : new SoundPool('audio/eat.mp3', 4),
                 frightened : new SoundWrapper('audio/frightened.mp3'),
                 dead : new SoundPool('audio/dead.mp3', 10),
-                bonus : new SoundWrapper('audio/bonus.mp3')
+                bonus : new SoundWrapper('audio/bonus.mp3'),
+                life : new SoundWrapper('audio/life.mp3')
             };
         },
         
