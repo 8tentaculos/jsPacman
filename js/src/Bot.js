@@ -23,7 +23,7 @@
         // Options.
         w                : 30,
         h                : 30,
-        step             : 5,
+        step             : 5.5,
         speed            : 80,
         preturn          : false,
         scatterTarget    : 3,
@@ -58,8 +58,8 @@
                 var t = this.getTile();
 
                 // Fix float point offset.
-                if (Math.abs(this.y - t.y) < 0.2) this.y = t.y;
-                if (Math.abs(this.x - t.x) < 0.2) this.x = t.x;
+                if (Math.abs(this.y - t.y) < 0.5) this.y = t.y;
+                if (Math.abs(this.x - t.x) < 0.5) this.x = t.x;
 
                 // Position change, move.
                 if (this._lastX !== this.x || this._lastY != this.y) {
