@@ -84,7 +84,7 @@
         // Change tile.
         this.on('sprite:tile', $.proxy(function(e, t) {
             if (this.mode === this.modes.frightened) this._speed = this.frightenedSpeed;
-            else if (this.mode === this.modes.dead) this._speed = 120;
+            else if (this.mode === this.modes.dead) this._speed = 130;
             else if (t.isTunnel()) this._speed = this.tunnelSpeed;
             else this._speed = this.speed;
 
