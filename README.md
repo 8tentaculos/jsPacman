@@ -3,9 +3,9 @@
 jsPacman
 ========
 
-jsPacman is a Javascript implementation of the classic [Ms Pac-Man](https://en.wikipedia.org/wiki/Ms._Pac-Man) game.
+jsPacman is a Javascript remake of the classic [Ms Pac-Man](https://en.wikipedia.org/wiki/Ms._Pac-Man) game.
 It is written in [JavaScript](https://en.wikipedia.org/wiki/JavaScript), using [jQuery](http://jquery.com/) and the [gameQuery](http://gamequeryjs.com/) plug-in.
-Animations are made using pure CSS3 DOM manipulation, and the sound is native HTML5.
+Animations are made using pure CSS3 DOM manipulation. Sound is native HTML5.
 
 Play Demo
 -----------
