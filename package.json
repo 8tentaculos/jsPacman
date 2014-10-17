@@ -2,6 +2,7 @@
   "name": "jsPacman",
   "version": "0.0.1",
   "description": "Javascript version of the classic arcade.",
+  "main": "index.html",
   "scripts": {
     "test": "grunt test"
   },
