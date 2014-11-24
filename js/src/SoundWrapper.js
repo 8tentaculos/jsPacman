@@ -40,6 +40,10 @@ define(['jquery', 'gameQuery'], function($) {
             this.audio.muted = !!mute;
         },
 
+        isPlaying : function() {
+            return this.audio.currentTime !== 0 || !this.audio.ended;
+        },
+
         // returns true if the sound is ready to be played
         ready : function() {
             return this.audio.readyState == this.audio.HAVE_ENOUGH_DATA;
