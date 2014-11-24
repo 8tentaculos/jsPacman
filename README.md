@@ -44,6 +44,10 @@ Watch changes and run tests, lint and livereload:
 ```
 $ grunt watch
 ```
+Build (concatenate and uglify modules):
+```
+$ grunt build
+```
 
 Licences
 -----------
