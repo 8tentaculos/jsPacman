@@ -1,24 +1,28 @@
 define(['jquery', 'SoundWrapper'], function($, SoundWrapper) {
 
     var SoundPool = function(url, size) {
+        this.url = url;
         this.pool = [];
         this.current = 0;
 
         for (var i = 0; i < size; i++) {
-            var sound = new SoundWrapper(url);
-            this.pool.push(sound);
+            this._createSound();
         }
 
     };
 
-    SoundPool.prototype.play = function() {
-        var sw = this.pool[this.current], audio = sw.audio;
+    SoundPool.prototype._createSound = function() {
+        this.pool.push(new SoundWrapper(this.url));
+    };
 
-        if (sw.isPlaying()) sw.stop();
+    SoundPool.prototype.play = function() {
+        var sw = this.pool[this.current];
+
+        this._createSound();
         
         sw.play();
         
-        this.current = (this.current + 1) % this.pool.length;
+        this.current++;
     };
 
     return SoundPool;
