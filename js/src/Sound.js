@@ -13,12 +13,12 @@ define([
 
             this.sounds = {
                 intro : new SoundWrapper('audio/intro.mp3'),
-                back : new SoundPool('audio/back.mp3', 30),
-                dot : new SoundPool('audio/dot.mp3', 30),
+                back : new SoundPool('audio/back.mp3', 20),
+                dot : new SoundPool('audio/dot.mp3', 20),
                 eaten : new SoundWrapper('audio/eaten.mp3'),
-                eat : new SoundPool('audio/eat.mp3', 10),
+                eat : new SoundPool('audio/eat.mp3', 8),
                 frightened : new SoundWrapper('audio/frightened.mp3'),
-                dead : new SoundPool('audio/dead.mp3', 30),
+                dead : new SoundPool('audio/dead.mp3', 20),
                 bonus : new SoundWrapper('audio/bonus.mp3'),
                 life : new SoundWrapper('audio/life.mp3')
             };
