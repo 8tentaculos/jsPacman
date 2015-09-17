@@ -13,7 +13,7 @@ Play Demo
 
 Credits
 -----------
-Code by [@AlbertChop].(https://twitter.com/AlbertChop)
+Code by [@AlbertChop](https://twitter.com/AlbertChop).
 Game algorithm is based on [The Pac-Man Dossier](https://home.comcast.net/~jpittman2/pacman/pacmandossier.html).
 Sprites are from [spriters-resource](http://www.spriters-resource.com/game_boy_advance/namcomuseum/sheet/22732).
 
