@@ -17,13 +17,7 @@ define(['jquery', 'SoundWrapper'], function($, SoundWrapper) {
     SoundPool.prototype.play = function() {
         var sw = this.pool.shift();
         sw.play();
-        if (window.chrome) {
-            sw.audio = null;
-            this._createSound();
-        } else {
-            this.pool.push(sw);
-        }
-        
+        this.pool.push(sw);
     };
 
     return SoundPool;
