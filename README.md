@@ -9,7 +9,7 @@ Animations are made using pure CSS3 DOM manipulation. Sound is native HTML5.
 
 Play Demo
 -----------
-[jspacman.bitbucket.org](http://jspacman.bitbucket.org/)
+[jspacman.bitbucket.io](http://jspacman.bitbucket.io/)
 
 Credits
 -----------
