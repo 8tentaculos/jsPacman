@@ -1,0 +1,237 @@
+body {
+    background-color: #222;
+    background-image: url('./img/back-out.jpg');
+}
+
+.js-pacman.container {
+    margin: 10px auto 10px auto;
+    position: relative;
+    width: 448px;
+    height: 576px;
+    padding : 6px;
+    background: #000;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: 0 0 20px 5px #efefef;
+    -webkit-box-shadow: 0 0 20px 5px #EFEFEF;
+    box-shadow: 0 0 20px 5px #efefef;
+    border: 1px solid #FFF;
+}
+
+.js-pacman .playground {
+    position: relative;
+    color: #EFEFEF;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    background: url('./img/maze.png');
+}
+
+.js-pacman .playground.maze-1 {
+    background-position: 0 0;
+}
+
+.js-pacman .playground.maze-2 {
+    background-position: -448px 0;
+}
+
+.js-pacman .playground.maze-3 {
+    background-position: -896px 0;
+}
+
+.js-pacman .playground.maze-4 {
+    background-position: -1344px 0;
+}
+
+.js-pacman .playground.maze-1.blink {
+    background-position: 0 -576px;
+}
+
+.js-pacman .playground.maze-2.blink {
+    background-position: -448px -576px;
+}
+
+.js-pacman .playground.maze-3.blink {
+    background-position: -896px -576px;
+}
+
+.js-pacman .playground.maze-4.blink {
+    background-position: -1344px -576px;
+}
+
+.js-pacman .splash {
+    background: url(./img/start.png);
+    text-align: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.js-pacman .splash h1 {
+}
+
+.js-pacman .splash a {
+    position: relative;
+    top: 370px;
+    text-transform: uppercase;
+    color: #DDDDDD;
+    font-size: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.js-pacman .splash a:hover {
+    color: #FFF;
+}
+
+.js-pacman .splash .title {
+    position: absolute;
+    top: 127px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #FCB644;
+}
+
+.js-pacman .splash p.nerd {
+    position: absolute;
+    top: 191px;
+    left: 158px;
+    text-align: center;
+    color: #FFF;
+}
+
+.js-pacman .splash p span {
+    color : #FFFF00;
+}
+
+.js-pacman .splash .keys {
+    position: absolute;
+    top: 520px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #FFF;
+}
+
+.js-pacman .loadbar {
+    position: absolute;
+    top: 370px;
+    left: 100px;
+    right: 100px;
+    background: #FF0;
+    height: 20px;
+    overflow: visible;
+    border: 2px solid #FFF;
+}
+
+.js-pacman .loadbar .inner {
+    position: relative;
+    background: #FF0000;
+    height: 20px;
+    width: 0;
+}
+
+.js-pacman .score {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    left: 20px;
+    text-align: center;
+    z-index: 2
+}
+
+.js-pacman .score .p1-score {
+    position: absolute;
+    width: 22%;
+    top: 0;
+    left: 0;
+}
+
+.js-pacman .score .high-score {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.js-pacman .score .p2-score {
+    position: absolute;
+    width: 22%;
+    top: 0;
+    right: 0;
+}
+
+.js-pacman .score span {
+    text-align: right;
+    display: block;
+}
+
+.js-pacman .score .high-score span {
+    text-align: center;
+}
+
+.js-pacman .start-p1 {
+    position: absolute;
+    top: 223px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #5EE;
+}
+
+.js-pacman .game-over,
+.js-pacman .start-ready,
+.js-pacman .sound-status,
+.js-pacman .paused {
+    position: absolute;
+    top: 320px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #F00;
+}
+
+.js-pacman .sound-status.on span.on,
+.js-pacman .sound-status span.off {
+    display : inline;
+}
+
+.js-pacman .sound-status.on span.off,
+.js-pacman .sound-status span.on {
+    display : none;
+}
+
+.js-pacman .sound-status .wrap, .js-pacman .paused .wrap {
+    background: #000;
+}
+
+.hdn {
+    position: absolute;
+    left: -10000px;
+}
+
+.credits {
+    font-family: 'Press Start 2P', cursive;
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    color: #FFF;
+    background: #000;
+    padding: 5px;
+    font-size: 14px;
+    -moz-box-shadow: 2px 2px 5px #000 inset,-1px -1px 0px #CCC inset;
+    -webkit-box-shadow: 2px 2px 5px #000 inset,-1px -1px 0px #CCC inset;
+    box-shadow: 2px 2px 5px #000 inset,-1px -1px 0px #CCC inset;
+    background: #111;
+}
+
+.credits span {
+    color: #FF3333;
+    font-size: 15px;
+}
+
+.credits a {
+    color: #FFFF00;
+}
