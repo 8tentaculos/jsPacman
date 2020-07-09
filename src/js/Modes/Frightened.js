@@ -2,21 +2,16 @@ import $ from 'jquery';
 import Bot from '../Bot';
 import Mode from './Mode';
 
-// FRIGHTENED
-const Frightened = function(ghost) {
-    Mode.apply(this, arguments);
-};
-
-$.extend(Frightened.prototype, Mode.prototype, {
-    onEnter : function() {
+class Frightened extends Mode {
+    onEnter() {
         this._startTime = this.ghost.ts();
-    },
+    }
 
-    resume : function() {
+    resume() {
         this._startTime += this.ghost.ts() - this._pauseTime;
-    },
+    }
 
-    getNextDirection : function() {
+    getNextDirection() {
         var nextTile = this.ghost.getTile().get(this.ghost._dir); // Next tile.
 
         var directions = ['u', 'r', 'd', 'l', 'u', 'r', 'd', 'l']; // Clockwise direction order.
@@ -31,24 +26,24 @@ $.extend(Frightened.prototype, Mode.prototype, {
         }
 
         return nextDirection;
-    },
+    }
 
-    setAnimation : function() {
+    setAnimation() {
         if (this.ghost.frightenedTime - this.ghost.frightenedTime * 0.2 > this.ghost.ts() - this._startTime) {
             this.ghost.animation = this.ghost.animations.frightened;
         } else
             this.ghost.animation = this.ghost.animations.frightenedBlink;
-    },
+    }
 
-    exit : function() {
+    exit() {
         if (this.ghost.frightenedTime > this.ghost.ts() - this._startTime) return false;
         return true;
-    },
+    }
 
-    onExit : function() {
+    onExit() {
         if (!this.ghost.frightened) this.ghost.setMode();
         this.ghost.pacman.ghostFrightened = false; // TODO: ugly solution for pacman to know when ghosts exits frightened mode
     }
-});
+}
 
 export default Frightened;

@@ -1,51 +1,31 @@
 import $ from 'jquery';
 import Helper from './Helper';
 
-const Item = function(attrs) {
-    if (!attrs) attrs = {};
-    // Deeply override of animations.
-    if (attrs.animations || this.animations) {
-        this.animations = $.extend((this.animations || {}), (attrs.animations || {}));
-        delete attrs.animations;
-    }
-    // Extend this with attrs.
-    $.extend(this, attrs);
-
-    if (this.animation || this.animations) {
+class Item {
+    constructor(attrs = {}) {
+        const { animations, ...rest } = attrs;
+        // Extend this with attrs.
+        Object.assign(this, rest);
+        // Half width and half height.
         this.hw = parseInt(this.w / 2);
         this.hh = parseInt(this.h / 2);
-
-        // this.animations may be a function returning animations object.
-        if (this.animations) {
-            for (var key in this.animations) {
-                if (this.aniBase)
-                    this.animations[key] = $.extend({}, this.aniBase, this.animations[key]);
-
-                this.animations[key] = new $.gQ.Animation(this.animations[key]);
-            }
-        }
-
+        // Merge animations options objects.
+        this.animations = { ...this.animations, ...animations };
+        // Create animations.
+        Object.keys(this.animations).forEach(key => {
+            this.animations[key] = new $.gQ.Animation({
+                ...this.animationBase,
+                ...this.animations[key]
+            });
+        });
+        // Render.
         this.render();
         // Cache jQuery el.
         this.el = $('#' + this.id);
     }
-};
 
-$.extend(Item.prototype, Helper, {
-    // Options.
-    w : null,
-    h : null,
-
-    x : null,
-    y : null,
-    // End Options.
-    pg : null,
-    map : null,
-
-    animations : null,
-
-    render : function() {
-        this.animation = this.animations.default || this.animations[this.defaultAnimation];
+    render() {
+        this.animation = this.animations[this.defaultAnimation];
 
         this.pg.addSprite(this.id, {
             animation : this.animation,
@@ -57,16 +37,30 @@ $.extend(Item.prototype, Helper, {
 
         this._lastX = this.x;
         this._lastY = this.y;
-        this._lastAni = this.animation;
-    },
+        this._lastAnimation = this.animation;
+    }
 
-    destroy : function() {
+    destroy() {
         this.el.remove();
-    },
+    }
 
-    getTile : function() {
+    getTile() {
         return this.map.getTile(this.x, this.y, true);
     }
+}
+
+Object.assign(Item.prototype, Helper, {
+    // Options.
+    w : null,
+    h : null,
+    x : null,
+    y : null,
+    // Playground and map.
+    pg : null,
+    map : null,
+    // Animations.
+    animations : null,
+    defaultAnimation : 'default'
 });
 
 export default Item;

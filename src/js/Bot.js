@@ -1,60 +1,43 @@
 import $ from 'jquery';
 import Item from './Item';
 
-const Bot = function(attrs) {
-    Item.call(this, attrs);
+class Bot extends Item {
+    constructor(attrs) {
+        super(attrs);
 
-    this.el.pauseAnimation();
-    this._moving = false;
+        this.el.pauseAnimation();
+        this._moving = false;
 
-    this.on('sprite:move', $.proxy(function() { this.el.resumeAnimation(); }, this));
-    this.on('sprite:stop', $.proxy(function() { this.el.pauseAnimation(); }, this));
+        this.on('sprite:move', () => { this.el.resumeAnimation(); });
+        this.on('sprite:stop', () => { this.el.pauseAnimation(); });
 
-    this._saveDefaults();
+        this._saveDefaults();
 
-    this.on('sprite:tile', $.proxy(function(e, t) {
-        this._setAnimation();
-    }, this));
+        this.on('sprite:tile', (e, t) => {
+            this._setAnimation();
+        });
 
-    this._speed = this.speed;
-};
+        this._speed = this.speed;
+    }
 
-$.extend(Bot.prototype, Item.prototype);
-
-$.extend(Bot.prototype, {
-    // Options.
-    w                : 30,
-    h                : 30,
-    step             : 5,
-    speed            : 80,
-    preturn          : false,
-    scatterTarget    : 3,
-    // End Options.S
-
-    pg               : null,
-    map              : null,
-
-    animations       : null,
-    defaultAnimation : null,
-
-    _saveDefaults : function() {
+    _saveDefaults() {
         this.defaults = {
             x : this.x,
             y : this.y,
-            animation : this.animations.default || this.animations[this.defaultAnimation],
+            animation : this.animations[this.defaultAnimation],
             dir : this.dir,
             _dir : null,
             _nextDirection : null,
             mode : this.mode
         };
-    },
+    }
 
-    reset : function() {
-        $.extend(this, this.defaults);
+    reset() {
+        Object.assign(this, this.defaults);
         this.render(true);
-    },
+    }
 
-    render : function(reset) {
+    render(reset) {
         // Already rendered for first time.
         if (this.el) {
             var t = this.getTile();
@@ -88,10 +71,10 @@ $.extend(Bot.prototype, {
                 }
             }
             // Changed animation.
-            if (this._lastAni !== this.animation) {
+            if (this._lastAnimation !== this.animation) {
                 this.el.setAnimation(this.animation);
 
-                this._lastAni = this.animation;
+                this._lastAnimation = this.animation;
             }
 
         // First render ever.
@@ -99,9 +82,9 @@ $.extend(Bot.prototype, {
             // Call super.
             Item.prototype.render.apply(this, arguments);
         }
-    },
+    }
     // Called from Game main loop at every revolution.
-    move : function(dir) {
+    move(dir) {
         if (!dir) dir = this.dir;
         if (!dir) return;
 
@@ -185,14 +168,14 @@ $.extend(Bot.prototype, {
         }
 
         this.render();
-    },
+    }
 
-    getStep : function() {
+    getStep() {
         return this.step * (this._speed / 100);
-    },
+    }
 
     // Set animation according model conditions. Override on subclasses.
-    _setAnimation : function() {
+    _setAnimation() {
         if (this.dir === 'u') {
             this.animation = this.animations.up;
         }
@@ -205,40 +188,44 @@ $.extend(Bot.prototype, {
         if (this.dir === 'l') {
             this.animation = this.animations.left;
         }
-    },
+    }
 
     // Helper methods:
-    _getOpDirection : function(dir) {
+    _getOpDirection(dir) {
         dir = dir || this.dir;
 
         if (dir === 'u') return 'd';
         if (dir === 'r') return 'l';
         if (dir === 'd') return 'u';
         if (dir === 'l') return 'r';
-    },
+    }
     // Tile on passed direction is available for walking.
-    _canGo : function(dir) {
+    _canGo(dir) {
         var t = this.getTile();
 
         var nt = t.get(dir);
 
         return nt && !nt.isHouse() && !nt.isWall();
-    },
-    _isV : function(dir) {
+    }
+
+    _isV(dir) {
         return dir === 'u' || dir === 'd';
-    },
-    _isH : function(dir) {
+    }
+
+    _isH(dir) {
         return dir === 'l' || dir === 'r';
-    },
-    _isCentered : function(xy) {
+    }
+
+    _isCentered(xy) {
         var t = this.getTile();
         var x = t.x === this.x, y = t.y === this.y;
 
         if (xy === 'x') return x;
         if (xy === 'y') return y;
         else return  x && y;
-    },
-    getMin : function() {
+    }
+
+    getMin() {
         var min = null;
         for (var i = 0, l = arguments.length; i < l; i++)
             if (min === null || arguments[i] < min) min = arguments[i];
@@ -246,6 +233,16 @@ $.extend(Bot.prototype, {
         return min;
     }
 
+}
+
+Object.assign(Bot.prototype, {
+    // Options.
+    w                : 30,
+    h                : 30,
+    step             : 5,
+    speed            : 80,
+    preturn          : false,
+    scatterTarget    : 3
 });
 
 export default Bot;

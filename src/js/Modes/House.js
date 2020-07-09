@@ -2,30 +2,28 @@ import $ from 'jquery';
 import Bot from '../Bot';
 import Mode from './Mode';
 
- // HOUSE
-const House = function() {
-    Mode.apply(this, arguments);
-    this._houseTop = this.ghost.y - this.ghost.getTile().h / 2;
-    this._houseBottom = this.ghost.y + this.ghost.getTile().h / 2;
-    this._exitTile = this.ghost.map.house.getR();
-    this._exitTileX = this._exitTile.x  - this.ghost.map.tw / 2;
-};
+class House extends Mode {
+    constructor(ghost) {
+        super(ghost);
 
-$.extend(House.prototype, Mode.prototype, {
-    onEnter : function() {
+        this._houseTop = this.ghost.y - this.ghost.getTile().h / 2;
+        this._houseBottom = this.ghost.y + this.ghost.getTile().h / 2;
+        this._exitTile = this.ghost.map.house.getR();
+        this._exitTileX = this._exitTile.x  - this.ghost.map.tw / 2;
+    }
+
+    onEnter() {
         this._prepareExit = false;
         this.ghost._speed = 70;
-    },
+    }
 
-    resume : function() {
+    resume() {
         if (!this._prepareExit) this._startTime += this.ghost.ts() - this._pauseTime;
-    },
+    }
 
-    getNextDirection : function() {
+    getNextDirection() {}
 
-    },
-
-    move : function() {
+    move() {
         if (!this._startTime) this._startTime = this.ghost.ts();
 
         var t = this.ghost.getTile();
@@ -70,23 +68,22 @@ $.extend(House.prototype, Mode.prototype, {
             this.ghost.render();
 
         }
-    },
+    }
 
-    setAnimation : function() {
+    setAnimation() {
         if (this.ghost.frightened) this.ghost.frightened.setAnimation();
         else Bot.prototype._setAnimation.call(this.ghost);
-    },
+    }
 
-    exit : function() {
+    exit() {
         if (this.ghost.frightened && this.ghost.frightened.exit()) {
             this.ghost.frightened = null;
         }
 
         return this.ghost.getTile() === this._exitTile.getU();
+    }
 
-    },
-
-    onExit : function() {
+    onExit() {
         this._startTime = null;
 
         var t = this.ghost.getTile();
@@ -97,6 +94,6 @@ $.extend(House.prototype, Mode.prototype, {
         this.ghost._speed = this.ghost.speed;
         this.ghost.setMode();
     }
-});
+}
 
 export default House;

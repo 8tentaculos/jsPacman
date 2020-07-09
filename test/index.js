@@ -2,10 +2,10 @@ import chai from 'chai';
 import $ from 'jquery';
 import '../src/js/jquery.gamequery-0.7.1';
 import Map from '../src/js/Map';
-import map1 from '../src/js/Maps/map-1';
+import map1 from '../src/js/maps/map-1';
 import Game from '../src/js/Game';
 import Item from '../src/js/Item';
-import FactoryMsPacman from '../src/js/Factory/MsPacman';
+import makeMsPacman from '../src/js/factory/makeMsPacman';
 
 const should = chai.should();
 let pg;
@@ -133,7 +133,7 @@ describe('Pacman', function() {
     let pacman;
 
     it('Should exist and be initialized', function() {
-        pacman = FactoryMsPacman.make({
+        pacman = makeMsPacman({
             map : map,
             pg : pg,
             speed : 50

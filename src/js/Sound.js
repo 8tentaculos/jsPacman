@@ -2,11 +2,10 @@ import $ from 'jquery';
 import SoundWrapper from './SoundWrapper';
 import SoundPool from './SoundPool';
 
-const Sound = {
-    active : true,
-
-    init : function(active) {
+class Sound {
+    constructor(active) {
         this.active = active;
+
         if (!this.active) return;
 
         this.sounds = {
@@ -20,17 +19,16 @@ const Sound = {
             bonus : new SoundWrapper('audio/bonus.mp3'),
             life : new SoundWrapper('audio/life.mp3')
         };
-    },
-
-    play : function(label) {
-        if (!this.active) return;
-        this.sounds[label].play();
-    },
-
-    muted : function(muted) {
-        $.muteSound(muted);
     }
 
-};
+    play(label) {
+        if (!this.active) return;
+        this.sounds[label].play();
+    }
+
+    muted(muted) {
+        $.muteSound(muted);
+    }
+}
 
 export default Sound;

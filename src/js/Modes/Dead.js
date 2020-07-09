@@ -2,24 +2,25 @@ import $ from 'jquery';
 import Bot from '../Bot';
 import Mode from './Mode';
 
-// DEAD
-const Dead = function(ghost) {
-    Mode.apply(this, arguments);
-    this._target = this.ghost.map.house.getR().getU();
+class Dead extends Mode {
+    constructor(ghost) {
+        super(ghost);
 
-    this._endX = this.ghost.defaults.x;
-    this._endY = this.ghost.map.houseCenter.y;
+        this._target = this.ghost.map.house.getR().getU();
 
-    this._end = this.ghost.map.getTile(this._endX, this._endY, true);
-};
+        this._endX = this.ghost.defaults.x;
+        this._endY = this.ghost.map.houseCenter.y;
 
-$.extend(Dead.prototype, Mode.prototype, {
-    onEnter : function() {
+        this._end = this.ghost.map.getTile(this._endX, this._endY, true);
+    }
+
+    onEnter() {
         this._prepareEnter = false;
         this.ghost.animation =  this.ghost.animations['score_' + this.ghost.score];
         this.ghost.render();
-    },
-    move : function() {
+    }
+
+    move() {
         var t = this.ghost.getTile();
 
         if (!this._prepareEnter && this.ghost.getTile() === this._target) {
@@ -56,8 +57,9 @@ $.extend(Dead.prototype, Mode.prototype, {
             Bot.prototype.move.call(this.ghost, this.ghost._dir);
 
         }
-    },
-    setAnimation : function() {
+    }
+
+    setAnimation() {
         if (this.ghost.dir === 'u') {
             this.ghost.animation = this.ghost.animations.deadUp;
         }
@@ -70,26 +72,28 @@ $.extend(Dead.prototype, Mode.prototype, {
         if (this.ghost.dir === 'l') {
             this.ghost.animation = this.ghost.animations.deadLeft;
         }
-    },
-    _getTarget : function() {
+    }
+
+    _getTarget() {
         return this._target;
-    },
-    canGo : function(dir, t) {
+    }
+
+    canGo(dir, t) {
         if (!t) t = this.ghost.getTile();
 
         var nt = t.get(dir);
 
         return !nt || !nt.isWall();
-    },
+    }
 
-    exit : function() {
+    exit() {
         return this.ghost.getTile() === this._end;
-    },
+    }
 
-    onExit : function() {
+    onExit() {
         var attrs = this.ghost.id === 'bot-blinky' ? {x : this.ghost.x, y : this.ghost.y} : {};
         this.ghost.reset(attrs);
     }
-});
+}
 
 export default Dead;

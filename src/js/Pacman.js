@@ -1,75 +1,43 @@
 import $ from 'jquery';
 import Bot from './Bot.js';
 
-const Pacman = function(attrs) {
-    this.animations = {
-        right : {},
+class Pacman extends Bot {
+    constructor(attrs) {
+        super(attrs);
+        // Change tile. Set direction.
+        this.on('sprite:tile', (e, t) => {
+            if (this.ghostFrightened) this._speed = this.frightenedSpeed;
+            else this._speed = this.speed;
 
-        down : {
-            offsetx : 32 * 4
-        },
-
-        up : {
-            offsetx : 32 * 8
-        },
-
-        left : {
-            offsetx : 32 * 12
-        }
-    };
-
-    Bot.call(this, attrs);
-
-    // Change tile. Set direction.
-    this.on('sprite:tile', $.proxy(function(e, t) {
-        if (this.ghostFrightened) this._speed = this.frightenedSpeed;
-        else this._speed = this.speed;
-
-        if (t.item) {
-            if (t.hasPill()) { // Pill!
-                this.trigger('sprite:pill', t);
-                this.ghostFrightened = true;
+            if (t.item) {
+                if (t.hasPill()) { // Pill!
+                    this.trigger('sprite:pill', t);
+                    this.ghostFrightened = true;
+                }
+                else if (t.hasDot()) { // Dot!
+                    this.trigger('sprite:dot', t);
+                    if (this.ghostFrightened) this._speed = this.frightenedDotSpeed;
+                    else this._speed = this.dotSpeed;
+                }
+                t.item.destroy();
+                delete t.item;
             }
-            else if (t.hasDot()) { // Dot!
-                this.trigger('sprite:dot', t);
-                if (this.ghostFrightened) this._speed = this.frightenedDotSpeed;
-                else this._speed = this.dotSpeed;
-            }
-            t.item.destroy();
-            delete t.item;
-        }
 
-    }, this));
+        });
 
-    this.on('sprite:eaten', $.proxy(function(e, ghost) {
-        this._eatenTurns = 9;
-        this.dir = 'r';
-        this.el.pauseAnimation();
-    }, this));
-};
+        this.on('sprite:eaten', (e, ghost) => {
+            this._eatenTurns = 9;
+            this.dir = 'r';
+            this.el.pauseAnimation();
+        });
+    }
 
-$.extend(Pacman.prototype, Bot.prototype);
-
-$.extend(Pacman.prototype, {
-    aniBase : {
-        imageURL : 'img/bots.png',
-        numberOfFrame : 4,
-        delta : 32,
-        rate : 60,
-        offsety : 30,
-        type : $.gQ.ANIMATION_HORIZONTAL
-    },
-
-    dir : 'l',
-
-    defaultAnimation : 'left',
-
-    reset : function() {
+    reset() {
         Bot.prototype.reset.apply(this);
         this._lastEatenTurnsTime = null;
-    },
+    }
 
-    move : function() {
+    move() {
         if (!this._eatenTurns) Bot.prototype.move.apply(this, arguments);
         else if (!this._eatenTurnsFrames) {
             if (this._eatenTurns === 9) this.trigger('sprite:die');
@@ -88,6 +56,37 @@ $.extend(Pacman.prototype, {
         } else this._eatenTurnsFrames--;
     }
 
+};
+
+Object.assign(Pacman.prototype, {
+    animationBase : {
+        imageURL : 'img/bots.png',
+        numberOfFrame : 4,
+        delta : 32,
+        rate : 60,
+        offsety : 30,
+        type : $.gQ.ANIMATION_HORIZONTAL
+    },
+
+    animations : {
+        right : {},
+
+        down : {
+            offsetx : 32 * 4
+        },
+
+        up : {
+            offsetx : 32 * 8
+        },
+
+        left : {
+            offsetx : 32 * 12
+        }
+    },
+
+    dir : 'l',
+
+    defaultAnimation : 'left'
 });
 
 export default Pacman;

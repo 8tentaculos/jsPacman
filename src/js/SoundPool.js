@@ -1,24 +1,25 @@
 import $ from 'jquery';
 import SoundWrapper from './SoundWrapper';
 
-const SoundPool = function(url, size) {
-    this.pool = [];
-    this.url = url;
+class SoundPool {
+    constructor(url, size) {
+        this.pool = [];
+        this.url = url;
 
-    for (var i = 0; i < size; i++) {
-        this._createSound();
+        for (var i = 0; i < size; i++) {
+            this._createSound();
+        }
     }
 
-};
+    _createSound() {
+        this.pool.push(new SoundWrapper(this.url));
+    }
 
-SoundPool.prototype._createSound = function() {
-    this.pool.push(new SoundWrapper(this.url));
-};
-
-SoundPool.prototype.play = function() {
-    var sw = this.pool.shift();
-    sw.play();
-    this.pool.push(sw);
-};
+    play() {
+        var sw = this.pool.shift();
+        sw.play();
+        this.pool.push(sw);
+    }
+}
 
 export default SoundPool;

@@ -1,27 +1,25 @@
 import $ from 'jquery';
 import Bot from '../Bot';
 
-const Mode = function(ghost) {
-    this.ghost = ghost;
-};
+class Mode {
+    constructor(ghost) {
+        this.ghost = ghost;
+    }
 
-$.extend(Mode.prototype, {
-    move : function() {
+    move() {
         if (this.exit()) this.onExit();
         else {
             Bot.prototype.move.call(this.ghost, this.ghost._dir);
         }
-    },
+    }
 
-    pause : function() {
+    pause() {
         this._pauseTime = this.ghost.ts();
-    },
+    }
 
-    resume : function() {
+    resume() {}
 
-    },
-
-    getNextDirection : function() {
+    getNextDirection() {
         var targetTile = this._getTarget(); // Target Tile
 
         var _dir = this.ghost._dir || this.ghost.dir;
@@ -49,35 +47,35 @@ $.extend(Mode.prototype, {
         }
 
         return nextDirection;
-    },
+    }
 
-    _getTarget : function() {
-        //
-    },
+    _getTarget() {}
 
-    setAnimation : function() {
+    setAnimation() {
         Bot.prototype._setAnimation.call(this.ghost);
-    },
+    }
 
-    canGo : function(dir, t) {
+    canGo(dir, t) {
         if (!t) t = this.ghost.getTile();
         var nt = t.get(dir);
 
         if (!nt) return false;
 
         return !nt.isWall() && !nt.isHouse();
-    },
-    exit : function() {
+    }
+
+    exit() {
         if (this.ghost.mode != this.ghost.globalMode) return true;
         return false;
-    },
-    onExit : function() {
+    }
+
+    onExit() {
         var t = this.ghost.getTile();
         if (!t.isHouse()) {
             this.ghost._turnBack = true;
         }
         this.ghost.setMode();
     }
-});
+}
 
 export default Mode;

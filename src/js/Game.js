@@ -2,12 +2,12 @@ import $ from 'jquery';
 import './jquery.gamequery-0.7.1';
 import Map from './Map';
 import Helper from './Helper';
-import Levels from './Levels';
-import FactoryMsPacman from './Factory/MsPacman';
-import FactoryGhost from './Factory/Ghost';
-import FactoryDot from './Factory/Dot';
-import FactoryPill from './Factory/Pill';
-import FactoryBonus from './Factory/Bonus';
+import getLevelData from './Levels';
+import makeMsPacman from './factory/makeMsPacman';
+import makeGhost from './factory/makeGhost';
+import makeDot from './factory/makeDot';
+import makePill from './factory/makePill';
+import makeBonus from './factory/makeBonus';
 import Lives from './Lives';
 import Bonuses from './Bonuses';
 import Sound from './Sound';
@@ -17,132 +17,103 @@ const _times = [
     [{mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 1000000}]
 ];
 
-const Game = function(el) {
+class Game {
+    constructor(el) {
 
-    this.el = $(el);
+        this.el = $(el);
 
-    this.pg = this.el.playground({width : this.w, height : this.h, keyTracker : true});
+        this.pg = this.el.playground({width : this.w, height : this.h, keyTracker : true});
 
-    $(document).keydown($.proxy(function(ev) {
-        // Sound on/off
-        if (ev.which === 83) {
-            // Mute Sound.
-            this._muted = !this._muted;
-            Sound.muted(this._muted);
+        $(document).keydown((ev) => {
+            // Sound on/off
+            if (ev.which === 83) {
+                // Mute Sound.
+                this._muted = !this._muted;
+                this.sound.muted(this._muted);
 
-            var el = this.$$.soundStatus;
+                var el = this.$$.soundStatus;
 
-            if (this._muted) el.removeClass('on');
-            else el.addClass('on');
+                if (this._muted) el.removeClass('on');
+                else el.addClass('on');
 
-            el.show();
+                el.show();
 
-            if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
-            this._hideSoundStatusTimeout = setTimeout(function() { el.hide(); }, 2000);
+                if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
+                this._hideSoundStatusTimeout = setTimeout(function() { el.hide(); }, 2000);
+            }
+            // Pause Game
+            if (ev.which === 80) {
+                this._paused = !this._paused;
+                if (this._paused) this.pause();
+                else this.resume();
+            }
+
+        });
+
+        this.$$ = {
+            splash : this.$('.splash'),
+            start : this.$('.start'),
+            startP1 : this.$('.start-p1'),
+            startReady : this.$('.start-ready'),
+            highScore : this.$('.high-score span'),
+            score : this.$('.p1-score span'),
+            gameOver : this.$('.game-over'),
+            soundStatus : this.$('.sound-status'),
+            paused : this.$('.paused'),
+            load : this.$('.loadbar')
+        };
+
+        // configure the loading bar
+        $.loadCallback((percent) => {
+            $('.inner', this.$$.load).width(percent + '%');
+        });
+
+        // register the start button and remove the splash screen once the game is ready to starts
+        this.$$.start.click(() => {
+            this.start();
+        });
+
+        this.sound = new Sound(this.soundEnabled);
+
+        this.lives = new Lives({
+            lives : this.defaultLives + 1,
+            x : 20,
+            y : 562,
+            pg : this.pg
+        });
+
+        this.bonuses = new Bonuses({
+            level : this.level,
+            x : 430,
+            y : 562,
+            pg : this.pg
+        });
+
+        this.lives.on('lives:gameover', () => {
+            this.$$.gameOver.show();
+
+            this._gameOver = true;
+
+            this.hideGhosts();
+
+            this.pacman.el.hide();
+
+            if (window.localStorage) localStorage.jsPacmanHighScore = this.highScore;
+        });
+
+        if (window.localStorage && localStorage.jsPacmanHighScore) {
+            this.highScore = localStorage.jsPacmanHighScore;
         }
-        // Pause Game
-        if (ev.which === 80) {
-            this._paused = !this._paused;
-            if (this._paused) this.pause();
-            else this.resume();
-        }
 
-    }, this));
+        this._makeLevel();
 
-    this.$$ = {
-        splash : this.$('.splash'),
-        start : this.$('.start'),
-        startP1 : this.$('.start-p1'),
-        startReady : this.$('.start-ready'),
-        highScore : this.$('.high-score span'),
-        score : this.$('.p1-score span'),
-        gameOver : this.$('.game-over'),
-        soundStatus : this.$('.sound-status'),
-        paused : this.$('.paused'),
-        load : this.$('.loadbar')
-    };
-
-    // configure the loading bar
-    $.loadCallback($.proxy(function(percent){
-        $('.inner', this.$$.load).width(percent + '%');
-    }, this));
-
-    // register the start button and remove the splash screen once the game is ready to starts
-    this.$$.start.click($.proxy(function() {
-        this.start();
-    }, this));
-
-    Sound.init(this.sound);
-
-    this.lives = new Lives({
-        lives : this.defaultLives + 1,
-        x : 20,
-        y : 562,
-        pg : this.pg
-    });
-
-    this.bonuses = new Bonuses({
-        level : this.level,
-        x : 430,
-        y : 562,
-        pg : this.pg
-    });
-
-    this.lives.on('lives:gameover', $.proxy(function() {
-        this.$$.gameOver.show();
-
-        this._gameOver = true;
-
-        this.hideGhosts();
-
-        this.pacman.el.hide();
-
-        if (window.localStorage) localStorage.jsPacmanHighScore = this.highScore;
-    }, this));
-
-    if (window.localStorage && localStorage.jsPacmanHighScore) {
-        this.highScore = localStorage.jsPacmanHighScore;
+        this.pg.startGame(() => {
+            this.$$.load.hide();
+            this.$$.start.show();
+        });
     }
 
-    this._makeLevel();
-
-    this.pg.startGame($.proxy(function() {
-        this.$$.load.hide();
-        this.$$.start.show();
-    }, this));
-
-};
-
-$.extend(Game.prototype, Helper, {
-    // Options.
-    w : 448,
-    h : 576,
-
-    dotScore : 10,
-    pillScore : 50,
-
-    defaultPauseFrames : 40,
-
-    defaultLives :  3,
-
-    stickyTurn : false, // Remember last input direction when arriving to intersection.
-
-    sound : true,
-
-    DEBUG : true,
-
-    // End Options.
-    pg : null,
-
-    score : 0,
-    highScore : 0,
-
-    extraLifeScore : 10000,
-    extraLife : false,
-
-    level : 1,
-
-    start : function() {
+    start() {
         if (this._win) {
             this.level++;
             this.reset();
@@ -155,16 +126,16 @@ $.extend(Game.prototype, Helper, {
             this.reset();
             this._gameOver = false;
             this.$$.splash.hide();
-            Sound.play('intro');
+            this.sound.play('intro');
             return;
         }
 
         this.$$.splash.hide();
-        Sound.play('intro');
-        this.pg.registerCallback($.proxy(this.mainLoop, this), 30);
-    },
+        this.sound.play('intro');
+        this.pg.registerCallback(this.mainLoop.bind(this), 30);
+    }
 
-    reset : function() {
+    reset() {
         this.pinky.destroy();
         this.blinky.destroy();
         this.inky.destroy();
@@ -188,10 +159,10 @@ $.extend(Game.prototype, Helper, {
         this._lastGlobalMode = null;
 
         this._makeLevel();
-    },
+    }
 
-    _makeLevel : function() {
-        $.extend(this, Levels.get(this.level, 'game'));
+    _makeLevel() {
+        Object.assign(this, getLevelData(this.level, 'game'));
 
         this.bonuses.setLevel(this.level);
 
@@ -218,7 +189,7 @@ $.extend(Game.prototype, Helper, {
         while (i--) {
             var t = this.map.tiles[i];
             if (t.code === '.') {
-                t.item = FactoryDot.make({
+                t.item = makeDot({
                     defaultAnimation : dotColor,
                     id : 'item-dot-' + i,
                     map : this.map,
@@ -231,7 +202,7 @@ $.extend(Game.prototype, Helper, {
             }
 
             if (t.code === '*') {
-                t.item = FactoryPill.make({
+                t.item = makePill({
                     defaultAnimation : dotColor,
                     id : 'item-pill-' + i,
                     map : this.map,
@@ -243,40 +214,39 @@ $.extend(Game.prototype, Helper, {
             }
         }
 
-        // total = 10; //////////////////// REMOVE
-
         this.totalItems = total;
         // PACMAN
-        this.pacman = FactoryMsPacman.make($.extend(Levels.get(this.level, 'pacman'), {
+        this.pacman = makeMsPacman({
+            ...getLevelData(this.level, 'pacman'),
             map : this.map,
             pg : this.pg
-        }));
+        });
 
-        this.pacman.on('sprite:pill', $.proxy(function(ev, t) {
+        this.pacman.on('sprite:pill', (ev, t) => {
             this._pauseFrames = 2;
             this.addScore(this.pillScore);
             if (!(--this.totalItems)) this._gameOver = true;
-            Sound.play('frightened');
-        }, this));
+            this.sound.play('frightened');
+        });
         // Pacman eats ghost
-        this.pacman.on('sprite:eat', $.proxy(function(ev, ghost) {
+        this.pacman.on('sprite:eat', (ev, ghost) => {
             ghost.pacman.el.hide();
             this._pauseFrames = 15;
             this._showPacman = true;
             this.addScore(parseInt(ghost.score));
-            Sound.play('eat');
-        }, this));
+            this.sound.play('eat');
+        });
         // Ghost eats Pacman
-        this.pacman.on('sprite:eaten', $.proxy(function(ev, ghost) {
+        this.pacman.on('sprite:eaten', (ev, ghost) => {
             this._pauseFrames = this.defaultPauseFrames;
             this._pacmanEaten = true;
-        }, this));
+        });
         // Pacman make die turn arround
-        this.pacman.on('sprite:die', $.proxy(function(ev, ghost) {
-            Sound.play('eaten');
-        }, this));
+        this.pacman.on('sprite:die', (ev, ghost) => {
+            this.sound.play('eaten');
+        });
         // Pacman lose
-        this.pacman.on('sprite:life', $.proxy(function(ev) {
+        this.pacman.on('sprite:life', (ev) => {
             $.gQ.keyTracker = {};
 
             this._inputDir = null;
@@ -312,12 +282,12 @@ $.extend(Game.prototype, Helper, {
 
             if (this.lives.lives) this._pauseFrames = this.defaultPauseFrames;
             else this._pauseFrames = 120;
-        }, this));
+        });
         // Pacman eats dot
-        this.pacman.on('sprite:dot', $.proxy(function(ev, t) {
+        this.pacman.on('sprite:dot', (ev, t) => {
             this.addScore(this.dotScore);
 
-            Sound.play('dot');
+            this.sound.play('dot');
             // Win!!!
             if (!(--this.totalItems)) {
                 this._pauseFrames = 120;
@@ -329,15 +299,15 @@ $.extend(Game.prototype, Helper, {
                 this.pacman.el.pauseAnimation();
             }
 
-        }, this));
+        });
         // Pacman eats bonus
-        this.pacman.on('sprite:bonus', $.proxy(function(ev, bonus) {
+        this.pacman.on('sprite:bonus', (ev, bonus) => {
             if (this._showBonus) return; // Not yet in the maze
             this._pauseFrames = 5;
             this._destroyBonus = 25;
             this.addScore(parseInt(bonus.score));
-            Sound.play('bonus');
-        }, this));
+            this.sound.play('bonus');
+        });
 
         // BONUS
         if (this.bonus) {
@@ -345,7 +315,7 @@ $.extend(Game.prototype, Helper, {
         }
 
         var bonusT = this.map.tunnels[this.map.tunnels.length - 1];
-        this.bonus = FactoryBonus.make({
+        this.bonus = makeBonus({
             id : this.bonusId,
             map : this.map,
             pg : this.pg,
@@ -357,46 +327,51 @@ $.extend(Game.prototype, Helper, {
         });
 
         // Bonus reaches target and disappears
-        this.bonus.on('sprite:bonusdestroy', $.proxy(function(ev, bonus) {
+        this.bonus.on('sprite:bonusdestroy', (ev, bonus) => {
             this.bonus.destroy();
             delete this.bonus;
-        }, this));
-
-        // GHOSTS
-        var ghostAttrs = $.extend(Levels.get(this.level, 'ghost'), {
-            map : this.map,
-            pg : this.pg,
-            pacman : this.pacman
         });
 
+        // GHOSTS
+        var ghostAttrs = {
+            ...getLevelData(this.level, 'ghost'),
+            map : this.map,
+            pg : this.pg,
+            pacman : this.pacman,
+        };
+
         var pinkyT = this.map.houseCenter.getR();
-        this.pinky = FactoryGhost.make($.extend(ghostAttrs, {
+        this.pinky = makeGhost({
+            ...ghostAttrs,
             id : 'bot-pinky',
             x : pinkyT.x - this.map.tw / 2,
             y : pinkyT.y
-        }));
+        });
 
         var blinkyT = this.map.house.getU().getR();
-        this.blinky = FactoryGhost.make($.extend(ghostAttrs, {
+        this.blinky = makeGhost({
+            ...ghostAttrs,
             id : 'bot-blinky',
             x : blinkyT.x - this.map.tw / 2,
             y : blinkyT.y
-        }));
+        });
 
         var inkyT = this.map.houseCenter.getL();
-        this.inky = FactoryGhost.make($.extend(ghostAttrs, {
+        this.inky = makeGhost({
+            ...ghostAttrs,
             blinky : this.blinky,
             id : 'bot-inky',
             x : inkyT.x - 8,
             y : inkyT.y
-        }));
+        });
 
         var sueT = this.map.houseCenter.getR().getR();
-        this.sue = FactoryGhost.make($.extend(ghostAttrs, {
+        this.sue = makeGhost({
+            ...ghostAttrs,
             id : 'bot-sue',
             x : sueT.x + 8,
             y : sueT.y
-        }));
+        });
 
         if (!this._win) {
             this.hideGhosts();
@@ -408,17 +383,16 @@ $.extend(Game.prototype, Helper, {
             this.bonus.el.hide();
             this._start = 1;
         }
+    }
 
-    },
-
-    addScore : function(score) {
+    addScore(score) {
         this.score = this.score + (score || 0);
         this.$$.score.text(this.score || '00');
 
         if (!this.extraLife && this.score >= this.extraLifeScore) {
             this.extraLife = true;
             this.lives.add();
-            Sound.play('life');
+            this.sound.play('life');
         }
 
         if (this.highScore < this.score) {
@@ -430,9 +404,9 @@ $.extend(Game.prototype, Helper, {
             this._addedHighscore = true;
             this.$$.highScore.text(this.highScore || '00');
         }
-    },
+    }
 
-    mainLoop : function() {
+    mainLoop() {
         if (this._win) {
             if (!this._mazeBlinkPauseFrames) {
                 if (this.pg.hasClass('blink')) {
@@ -451,11 +425,11 @@ $.extend(Game.prototype, Helper, {
 
         if (!this._start) {
             if (!this._isGhostFrightened()) {
-                Sound.sounds.frightened.stop();
+                this.sound.sounds.frightened.stop();
             } else if (this._isGhostDead()) {
-                Sound.sounds.frightened.audio.volume = 0;
+                this.sound.sounds.frightened.audio.volume = 0;
             } else {
-                Sound.sounds.frightened.audio.volume = 1;
+                this.sound.sounds.frightened.audio.volume = 1;
             }
         }
 
@@ -515,10 +489,10 @@ $.extend(Game.prototype, Helper, {
             } else {
                 if (!this._soundBackPauseFrames) {
                     if (this._isGhostDead()) {
-                        Sound.play('dead');
+                        this.sound.play('dead');
                     }
                     else if (!this._isGhostFrightened()) {
-                        Sound.play('back');
+                        this.sound.play('back');
                     }
                     this._soundBackPauseFrames = 5;
                 } else this._soundBackPauseFrames--;
@@ -549,9 +523,9 @@ $.extend(Game.prototype, Helper, {
         } else {
             this._pauseFrames--;
         }
-    },
+    }
 
-    pause : function() {
+    pause() {
         this._pauseTime = this.ts();
 
         this.pinky.pause();
@@ -559,14 +533,14 @@ $.extend(Game.prototype, Helper, {
         this.inky.pause();
         this.sue.pause();
 
-        Sound.muted(true);
+        this.sound.muted(true);
 
         this.pg.pauseGame();
 
         this.$$.paused.show();
-    },
+    }
 
-    resume : function() {
+    resume() {
         this._globalModeTime = this.ts() - this._pauseTime;
 
         this.pinky.resume();
@@ -574,46 +548,46 @@ $.extend(Game.prototype, Helper, {
         this.inky.resume();
         this.sue.resume();
 
-        Sound.muted(this._muted);
+        this.sound.muted(this._muted);
 
         this.pg.resumeGame();
 
         this.$$.paused.hide();
-    },
+    }
 
-    hideGhosts : function() {
+    hideGhosts() {
         this.pinky.el.hide();
         this.blinky.el.hide();
         this.inky.el.hide();
         this.sue.el.hide();
 
         if (this.bonus) this.bonus.el.hide();
-    },
+    }
 
-    showGhosts : function() {
+    showGhosts() {
         this.pinky.el.show();
         this.blinky.el.show();
         this.inky.el.show();
         this.sue.el.show();
 
         if (this.bonus && !this._showBonus) this.bonus.el.show();
-    },
+    }
 
-    _isGhostFrightened : function() {
+    _isGhostFrightened() {
         return this.blinky.isFrightened() ||
                 this.inky.isFrightened()  ||
                 this.pinky.isFrightened() ||
                 this.sue.isFrightened();
-    },
+    }
 
-    _isGhostDead : function() {
+    _isGhostDead() {
         return this.blinky.isDead() ||
                 this.inky.isDead()  ||
                 this.pinky.isDead() ||
                 this.sue.isDead();
-    },
+    }
 
-    _getGlobalMode : function() {
+    _getGlobalMode() {
         var times = _times[0]; // Level 1.
 
         if (!this._globalModeTime) {
@@ -630,9 +604,9 @@ $.extend(Game.prototype, Helper, {
             }
             return times[times.length - 1].mode;
         }
-    },
+    }
 
-    _getInputDir : function() {
+    _getInputDir() {
         var keys = $.gQ.keyTracker;
 
         if (keys[38]) {
@@ -653,6 +627,37 @@ $.extend(Game.prototype, Helper, {
 
         return null;
     }
+}
+
+Object.assign(Game.prototype, Helper, {
+    // Options.
+    w : 448,
+    h : 576,
+
+    dotScore : 10,
+    pillScore : 50,
+
+    defaultPauseFrames : 40,
+
+    defaultLives :  3,
+
+    // Remember last input direction when arriving to intersection.
+    stickyTurn : false,
+
+    soundEnabled : true,
+
+    DEBUG : true,
+
+    // Playground.
+    pg : null,
+
+    score : 0,
+    highScore : 0,
+
+    extraLifeScore : 10000,
+    extraLife : false,
+
+    level : 1
 });
 
 export default Game;

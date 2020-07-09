@@ -1,7 +1,7 @@
-import map1 from './Maps/map-1';
-import map2 from './Maps/map-2';
-import map3 from './Maps/map-3';
-import map4 from './Maps/map-4';
+import map1 from './maps/map-1';
+import map2 from './maps/map-2';
+import map3 from './maps/map-3';
+import map4 from './maps/map-4';
 
 
 // This info was parsed from
@@ -50,20 +50,18 @@ var keys = [
     'game.maze'
 ];
 
-export default {
-    get : function(level, key) {
-        var obj = {};
+export default function(level, key) {
+    var obj = {};
 
-        level = level > data.length ? data.length : level;
+    level = level > data.length ? data.length : level;
 
-        var i = keys.length;
+    var i = keys.length;
 
-        while(i--) {
-            var spl = keys[i].split('.');
-            if (spl[0] === key) obj[spl[1]] = data[level - 1][i];
-        }
-
-        return obj;
-
+    while(i--) {
+        var spl = keys[i].split('.');
+        if (spl[0] === key) obj[spl[1]] = data[level - 1][i];
     }
-};
+
+    return obj;
+
+}
