@@ -22,11 +22,14 @@ class Game extends View {
     constructor(options) {
         super(options);
 
+        const { w, h, window } = options;
+
         this.scaling = new Scaling(this.originalW, this.originalH);
 
-        this.scaling.resize(options.w, options.h);
+        this.scaling.resize(w, h);
 
         this.el.style.fontSize = `${this.scaling.getScale() * 2}em`;
+
         show(this.el);
 
         this.render();
@@ -40,7 +43,7 @@ class Game extends View {
             disableCollision : true
         });
 
-        options.document.addEventListener('keydown', ev => {
+        window.document.addEventListener('keydown', ev => {
             // Sound on/off
             if (ev.keyCode === 83) {
                 // Mute Sound.
@@ -108,7 +111,7 @@ class Game extends View {
 
             this.hideGhosts();
 
-            this.pacman.el.hide();
+            this.pacman.$el.hide();
 
             if (window.localStorage) localStorage.jsPacmanHighScore = this.highScore;
         });
@@ -123,28 +126,6 @@ class Game extends View {
             hide(this.elements.load);
             show(this.elements.start);
         });
-    }
-
-    template() {
-        return `
-            <div class="score">
-                <div class="p1-score">1UP<br /><span></span></div>
-                <div class="high-score">HIGH SCORE<br /><span></span></div>
-                <div class="p2-score">2UP<br /><span>00</span></div>
-            </div>
-            <div class="start-p1" style="display: none">PLAYER ONE</div>
-            <div class="start-ready" style="display: none">READY!</div>
-            <div class="game-over" style="display: none">GAME OVER</div>
-            <div class="sound-status on" style="display: none"><span class="wrap">SOUND: <span class="on">ON</span><span class="off">OFF</span></span></div>
-            <div class="paused" style="display: none"><span class="wrap">PAUSED</span></div>
-            <div class="splash">
-                <span class="title">"JS PAC-MAN"</span>
-                <p class="nerd">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
-                <a class="start" style="display: none">START</a>
-                <div class="loadbar"><div class="inner"></div></div>
-                <p class="keys"><span>&larr;&uarr;&darr;&rarr;</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
-            </div>
-        `;
     }
 
     start() {
@@ -267,7 +248,7 @@ class Game extends View {
         });
         // Pacman eats ghost
         this.pacman.on('sprite:eat', (ev, ghost) => {
-            ghost.pacman.el.hide();
+            ghost.pacman.$el.hide();
             this._pauseFrames = 15;
             this._showPacman = true;
             this.addScore(parseInt(ghost.score));
@@ -303,7 +284,7 @@ class Game extends View {
                 this._destroyBonus = 0;
                 this._showBonus = 250;
                 this.bonus.reset();
-                this.bonus.el.hide();
+                this.bonus.$el.hide();
             }
 
             this.showGhosts();
@@ -333,7 +314,7 @@ class Game extends View {
 
                 this.hideGhosts();
                 this.map.hideItems();
-                this.pacman.el.pauseAnimation();
+                this.pacman.$el.pauseAnimation();
             }
 
         });
@@ -377,6 +358,7 @@ class Game extends View {
             pg : this.pg,
             scaling : this.scaling,
             pacman : this.pacman,
+            addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener)
         };
 
         var pinkyT = this.map.houseCenter.getR();
@@ -415,11 +397,11 @@ class Game extends View {
         if (!this._win) {
             this.hideGhosts();
 
-            this.pacman.el.hide();
+            this.pacman.$el.hide();
 
             this._start = 2;
         } else {
-            this.bonus.el.hide();
+            this.bonus.$el.hide();
             this._start = 1;
         }
     }
@@ -458,7 +440,7 @@ class Game extends View {
         // Global mode.
         var globalMode = this._getGlobalMode();
         if (this._lastGlobalMode !== globalMode) {
-            this.trigger('game:globalmode', globalMode);
+            this.emit('game:globalmode', globalMode);
             this._lastGlobalMode = globalMode;
         }
 
@@ -478,13 +460,13 @@ class Game extends View {
         // Move.
         if (!this._pauseFrames) {
             if (this._start === 2) {
-                show(this.elements.startP1);
+                hide(this.elements.startP1);
 
                 this.showGhosts();
 
                 this.lives.set(this.defaultLives);
 
-                this.pacman.el.show();
+                this.pacman.$el.show();
 
                 this._pauseFrames = 60;
                 this._start--;
@@ -515,7 +497,7 @@ class Game extends View {
             }
 
             if (this._showPacman) {
-                this.pacman.el.show();
+                this.pacman.$el.show();
                 this._showPacman = false;
             }
 
@@ -550,7 +532,7 @@ class Game extends View {
                 } else if (this.bonus) {
                     if (this._showBonus) {
                         if (this._showBonus === 1) {
-                            this.bonus.el.show();
+                            this.bonus.$el.show();
                         }
                         this._showBonus--;
                     } else {
@@ -595,21 +577,21 @@ class Game extends View {
     }
 
     hideGhosts() {
-        this.pinky.el.hide();
-        this.blinky.el.hide();
-        this.inky.el.hide();
-        this.sue.el.hide();
+        this.pinky.$el.hide();
+        this.blinky.$el.hide();
+        this.inky.$el.hide();
+        this.sue.$el.hide();
 
-        if (this.bonus) this.bonus.el.hide();
+        if (this.bonus) this.bonus.$el.hide();
     }
 
     showGhosts() {
-        this.pinky.el.show();
-        this.blinky.el.show();
-        this.inky.el.show();
-        this.sue.el.show();
+        this.pinky.$el.show();
+        this.blinky.$el.show();
+        this.inky.$el.show();
+        this.sue.$el.show();
 
-        if (this.bonus && !this._showBonus) this.bonus.el.show();
+        if (this.bonus && !this._showBonus) this.bonus.$el.show();
     }
 
     _isGhostFrightened() {
@@ -665,6 +647,28 @@ class Game extends View {
         }
 
         return null;
+    }
+
+    template() {
+        return `
+            <div class="score">
+                <div class="p1-score">1UP<br /><span></span></div>
+                <div class="high-score">HIGH SCORE<br /><span></span></div>
+                <div class="p2-score">2UP<br /><span>00</span></div>
+            </div>
+            <div class="start-p1" style="display: none">PLAYER ONE</div>
+            <div class="start-ready" style="display: none">READY!</div>
+            <div class="game-over" style="display: none">GAME OVER</div>
+            <div class="sound-status on" style="display: none"><span class="wrap">SOUND: <span class="on">ON</span><span class="off">OFF</span></span></div>
+            <div class="paused" style="display: none"><span class="wrap">PAUSED</span></div>
+            <div class="splash">
+                <span class="title">"JS PAC-MAN"</span>
+                <p class="nerd">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
+                <a class="start" style="display: none">START</a>
+                <div class="loadbar"><div class="inner"></div></div>
+                <p class="keys"><span>&larr;&uarr;&darr;&rarr;</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
+            </div>
+        `;
     }
 }
 

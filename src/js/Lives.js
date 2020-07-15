@@ -18,10 +18,10 @@ class Lives {
                 defaultAnimation : 'right'
             }));
 
-            if (i > this.lives - 2) this.pacmans[i].el.hide();
+            if (i > this.lives - 2) this.pacmans[i].$el.hide();
         }
 
-        this.el = this.pacmans[0].el;
+        this.$el = this.pacmans[0].$el;
     }
 
     die() {
@@ -42,8 +42,8 @@ class Lives {
 
     render() {
         for (var i = 0; i < 5; i++) {
-            if (i > this.lives - 2) this.pacmans[i].el.hide();
-            else this.pacmans[i].el.show();
+            if (i > this.lives - 2) this.pacmans[i].$el.hide();
+            else this.pacmans[i].$el.show();
         }
     }
 }

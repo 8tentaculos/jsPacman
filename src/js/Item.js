@@ -20,10 +20,12 @@ class Item {
         });
         // Render.
         this.render();
+        // Cache el.
+        this.el = document.querySelector(`#${this.id}`);
         // Cache jQuery el.
-        this.el = $('#' + this.id);
+        this.$el = $(this.el);
         // Scale sprite.
-        this.el.scale(this.scaling.getScale());
+        this.$el.scale(this.scaling.getScale());
     }
 
     render() {
@@ -43,7 +45,7 @@ class Item {
     }
 
     destroy() {
-        this.el.remove();
+        this.$el.remove();
     }
 
     getTile() {

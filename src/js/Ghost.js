@@ -9,6 +9,9 @@ import ModeScatter from './modes/Scatter';
 class Ghost extends Bot {
     constructor(attrs) {
         super(attrs);
+
+        const { addGameGlobalModeEventListener } = attrs;
+
         // Modes.
         this.modes = {
             scatter    : new ModeScatter(this),
@@ -22,7 +25,7 @@ class Ghost extends Bot {
 
         this.scatterTarget = this.map.tiles[this.scatterTarget];
 
-        this.pg.on('game:globalmode', this._onGameGlobalMode.bind(this));
+        addGameGlobalModeEventListener(this._onGameGlobalMode.bind(this));
 
         // Change tile.
         this.on('sprite:tile', (e, t) => {
@@ -105,7 +108,7 @@ class Ghost extends Bot {
         return this.pacman.getTile();
     }
 
-    _onGameGlobalMode(ev, mode) {
+    _onGameGlobalMode(mode) {
         if (typeof mode === 'string') mode = this.modes[mode];
         this.globalMode = mode;
     }

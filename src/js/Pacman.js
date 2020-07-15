@@ -28,7 +28,7 @@ class Pacman extends Bot {
         this.on('sprite:eaten', (e, ghost) => {
             this._eatenTurns = 9;
             this.dir = 'r';
-            this.el.pauseAnimation();
+            this.$el.pauseAnimation();
         });
     }
 

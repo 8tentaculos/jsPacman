@@ -22,9 +22,10 @@ window.addEventListener('load', (event) => {
     const container = document.querySelector('.js-pacman-container');
 
     const game = new Game({
+        window,
         el : container.querySelector('.js-pacman-playground'),
         w : container.clientWidth - 12,
-        h : container.clientHeight - 12,
-        document : document
+        h : container.clientHeight - 12
     });
+
 });

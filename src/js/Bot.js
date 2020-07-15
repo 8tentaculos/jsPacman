@@ -5,11 +5,11 @@ class Bot extends Item {
     constructor(attrs) {
         super(attrs);
 
-        this.el.pauseAnimation();
+        this.$el.pauseAnimation();
         this._moving = false;
 
-        this.on('sprite:move', () => { this.el.resumeAnimation(); });
-        this.on('sprite:stop', () => { this.el.pauseAnimation(); });
+        this.on('sprite:move', () => { this.$el.resumeAnimation(); });
+        this.on('sprite:stop', () => { this.$el.pauseAnimation(); });
 
         this._saveDefaults();
 
@@ -51,7 +51,7 @@ class Bot extends Item {
                 // _offsetY stuff is for bonus movement up and down
                 if (this._offsetY == null) this._offsetY = 0; // jshint ignore:line
                 // Actually move element.
-                this.el.xy(
+                this.$el.xy(
                     this.scaling.getX(this.x) - this.hw,
                     this.scaling.getY(this.y) - this.hh + this._offsetY
                 );
@@ -61,7 +61,7 @@ class Bot extends Item {
 
                 if (reset) {
                     this._moving = false;
-                    this.el.pauseAnimation();
+                    this.$el.pauseAnimation();
                 } else if (!this._moving) {
                     this.trigger('sprite:move', {x : this.x, y : this.y});
                     this._moving = true;
@@ -75,7 +75,7 @@ class Bot extends Item {
             }
             // Changed animation.
             if (this._lastAnimation !== this.animation) {
-                this.el.setAnimation(this.animation);
+                this.$el.setAnimation(this.animation);
 
                 this._lastAnimation = this.animation;
             }

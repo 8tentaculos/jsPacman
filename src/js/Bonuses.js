@@ -20,7 +20,7 @@ class Bonuses {
                 y : attrs.y
             }, i));
 
-            if (i >= this.level) this.bonuses[i].el.hide();
+            if (i >= this.level) this.bonuses[i].$el.hide();
         }
     }
 
@@ -31,8 +31,8 @@ class Bonuses {
 
     render() {
         for (var i = 0; i < 8; i++) {
-            if (i >= this.level) this.bonuses[i].el.hide();
-            else this.bonuses[i].el.show();
+            if (i >= this.level) this.bonuses[i].$el.hide();
+            else this.bonuses[i].$el.show();
         }
     }
 }

@@ -128,8 +128,8 @@ describe('Item', function() {
     it('Should be positioned', function() {
         item.getTile().should.be.an('object');
 
-        item.x.should.equal(item.el.x() + parseInt(item.w / 2));
-        item.y.should.equal(item.el.y() + parseInt(item.h / 2));
+        item.x.should.equal(item.$el.x() + parseInt(item.w / 2));
+        item.y.should.equal(item.$el.y() + parseInt(item.h / 2));
     });
 
     it('Should bind/trigger events', function(done) {

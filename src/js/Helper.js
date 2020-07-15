@@ -15,18 +15,18 @@ export default {
     },
     // Bind/unbind and trigger events throw this.el
     trigger : function(ev, params) {
-        this.el.trigger(ev, params);
+        this.$el.trigger(ev, params);
     },
 
     on : function(ev, handler) {
-        this.el.on(ev, handler);
+        this.$el.on(ev, handler);
     },
 
     off : function(ev, handler) {
-        this.el.off(ev, handler);
+        this.$el.off(ev, handler);
     },
 
     $ : function(selector) {
-      return this.el.find(selector);
+      return this.$el.find(selector);
     }
 };
