@@ -1,5 +1,7 @@
 import $ from 'jquery';
 import Bot from '../Bot';
+import ts from '../helper/ts';
+import getDistance from '../helper/getDistance';
 
 class Mode {
     constructor(ghost) {
@@ -14,7 +16,7 @@ class Mode {
     }
 
     pause() {
-        this._pauseTime = this.ghost.ts();
+        this._pauseTime = ts();
     }
 
     resume() {}
@@ -37,7 +39,7 @@ class Mode {
 
             if (this.canGo(dir, nextTile)) {
                 var testTile = nextTile.get(dir);
-                var distance = this.ghost.getDistance(testTile, targetTile);
+                var distance = getDistance(testTile, targetTile);
 
                 if (typeof lastDistance === 'undefined' || lastDistance > distance) {
                     nextDirection = dir;

@@ -1,14 +1,16 @@
 import $ from 'jquery';
 import Bot from '../Bot';
 import Mode from './Mode';
+import ts from '../helper/ts';
+import rnd from '../helper/rnd';
 
 class Frightened extends Mode {
     onEnter() {
-        this._startTime = this.ghost.ts();
+        this._startTime = ts();
     }
 
     resume() {
-        this._startTime += this.ghost.ts() - this._pauseTime;
+        this._startTime += ts() - this._pauseTime;
     }
 
     getNextDirection() {
@@ -17,7 +19,7 @@ class Frightened extends Mode {
         var directions = ['u', 'r', 'd', 'l', 'u', 'r', 'd', 'l']; // Clockwise direction order.
 
         // Select random direction. Then try that direction or change following clockwise order.
-        var idx = this.ghost.rnd(4);
+        var idx = rnd(4);
 
         var nextDirection = directions[idx];
 
@@ -29,14 +31,14 @@ class Frightened extends Mode {
     }
 
     setAnimation() {
-        if (this.ghost.frightenedTime - this.ghost.frightenedTime * 0.2 > this.ghost.ts() - this._startTime) {
+        if (this.ghost.frightenedTime - this.ghost.frightenedTime * 0.2 > ts() - this._startTime) {
             this.ghost.animation = this.ghost.animations.frightened;
         } else
             this.ghost.animation = this.ghost.animations.frightenedBlink;
     }
 
     exit() {
-        if (this.ghost.frightenedTime > this.ghost.ts() - this._startTime) return false;
+        if (this.ghost.frightenedTime > ts() - this._startTime) return false;
         return true;
     }
 

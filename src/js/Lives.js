@@ -1,9 +1,11 @@
 import $ from 'jquery';
-import Helper from './Helper';
+import { Emitter } from 'rasti';
 import makeMsPacman from './factory/makeMsPacman';
 
-class Lives {
+class Lives extends Emitter {
     constructor(attrs) {
+        super();
+
         this.pacmans = [];
         this.lives = attrs.lives;
         this.pg = attrs.pg;
@@ -27,7 +29,7 @@ class Lives {
     die() {
         this.lives--;
         if (this.lives) this.render();
-        else this.trigger('lives:gameover');
+        else this.emit('lives:gameover');
     }
 
     add() {
@@ -47,7 +49,5 @@ class Lives {
         }
     }
 }
-
-Object.assign(Lives.prototype, Helper);
 
 export default Lives;

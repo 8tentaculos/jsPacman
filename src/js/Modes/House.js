@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import Bot from '../Bot';
 import Mode from './Mode';
+import ts from '../helper/ts';
 
 class House extends Mode {
     constructor(ghost) {
@@ -18,17 +19,17 @@ class House extends Mode {
     }
 
     resume() {
-        if (!this._prepareExit) this._startTime += this.ghost.ts() - this._pauseTime;
+        if (!this._prepareExit) this._startTime += ts() - this._pauseTime;
     }
 
     getNextDirection() {}
 
     move() {
-        if (!this._startTime) this._startTime = this.ghost.ts();
+        if (!this._startTime) this._startTime = ts();
 
         var t = this.ghost.getTile();
 
-        if (!this._prepareExit && this.ghost.ts() - this._startTime > this.ghost.waitTime && !t.isWall()) {
+        if (!this._prepareExit && ts() - this._startTime > this.ghost.waitTime && !t.isWall()) {
             this._prepareExit = true;
             this.ghost.y = t.y;
         }

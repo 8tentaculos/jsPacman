@@ -1,8 +1,10 @@
 import $ from 'jquery';
-import Helper from './Helper';
+import { Emitter } from 'rasti';
 
-class Item {
+class Item extends Emitter {
     constructor(attrs = {}) {
+        super();
+
         const { animations, ...rest } = attrs;
         // Extend this with attrs.
         Object.assign(this, rest);
@@ -53,7 +55,7 @@ class Item {
     }
 }
 
-Object.assign(Item.prototype, Helper, {
+Object.assign(Item.prototype, {
     // Options.
     w : null,
     h : null,

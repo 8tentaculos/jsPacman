@@ -134,7 +134,7 @@ describe('Item', function() {
 
     it('Should bind/trigger events', function(done) {
         item.on('custom-event', function() { done(); });
-        item.trigger('custom-event');
+        item.emit('custom-event');
     });
 
 

@@ -1,11 +1,12 @@
 import $ from 'jquery';
 import Bot from './Bot';
+import getDistance from './helper/getDistance';
 
 class Bonus extends Bot {
     constructor(attrs) {
         super(attrs);
         // Change tile.
-        this.on('sprite:tile', (e, t) => {
+        this.on('sprite:tile', (t) => {
             let offset;
             if (this.y === t.y) offset = 1;
             else offset = 2;
@@ -20,7 +21,7 @@ class Bonus extends Bot {
                 if (this._targetFound) {
                     this._targetFound--;
                 } else {
-                    this.trigger('sprite:bonusdestroy');
+                    this.emit('sprite:bonusdestroy');
                 }
             }
 
@@ -40,7 +41,7 @@ class Bonus extends Bot {
                 this.animation =  this.animations['score_' + this.score];
                 this.render();
 
-                this.pacman.trigger('sprite:bonus', this);
+                this.pacman.emit('sprite:bonus', this);
             }
         }
     }
@@ -63,7 +64,7 @@ class Bonus extends Bot {
 
             if (this.canGo(dir, nextTile)) {
                 var testTile = nextTile.get(dir);
-                var distance = this.getDistance(testTile, targetTile);
+                var distance = getDistance(testTile, targetTile);
 
                 if (typeof lastDistance === 'undefined' || lastDistance > distance) {
                     nextDirection = dir;

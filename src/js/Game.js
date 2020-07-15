@@ -2,7 +2,6 @@ import $ from 'jquery';
 import './jquery.gamequery-0.7.1';
 import { View } from 'rasti';
 import Map from './Map';
-import Helper from './Helper';
 import getLevelData from './Levels';
 import makeMsPacman from './factory/makeMsPacman';
 import makeGhost from './factory/makeGhost';
@@ -240,14 +239,14 @@ class Game extends View {
             scaling : this.scaling
         });
 
-        this.pacman.on('sprite:pill', (ev, t) => {
+        this.pacman.on('sprite:pill', (t) => {
             this._pauseFrames = 2;
             this.addScore(this.pillScore);
             if (!(--this.totalItems)) this._gameOver = true;
             this.sound.play('frightened');
         });
         // Pacman eats ghost
-        this.pacman.on('sprite:eat', (ev, ghost) => {
+        this.pacman.on('sprite:eat', (ghost) => {
             ghost.pacman.$el.hide();
             this._pauseFrames = 15;
             this._showPacman = true;
@@ -255,12 +254,12 @@ class Game extends View {
             this.sound.play('eat');
         });
         // Ghost eats Pacman
-        this.pacman.on('sprite:eaten', (ev, ghost) => {
+        this.pacman.on('sprite:eaten', (ghost) => {
             this._pauseFrames = this.defaultPauseFrames;
             this._pacmanEaten = true;
         });
         // Pacman make die turn arround
-        this.pacman.on('sprite:die', (ev, ghost) => {
+        this.pacman.on('sprite:die', (ghost) => {
             this.sound.play('eaten');
         });
         // Pacman lose
@@ -302,7 +301,7 @@ class Game extends View {
             else this._pauseFrames = 120;
         });
         // Pacman eats dot
-        this.pacman.on('sprite:dot', (ev, t) => {
+        this.pacman.on('sprite:dot', (t) => {
             this.addScore(this.dotScore);
 
             this.sound.play('dot');
@@ -319,7 +318,7 @@ class Game extends View {
 
         });
         // Pacman eats bonus
-        this.pacman.on('sprite:bonus', (ev, bonus) => {
+        this.pacman.on('sprite:bonus', (bonus) => {
             if (this._showBonus) return; // Not yet in the maze
             this._pauseFrames = 5;
             this._destroyBonus = 25;
@@ -346,7 +345,7 @@ class Game extends View {
         });
 
         // Bonus reaches target and disappears
-        this.bonus.on('sprite:bonusdestroy', (ev, bonus) => {
+        this.bonus.on('sprite:bonusdestroy', (bonus) => {
             this.bonus.destroy();
             delete this.bonus;
         });

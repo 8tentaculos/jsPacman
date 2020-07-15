@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Ghost from '../Ghost';
+import getDistance from '../helper/getDistance';
 
 export default function(attrs) {
     if (!attrs) attrs = { id : 'bot-pinky' };
@@ -117,7 +118,7 @@ export default function(attrs) {
             defaultAnimation : 'up',
             getChaseTarget : function() {
                 var t = this.pacman.getTile();
-                var d = this.getDistance(t, this.getTile());
+                var d = getDistance(t, this.getTile());
                 if (d > 16 * t.w) return t;
                 else return this.scatterTarget;
             },
