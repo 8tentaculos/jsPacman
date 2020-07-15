@@ -70,7 +70,7 @@ class Map {
         var i = this.tiles.length;
         while (i--) {
             var t = this.tiles[i];
-            if (t.item) t.item.$el.hide();
+            if (t.item) t.item.hide();
         }
     }
 }

@@ -53,6 +53,14 @@ class Item extends Emitter {
     getTile() {
         return this.map.getTile(this.x, this.y, true);
     }
+
+    hide() {
+        this.el.style.display = 'none';
+    }
+
+    show() {
+        this.el.style.display = '';
+    }
 }
 
 Object.assign(Item.prototype, {

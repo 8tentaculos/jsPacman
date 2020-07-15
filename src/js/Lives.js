@@ -20,7 +20,7 @@ class Lives extends Emitter {
                 defaultAnimation : 'right'
             }));
 
-            if (i > this.lives - 2) this.pacmans[i].$el.hide();
+            if (i > this.lives - 2) this.pacmans[i].hide();
         }
 
         this.$el = this.pacmans[0].$el;
@@ -44,8 +44,8 @@ class Lives extends Emitter {
 
     render() {
         for (var i = 0; i < 5; i++) {
-            if (i > this.lives - 2) this.pacmans[i].$el.hide();
-            else this.pacmans[i].$el.show();
+            if (i > this.lives - 2) this.pacmans[i].hide();
+            else this.pacmans[i].show();
         }
     }
 }

@@ -110,7 +110,7 @@ class Game extends View {
 
             this.hideGhosts();
 
-            this.pacman.$el.hide();
+            this.pacman.hide();
 
             if (window.localStorage) localStorage.jsPacmanHighScore = this.highScore;
         });
@@ -247,7 +247,7 @@ class Game extends View {
         });
         // Pacman eats ghost
         this.pacman.on('sprite:eat', (ghost) => {
-            ghost.pacman.$el.hide();
+            ghost.pacman.hide();
             this._pauseFrames = 15;
             this._showPacman = true;
             this.addScore(parseInt(ghost.score));
@@ -283,7 +283,7 @@ class Game extends View {
                 this._destroyBonus = 0;
                 this._showBonus = 250;
                 this.bonus.reset();
-                this.bonus.$el.hide();
+                this.bonus.hide();
             }
 
             this.showGhosts();
@@ -396,11 +396,11 @@ class Game extends View {
         if (!this._win) {
             this.hideGhosts();
 
-            this.pacman.$el.hide();
+            this.pacman.hide();
 
             this._start = 2;
         } else {
-            this.bonus.$el.hide();
+            this.bonus.hide();
             this._start = 1;
         }
     }
@@ -465,7 +465,7 @@ class Game extends View {
 
                 this.lives.set(this.defaultLives);
 
-                this.pacman.$el.show();
+                this.pacman.show();
 
                 this._pauseFrames = 60;
                 this._start--;
@@ -496,7 +496,7 @@ class Game extends View {
             }
 
             if (this._showPacman) {
-                this.pacman.$el.show();
+                this.pacman.show();
                 this._showPacman = false;
             }
 
@@ -531,7 +531,7 @@ class Game extends View {
                 } else if (this.bonus) {
                     if (this._showBonus) {
                         if (this._showBonus === 1) {
-                            this.bonus.$el.show();
+                            this.bonus.show();
                         }
                         this._showBonus--;
                     } else {
@@ -576,21 +576,21 @@ class Game extends View {
     }
 
     hideGhosts() {
-        this.pinky.$el.hide();
-        this.blinky.$el.hide();
-        this.inky.$el.hide();
-        this.sue.$el.hide();
+        this.pinky.hide();
+        this.blinky.hide();
+        this.inky.hide();
+        this.sue.hide();
 
-        if (this.bonus) this.bonus.$el.hide();
+        if (this.bonus) this.bonus.hide();
     }
 
     showGhosts() {
-        this.pinky.$el.show();
-        this.blinky.$el.show();
-        this.inky.$el.show();
-        this.sue.$el.show();
+        this.pinky.show();
+        this.blinky.show();
+        this.inky.show();
+        this.sue.show();
 
-        if (this.bonus && !this._showBonus) this.bonus.$el.show();
+        if (this.bonus && !this._showBonus) this.bonus.show();
     }
 
     _isGhostFrightened() {
