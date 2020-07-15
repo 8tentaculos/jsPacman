@@ -15,7 +15,8 @@ class Bonuses {
             this.bonuses.push(makeBonus({
                 id : 'bonuses-' + i,
                 pg : attrs.pg,
-                x : attrs.x - i * 32,
+                scaling : attrs.scaling,
+                x : attrs.x - i * 64,
                 y : attrs.y
             }, i));
 

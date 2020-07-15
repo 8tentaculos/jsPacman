@@ -1,6 +1,7 @@
 import chai from 'chai';
 import $ from 'jquery';
 import '../src/js/jquery.gamequery-0.7.1';
+import Scaling from '../src/js/Scaling';
 import Map from '../src/js/Map';
 import map1 from '../src/js/maps/map-1';
 import Game from '../src/js/Game';
@@ -9,6 +10,7 @@ import makeMsPacman from '../src/js/factory/makeMsPacman';
 
 const should = chai.should();
 let pg;
+let scaling;
 let map;
 
 document.body.innerHTML = '<div id="playground"></div>';
@@ -73,7 +75,7 @@ describe('PlayGround', function() {
 
         should.exist(el);
 
-        pg = $(el).playground({width : Game.w, height : Game.h, keyTracker : true});
+        pg = $(el).playground({width : 100, height : 100, keyTracker : true});
 
         should.exist(pg);
 
@@ -82,13 +84,23 @@ describe('PlayGround', function() {
     });
 });
 
+
+describe('Scaling', function() {
+    it('Should exist and be initialized', function() {
+        scaling = new Scaling(100, 100);
+
+        should.exist(scaling);
+    });
+});
+
 describe('Item', function() {
     let item;
 
     it('Should exist and be initialized', function() {
         item = new Item({
-            pg : pg,
-            map : map,
+            pg,
+            scaling,
+            map,
 
             id : 'test-item',
 
@@ -134,8 +146,9 @@ describe('Pacman', function() {
 
     it('Should exist and be initialized', function() {
         pacman = makeMsPacman({
-            map : map,
-            pg : pg,
+            map,
+            pg,
+            scaling,
             speed : 50
         });
 
@@ -147,8 +160,8 @@ describe('Pacman', function() {
     });
 
     it('Should be centered', function() {
-        pacman.x = 8;
-        pacman.y = 9;
+        pacman.x = 16;
+        pacman.y = 20;
         pacman.render();
 
         pacman._isCentered().should.equal(true);

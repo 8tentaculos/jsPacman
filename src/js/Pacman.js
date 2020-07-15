@@ -62,9 +62,9 @@ Object.assign(Pacman.prototype, {
     animationBase : {
         imageURL : 'img/bots.png',
         numberOfFrame : 4,
-        delta : 32,
+        delta : 64,
         rate : 60,
-        offsety : 30,
+        offsety : 60,
         type : $.gQ.ANIMATION_HORIZONTAL
     },
 
@@ -72,15 +72,15 @@ Object.assign(Pacman.prototype, {
         right : {},
 
         down : {
-            offsetx : 32 * 4
+            offsetx : 64 * 4
         },
 
         up : {
-            offsetx : 32 * 8
+            offsetx : 64 * 8
         },
 
         left : {
-            offsetx : 32 * 12
+            offsetx : 64 * 12
         }
     },
 

@@ -51,7 +51,10 @@ class Bot extends Item {
                 // _offsetY stuff is for bonus movement up and down
                 if (this._offsetY == null) this._offsetY = 0; // jshint ignore:line
                 // Actually move element.
-                this.el.xy(this.x - this.hw, this.y - this.hh + this._offsetY);
+                this.el.xy(
+                    this.scaling.getX(this.x) - this.hw,
+                    this.scaling.getY(this.y) - this.hh + this._offsetY
+                );
 
                 this._lastX = this.x;
                 this._lastY = this.y;
@@ -237,9 +240,9 @@ class Bot extends Item {
 
 Object.assign(Bot.prototype, {
     // Options.
-    w                : 30,
-    h                : 30,
-    step             : 5,
+    w                : 60,
+    h                : 60,
+    step             : 10,
     speed            : 80,
     preturn          : false,
     scatterTarget    : 3

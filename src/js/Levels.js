@@ -3,6 +3,18 @@ import map2 from './maps/map-2';
 import map3 from './maps/map-3';
 import map4 from './maps/map-4';
 
+const times = [
+    [
+        { mode : 'scatter', time : 7 },
+        { mode : 'chase', time : 20 },
+        { mode : 'scatter', time : 7 },
+        { mode : 'chase', time : 20 },
+        { mode : 'scatter', time : 5 },
+        { mode : 'chase', time : 20 },
+        { mode : 'scatter', time : 5 },
+        { mode : 'chase', time : 1000000 }
+    ]
+];
 
 // This info was parsed from
 // https://home.comcast.net/~jpittman2/pacman/pacmandossier.html#LvlSpecs
@@ -55,6 +67,9 @@ export default function(level, key) {
 
     level = level > data.length ? data.length : level;
 
+    // TODO: Add times data for each level.
+    if (key === 'times') return times[0];
+
     var i = keys.length;
 
     while(i--) {
@@ -63,5 +78,4 @@ export default function(level, key) {
     }
 
     return obj;
-
 }

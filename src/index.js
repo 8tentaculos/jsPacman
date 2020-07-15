@@ -20,5 +20,11 @@ import $ from 'jquery';
 import Game from './js/Game';
 
 $(function() {
-    const game = new Game('.js-pacman .playground');
+    const container = $('.js-pacman');
+
+    const game = new Game({
+        el : container.find('.playground'),
+        w : container.width(),
+        h : container.height()
+    });
 });

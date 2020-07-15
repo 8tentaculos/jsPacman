@@ -2,12 +2,12 @@ import $ from 'jquery';
 import Item from '../Item';
 
 export default (attrs) => new Item({
-    w : 12,
-    h : 12,
+    w : 24,
+    h : 24,
     animationBase : {
         imageURL : 'img/pills.png',
         numberOfFrame : 2,
-        delta : 12,
+        delta : 24,
         rate : 450,
         type : $.gQ.ANIMATION_VERTICAL
     },
@@ -17,10 +17,10 @@ export default (attrs) => new Item({
     animations : {
         white : {},
         yellow : {
-            offsetx : 12 + 4
+            offsetx : 24 + 8
         },
         red : {
-            offsetx : (12 + 4) * 2
+            offsetx : (24 + 8) * 2
         }
     },
     ...attrs

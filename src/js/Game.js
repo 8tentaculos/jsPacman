@@ -11,18 +11,26 @@ import makeBonus from './factory/makeBonus';
 import Lives from './Lives';
 import Bonuses from './Bonuses';
 import Sound from './Sound';
-
-// TODO: move this to Levels
-const _times = [
-    [{mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 7}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 20}, {mode : 'scatter', time : 5}, {mode : 'chase', time : 1000000}]
-];
+import Scaling from './Scaling';
 
 class Game {
-    constructor(el) {
-
+    constructor({ el, w, h }) {
         this.el = $(el);
 
-        this.pg = this.el.playground({width : this.w, height : this.h, keyTracker : true});
+        this.scaling = new Scaling(this.originalW, this.originalH);
+
+        this.scaling.resize(w, h);
+
+        this.el.css({
+            fontSize : this.scaling.getScale() * 2 + 'em',
+            display : 'block'
+        });
+
+        this.pg = this.el.playground({
+            width : this.scaling.w,
+            height : this.scaling.h,
+            keyTracker : true
+        });
 
         $(document).keydown((ev) => {
             // Sound on/off
@@ -77,16 +85,18 @@ class Game {
 
         this.lives = new Lives({
             lives : this.defaultLives + 1,
-            x : 20,
-            y : 562,
-            pg : this.pg
+            x : 40,
+            y : 1124,
+            pg : this.pg,
+            scaling : this.scaling
         });
 
         this.bonuses = new Bonuses({
             level : this.level,
-            x : 430,
-            y : 562,
-            pg : this.pg
+            x : 860,
+            y : 1124,
+            pg : this.pg,
+            scaling : this.scaling
         });
 
         this.lives.on('lives:gameover', () => {
@@ -194,6 +204,7 @@ class Game {
                     id : 'item-dot-' + i,
                     map : this.map,
                     pg : this.pg,
+                    scaling : this.scaling,
                     x : t.x,
                     y : t.y
                 });
@@ -207,6 +218,7 @@ class Game {
                     id : 'item-pill-' + i,
                     map : this.map,
                     pg : this.pg,
+                    scaling : this.scaling,
                     x : t.x,
                     y : t.y
                 });
@@ -219,7 +231,8 @@ class Game {
         this.pacman = makeMsPacman({
             ...getLevelData(this.level, 'pacman'),
             map : this.map,
-            pg : this.pg
+            pg : this.pg,
+            scaling : this.scaling
         });
 
         this.pacman.on('sprite:pill', (ev, t) => {
@@ -319,6 +332,7 @@ class Game {
             id : this.bonusId,
             map : this.map,
             pg : this.pg,
+            scaling : this.scaling,
             dir : 'l',
             pacman : this.pacman,
             score : this.bonusScore,
@@ -337,6 +351,7 @@ class Game {
             ...getLevelData(this.level, 'ghost'),
             map : this.map,
             pg : this.pg,
+            scaling : this.scaling,
             pacman : this.pacman,
         };
 
@@ -361,7 +376,7 @@ class Game {
             ...ghostAttrs,
             blinky : this.blinky,
             id : 'bot-inky',
-            x : inkyT.x - 8,
+            x : inkyT.x - 16,
             y : inkyT.y
         });
 
@@ -369,7 +384,7 @@ class Game {
         this.sue = makeGhost({
             ...ghostAttrs,
             id : 'bot-sue',
-            x : sueT.x + 8,
+            x : sueT.x + 16,
             y : sueT.y
         });
 
@@ -588,7 +603,7 @@ class Game {
     }
 
     _getGlobalMode() {
-        var times = _times[0]; // Level 1.
+        var times = getLevelData(1, 'times');
 
         if (!this._globalModeTime) {
             this._globalModeTime = this.ts();
@@ -631,8 +646,8 @@ class Game {
 
 Object.assign(Game.prototype, Helper, {
     // Options.
-    w : 448,
-    h : 576,
+    originalW : 896,
+    originalH : 1152,
 
     dotScore : 10,
     pillScore : 50,

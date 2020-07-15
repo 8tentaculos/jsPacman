@@ -139,7 +139,7 @@ class Ghost extends Bot {
 }
 
 Object.assign(Ghost.prototype, {
-    w : 32,
+    w : 64,
     // Options.
     dir : null,
     // Overriden by Level
@@ -151,73 +151,73 @@ Object.assign(Ghost.prototype, {
     animationBase : {
         imageURL : 'img/bots.png',
         numberOfFrame : 2,
-        delta : 32,
+        delta : 64,
         rate : 180,
         type : $.gQ.ANIMATION_HORIZONTAL
     },
 
     animations : {
         frightened : {
-            offsety : 188,
-            offsetx : -1
+            offsety : 376,
+            offsetx : -2
         },
 
         frightenedBlink : {
-            offsety : 188,
-            offsetx : -1,
+            offsety : 376,
+            offsetx : -2,
             numberOfFrame : 4
         },
 
         deadRight : {
-            offsety : 188,
-            offsetx : 32 * 4 - 1,
+            offsety : 376,
+            offsetx : 64 * 4 - 2,
             numberOfFrame : 1
         },
 
         deadDown : {
-            offsety : 188,
-            offsetx : 32 * 5 - 1,
+            offsety : 376,
+            offsetx : 64 * 5 - 2,
             numberOfFrame : 1
         },
 
         deadUp : {
-            offsety : 188,
-            offsetx : 32 * 6 - 1,
+            offsety : 376,
+            offsetx : 64 * 6 - 2,
             numberOfFrame : 1
         },
 
         deadLeft : {
-            offsety : 188,
-            offsetx : 32 * 7 - 1,
+            offsety : 376,
+            offsetx : 64 * 7 - 2,
             numberOfFrame : 1
         },
 
         score_200 : {
             imageURL : 'img/misc.png',
             numberOfFrame : 1,
-            offsetx : -1,
-            offsety : 55
+            offsetx : -2,
+            offsety : 110
         },
 
         score_400 : {
             imageURL : 'img/misc.png',
             numberOfFrame : 1,
-            offsetx : 32 * 1 - 1,
-            offsety : 55
+            offsetx : 64 * 1 - 2,
+            offsety : 110
         },
 
         score_800 : {
             imageURL : 'img/misc.png',
             numberOfFrame : 1,
-            offsetx : 32 * 2 - 1,
-            offsety : 55
+            offsetx : 64 * 2 - 2,
+            offsety : 110
         },
 
         score_1600 : {
             imageURL : 'img/misc.png',
             numberOfFrame : 1,
-            offsetx : 32 * 3,
-            offsety : 55
+            offsetx : 64 * 3,
+            offsety : 110
         }
     },
 

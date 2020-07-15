@@ -9,12 +9,12 @@ class Tile {
 
         this.map = map;
 
-        this.w = 16;
-        this.h = 16;
+        this.w = 32;
+        this.h = 32;
 
         this.x = this.col * this.w + this.w / 2;
 
-        this.y = this.row * this.h + this.h / 2 + 1; // Original Pacman has tile's center at x : 4, y : 5 position.
+        this.y = this.row * this.h + this.h / 2 + 4; // Original Pacman has tile's center at x : 4, y : 5 position.
     }
 
     isWall() { return this.code === '='; }

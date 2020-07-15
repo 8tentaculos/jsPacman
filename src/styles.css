@@ -1,29 +1,29 @@
 body {
     background-color: #222;
-    background-image: url('./img/back-out.jpg');
 }
 
-.js-pacman.container {
+.js-pacman {
     margin: 10px auto 10px auto;
     position: relative;
+    /* width: 896px;
+    height: 1152px; */
     width: 448px;
     height: 576px;
     padding : 6px;
     background: #000;
-    -moz-border-radius: 5px;
     border-radius: 5px;
-    -moz-box-shadow: 0 0 20px 5px #efefef;
-    -webkit-box-shadow: 0 0 20px 5px #EFEFEF;
-    box-shadow: 0 0 20px 5px #efefef;
+    box-shadow: 0 0 40px 5px #888;
     border: 1px solid #FFF;
 }
 
 .js-pacman .playground {
+    display: none;
     position: relative;
     color: #EFEFEF;
     font-family: 'Press Start 2P', cursive;
-    font-size: 16px;
-    background: url('./img/maze.png');
+    font-size: 2em;
+    background-image: url('./img/maze.png');
+    background-size: 400% 200%;
 }
 
 .js-pacman .playground.maze-1 {
@@ -31,35 +31,36 @@ body {
 }
 
 .js-pacman .playground.maze-2 {
-    background-position: -448px 0;
+    background-position: -100% 0;
 }
 
 .js-pacman .playground.maze-3 {
-    background-position: -896px 0;
+    background-position: -200% 0;
 }
 
 .js-pacman .playground.maze-4 {
-    background-position: -1344px 0;
+    background-position: -300% 0;
 }
 
 .js-pacman .playground.maze-1.blink {
-    background-position: 0 -576px;
+    background-position: 0 -100%;
 }
 
 .js-pacman .playground.maze-2.blink {
-    background-position: -448px -576px;
+    background-position: -100% -100%;
 }
 
 .js-pacman .playground.maze-3.blink {
-    background-position: -896px -576px;
+    background-position: -200% -100%;
 }
 
 .js-pacman .playground.maze-4.blink {
-    background-position: -1344px -576px;
+    background-position: -300% -100%;
 }
 
 .js-pacman .splash {
-    background: url(./img/start.png);
+    background-image: url(./img/start.png);
+    background-size: 100% 100%;
     text-align: center;
     position: absolute;
     top: 0;
@@ -74,10 +75,10 @@ body {
 
 .js-pacman .splash a {
     position: relative;
-    top: 370px;
+    top: 64.23%;
     text-transform: uppercase;
     color: #DDDDDD;
-    font-size: 25px;
+    font-size: 1.6em;
     cursor: pointer;
     font-weight: bold;
 }
@@ -88,7 +89,7 @@ body {
 
 .js-pacman .splash .title {
     position: absolute;
-    top: 127px;
+    top: 22.04%;
     left: 0;
     right: 0;
     text-align: center;
@@ -97,8 +98,8 @@ body {
 
 .js-pacman .splash p.nerd {
     position: absolute;
-    top: 191px;
-    left: 158px;
+    top: 33.15%;
+    left: 35.26%;
     text-align: center;
     color: #FFF;
 }
@@ -109,7 +110,7 @@ body {
 
 .js-pacman .splash .keys {
     position: absolute;
-    top: 520px;
+    top: 90.27%;
     left: 0;
     right: 0;
     text-align: center;
@@ -118,11 +119,11 @@ body {
 
 .js-pacman .loadbar {
     position: absolute;
-    top: 370px;
-    left: 100px;
-    right: 100px;
+    top: 64.23%;
+    left: 22.32%;
+    right: 22.32%;
     background: #FF0;
-    height: 20px;
+    height: 3.472%;
     overflow: visible;
     border: 2px solid #FFF;
 }
@@ -130,15 +131,15 @@ body {
 .js-pacman .loadbar .inner {
     position: relative;
     background: #FF0000;
-    height: 20px;
+    height: 100%;
     width: 0;
 }
 
 .js-pacman .score {
     position: absolute;
     top: 0;
-    right: 20px;
-    left: 20px;
+    right: 0.4464%;
+    left: 0.4464%;
     text-align: center;
     z-index: 2
 }
@@ -174,7 +175,7 @@ body {
 
 .js-pacman .start-p1 {
     position: absolute;
-    top: 223px;
+    top: 38.71%;
     left: 0;
     right: 0;
     text-align: center;
@@ -186,7 +187,7 @@ body {
 .js-pacman .sound-status,
 .js-pacman .paused {
     position: absolute;
-    top: 320px;
+    top: 55.55%;
     left: 0;
     right: 0;
     text-align: center;
@@ -220,16 +221,13 @@ body {
     color: #FFF;
     background: #000;
     padding: 5px;
-    font-size: 14px;
-    -moz-box-shadow: 2px 2px 5px #000 inset,-1px -1px 0px #CCC inset;
-    -webkit-box-shadow: 2px 2px 5px #000 inset,-1px -1px 0px #CCC inset;
+    font-size: 0.9em;
     box-shadow: 2px 2px 5px #000 inset,-1px -1px 0px #CCC inset;
     background: #111;
 }
 
 .credits span {
     color: #FF3333;
-    font-size: 15px;
 }
 
 .credits a {

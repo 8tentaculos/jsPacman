@@ -15,23 +15,23 @@ export default function(attrs) {
             },
             animations : {
                 right : {
-                    offsety : 126,
-                    offsetx : -1
+                    offsety : 252,
+                    offsetx : -2
                 },
 
                 down : {
-                    offsety : 126,
-                    offsetx : 32 * 2 - 1
+                    offsety : 252,
+                    offsetx : 64 * 2 - 2
                 },
 
                 up : {
-                    offsety : 126,
-                    offsetx : 32 * 4 - 1
+                    offsety : 252,
+                    offsetx : 64 * 4 - 2
                 },
 
                 left : {
-                    offsety : 126,
-                    offsetx : 32 * 6 - 1
+                    offsety : 252,
+                    offsetx : 64 * 6 - 2
                 }
             }
         }, attrs);
@@ -45,23 +45,23 @@ export default function(attrs) {
             defaultAnimation : 'left',
             animations : {
                 right : {
-                    offsety : 62,
-                    offsetx : -1
+                    offsety : 124,
+                    offsetx : -2
                 },
 
                 down : {
-                    offsety : 62,
-                    offsetx : 32 * 2 - 1
+                    offsety : 124,
+                    offsetx : 64 * 2 - 2
                 },
 
                 up : {
-                    offsety : 62,
-                    offsetx : 32 * 4 - 1
+                    offsety : 124,
+                    offsetx : 64 * 4 - 2
                 },
 
                 left : {
-                    offsety : 62,
-                    offsetx : 32 * 6 - 1
+                    offsety : 124,
+                    offsetx : 64 * 6 - 2
                 }
             }
         }, attrs);
@@ -85,23 +85,23 @@ export default function(attrs) {
             },
             animations : {
                 right : {
-                    offsety : 158,
-                    offsetx : -1
+                    offsety : 316,
+                    offsetx : -2
                 },
 
                 down : {
-                    offsety : 158,
-                    offsetx : 32 * 2 - 1
+                    offsety : 316,
+                    offsetx : 64 * 2 - 2
                 },
 
                 up : {
-                    offsety : 158,
-                    offsetx : 32 * 4 - 1
+                    offsety : 316,
+                    offsetx : 64 * 4 - 2
                 },
 
                 left : {
-                    offsety : 158,
-                    offsetx : 32 * 6 - 1
+                    offsety : 316,
+                    offsetx : 64 * 6 - 2
                 }
             }
 
@@ -118,28 +118,28 @@ export default function(attrs) {
             getChaseTarget : function() {
                 var t = this.pacman.getTile();
                 var d = this.getDistance(t, this.getTile());
-                if (d > 8 * t.w) return t;
+                if (d > 16 * t.w) return t;
                 else return this.scatterTarget;
             },
             animations : {
                 right : {
-                    offsety : 94,
-                    offsetx : -1
+                    offsety : 188,
+                    offsetx : -2
                 },
 
                 down : {
-                    offsety : 94,
-                    offsetx : 32 * 2 - 1
+                    offsety : 188,
+                    offsetx : 64 * 2 - 2
                 },
 
                 up : {
-                    offsety : 94,
-                    offsetx : 32 * 4 - 1
+                    offsety : 188,
+                    offsetx : 64 * 4 - 2
                 },
 
                 left : {
-                    offsety : 94,
-                    offsetx : 32 * 6 - 1
+                    offsety : 188,
+                    offsetx : 64 * 6 - 2
                 }
            }
 

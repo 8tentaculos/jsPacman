@@ -111,37 +111,37 @@ Object.assign(Bonus.prototype, {
         default : {},
 
         score_100 : {
-            offsety : 30
+            offsety : 60
         },
 
         score_200 : {
-            offsetx : 30,
-            offsety : 30
+            offsetx : 60,
+            offsety : 60
         },
 
         score_500 : {
-            offsetx : 30 * 2,
-            offsety : 30
+            offsetx : 60 * 2,
+            offsety : 60
         },
 
         score_700 : {
-            offsetx : 30 * 3,
-            offsety : 30
+            offsetx : 60 * 3,
+            offsety : 60
         },
 
         score_1000 : {
-            offsetx : 30 * 4,
-            offsety : 30
+            offsetx : 60 * 4,
+            offsety : 60
         },
 
         score_2000 : {
-            offsetx : 30 * 5,
-            offsety : 30
+            offsetx : 60 * 5,
+            offsety : 60
         },
 
         score_5000 : {
-            offsetx : 30 * 6,
-            offsety : 30
+            offsetx : 60 * 6,
+            offsety : 60
         }
     }
 });

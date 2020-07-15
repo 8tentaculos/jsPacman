@@ -2,8 +2,8 @@ import $ from 'jquery';
 import Item from '../Item';
 
 export default (attrs) => new Item({
-    w : 4,
-    h : 4,
+    w : 8,
+    h : 8,
     animationBase  : {
         imageURL : 'img/pills.png',
         numberOfFrame : 1
@@ -11,13 +11,13 @@ export default (attrs) => new Item({
     defaultAnimation : 'white',
     animations : {
         white : {
-            offsetx : 12
+            offsetx : 24
         },
         yellow : {
-            offsetx : 12 + 16
+            offsetx : 24 + 32
         },
         red : {
-            offsetx : 12 + 16 * 2
+            offsetx : 24 + 32 * 2
         }
     },
     ...attrs

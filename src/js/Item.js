@@ -22,6 +22,8 @@ class Item {
         this.render();
         // Cache jQuery el.
         this.el = $('#' + this.id);
+        // Scale sprite.
+        this.el.scale(this.scaling.getScale());
     }
 
     render() {
@@ -29,10 +31,10 @@ class Item {
 
         this.pg.addSprite(this.id, {
             animation : this.animation,
-            posx: this.x - this.hw,
-            posy: this.y - this.hh,
-            width: this.w,
-            height: this.h
+            posx : this.scaling.getX(this.x) - this.hw,
+            posy : this.scaling.getY(this.y) - this.hh,
+            width : this.w,
+            height : this.h
         });
 
         this._lastX = this.x;
@@ -55,8 +57,9 @@ Object.assign(Item.prototype, Helper, {
     h : null,
     x : null,
     y : null,
-    // Playground and map.
+    // Playground, scaling and map.
     pg : null,
+    scaling : null,
     map : null,
     // Animations.
     animations : null,

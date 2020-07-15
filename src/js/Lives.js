@@ -12,7 +12,8 @@ class Lives {
             this.pacmans.push(makeMsPacman({
                 id : 'live-' + i,
                 pg : attrs.pg,
-                x : attrs.x + i * 35,
+                scaling : attrs.scaling,
+                x : attrs.x + i * 70,
                 y : attrs.y,
                 defaultAnimation : 'right'
             }));

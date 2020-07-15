@@ -15,7 +15,7 @@ export default function(attrs, idx) {
     return new Bonus({
         animations : {
             default : {
-                offsetx : 30 * idx
+                offsetx : 60 * idx
             }
         },
         ...attrs
