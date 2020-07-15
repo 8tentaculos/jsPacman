@@ -18,7 +18,9 @@ class Lives extends Emitter {
                 x : attrs.x + i * 70,
                 y : attrs.y,
                 defaultAnimation : 'right',
-                addGameGhostEatEventListener : () => {}
+                addGameGhostEatEventListener : () => {},
+                addGameGhostModeFrightenedEnter : () => {},
+                addGameGhostModeFrightenedExit : () => {}
             }));
 
             if (i > this.lives - 2) this.pacmans[i].hide();

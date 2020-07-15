@@ -5,21 +5,26 @@ class Pacman extends Bot {
     constructor(attrs) {
         super(attrs);
 
-        const { addGameGhostEatEventListener } = attrs;
+        const {
+            addGameGhostEatEventListener,
+            addGameGhostModeFrightenedEnter,
+            addGameGhostModeFrightenedExit
+        } = attrs;
+
+        this._ghostFrightened = 0;
 
         // Change tile. Set direction.
         this.on('item:tile', (t) => {
-            if (this.ghostFrightened) this._speed = this.frightenedSpeed;
+            if (this._ghostFrightened) this._speed = this.frightenedSpeed;
             else this._speed = this.speed;
 
             if (t.item) {
                 if (t.hasPill()) { // Pill!
                     this.emit('item:eatpill', t);
-                    this.ghostFrightened = true;
                 }
                 else if (t.hasDot()) { // Dot!
-                    this.emit('item:dot', t);
-                    if (this.ghostFrightened) this._speed = this.frightenedDotSpeed;
+                    this.emit('item:eatdot', t);
+                    if (this._ghostFrightened) this._speed = this.frightenedDotSpeed;
                     else this._speed = this.dotSpeed;
                 }
                 t.item.destroy();
@@ -32,6 +37,14 @@ class Pacman extends Bot {
             this._eatenTurns = 9;
             this.dir = 'r';
             this.$el.pauseAnimation();
+        });
+
+        addGameGhostModeFrightenedEnter(() => {
+            this._ghostFrightened++;
+        });
+
+        addGameGhostModeFrightenedExit(() => {
+            this._ghostFrightened--;
         });
     }
 

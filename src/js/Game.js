@@ -237,7 +237,9 @@ class Game extends View {
             map : this.map,
             pg : this.pg,
             scaling : this.scaling,
-            addGameGhostEatEventListener : listener => this.on('game:ghost:eat', listener)
+            addGameGhostEatEventListener : listener => this.on('game:ghost:eat', listener),
+            addGameGhostModeFrightenedEnter : listener => this.on('game:ghost:modefrightened:enter', listener),
+            addGameGhostModeFrightenedExit : listener => this.on('game:ghost:modefrightened:exit', listener)
         });
 
         this.pacman.on('item:eatpill', t => {
@@ -302,7 +304,7 @@ class Game extends View {
             else this._pauseFrames = 120;
         });
         // Pacman eats dot
-        this.pacman.on('item:dot', (t) => {
+        this.pacman.on('item:eatdot', (t) => {
             this.addScore(this.dotScore);
 
             this.sound.play('dot');
@@ -420,6 +422,8 @@ class Game extends View {
     addEventListenersToGhost(ghost) {
         ghost.on('item:eat', () => this.emit('game:ghost:eat', ghost));
         ghost.on('item:eaten', () => this.emit('game:ghost:eaten', ghost));
+        ghost.on('item:modefrightened:enter', () => this.emit('game:ghost:modefrightened:enter'));
+        ghost.on('item:modefrightened:exit', () => this.emit('game:ghost:modefrightened:exit'));
     }
 
     addScore(score) {

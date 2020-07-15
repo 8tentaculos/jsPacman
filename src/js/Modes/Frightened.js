@@ -7,6 +7,7 @@ import rnd from '../helper/rnd';
 class Frightened extends Mode {
     onEnter() {
         this._startTime = ts();
+        this.ghost.emit('item:modefrightened:enter');
     }
 
     resume() {
@@ -44,7 +45,7 @@ class Frightened extends Mode {
 
     onExit() {
         if (!this.ghost.frightened) this.ghost.setMode();
-        this.ghost.pacman.ghostFrightened = false; // TODO: ugly solution for pacman to know when ghosts exits frightened mode
+        this.ghost.emit('item:modefrightened:exit');
     }
 }
 
