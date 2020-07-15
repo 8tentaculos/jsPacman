@@ -6,7 +6,7 @@ class Bonus extends Bot {
     constructor(attrs) {
         super(attrs);
         // Change tile.
-        this.on('sprite:tile', (t) => {
+        this.on('item:tile', (t) => {
             let offset;
             if (this.y === t.y) offset = 1;
             else offset = 2;
@@ -21,7 +21,7 @@ class Bonus extends Bot {
                 if (this._targetFound) {
                     this._targetFound--;
                 } else {
-                    this.emit('sprite:bonusdestroy');
+                    this.emit('item:destroy');
                 }
             }
 
@@ -41,7 +41,7 @@ class Bonus extends Bot {
                 this.animation =  this.animations['score_' + this.score];
                 this.render();
 
-                this.pacman.emit('sprite:bonus', this);
+                this.emit('item:eaten', this);
             }
         }
     }

@@ -240,7 +240,7 @@ class Game extends View {
             addGameGhostEatEventListener : listener => this.on('game:ghost:eat', listener)
         });
 
-        this.pacman.on('sprite:pill', t => {
+        this.pacman.on('item:eatpill', t => {
             this._pauseFrames = 2;
             this.addScore(this.pillScore);
             if (!(--this.totalItems)) this._gameOver = true;
@@ -260,11 +260,11 @@ class Game extends View {
             this._pacmanEaten = true;
         });
         // Pacman make die turn arround
-        this.pacman.on('sprite:die', (ghost) => {
+        this.pacman.on('item:die', (ghost) => {
             this.sound.play('eaten');
         });
         // Pacman lose
-        this.pacman.on('sprite:life', (ev) => {
+        this.pacman.on('item:life', (ev) => {
             $.gQ.keyTracker = {};
 
             this._inputDir = null;
@@ -302,7 +302,7 @@ class Game extends View {
             else this._pauseFrames = 120;
         });
         // Pacman eats dot
-        this.pacman.on('sprite:dot', (t) => {
+        this.pacman.on('item:dot', (t) => {
             this.addScore(this.dotScore);
 
             this.sound.play('dot');
@@ -317,14 +317,6 @@ class Game extends View {
                 this.pacman.$el.pauseAnimation();
             }
 
-        });
-        // Pacman eats bonus
-        this.pacman.on('sprite:bonus', (bonus) => {
-            if (this._showBonus) return; // Not yet in the maze
-            this._pauseFrames = 5;
-            this._destroyBonus = 25;
-            this.addScore(parseInt(bonus.score));
-            this.sound.play('bonus');
         });
 
         // BONUS
@@ -346,9 +338,18 @@ class Game extends View {
         });
 
         // Bonus reaches target and disappears
-        this.bonus.on('sprite:bonusdestroy', (bonus) => {
+        this.bonus.on('item:destroy', (bonus) => {
             this.bonus.destroy();
-            delete this.bonus;
+            this.bonus = null;
+        });
+
+        // Pacman eats bonus
+        this.bonus.on('item:eaten', (bonus) => {
+            if (this._showBonus) return; // Not yet in the maze
+            this._pauseFrames = 5;
+            this._destroyBonus = 25;
+            this.addScore(parseInt(bonus.score));
+            this.sound.play('bonus');
         });
 
         // GHOSTS
@@ -359,7 +360,8 @@ class Game extends View {
             scaling : this.scaling,
             pacman : this.pacman,
             addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener),
-            addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener)
+            addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener),
+            addPacmanPillEventListener : listener => this.pacman.on('item:eatpill', listener)
         };
 
         const pinkyTile = this.map.houseCenter.getR();
@@ -416,8 +418,8 @@ class Game extends View {
     }
 
     addEventListenersToGhost(ghost) {
-        ghost.on('sprite:eat', () => this.emit('game:ghost:eat', ghost));
-        ghost.on('sprite:eaten', () => this.emit('game:ghost:eaten', ghost));
+        ghost.on('item:eat', () => this.emit('game:ghost:eat', ghost));
+        ghost.on('item:eaten', () => this.emit('game:ghost:eaten', ghost));
     }
 
     addScore(score) {

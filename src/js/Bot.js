@@ -8,12 +8,12 @@ class Bot extends Item {
         this.$el.pauseAnimation();
         this._moving = false;
 
-        this.on('sprite:move', () => { this.$el.resumeAnimation(); });
-        this.on('sprite:stop', () => { this.$el.pauseAnimation(); });
+        this.on('item:move', () => { this.$el.resumeAnimation(); });
+        this.on('item:stop', () => { this.$el.pauseAnimation(); });
 
         this._saveDefaults();
 
-        this.on('sprite:tile', (t) => {
+        this.on('item:tile', (t) => {
             this._setAnimation();
         });
 
@@ -63,13 +63,13 @@ class Bot extends Item {
                     this._moving = false;
                     this.$el.pauseAnimation();
                 } else if (!this._moving) {
-                    this.emit('sprite:move', {x : this.x, y : this.y});
+                    this.emit('item:move', {x : this.x, y : this.y});
                     this._moving = true;
                 }
             } else {
                 // Not moving.
                 if (this._moving) {
-                    this.emit('sprite:stop', {x : this.x, y : this.y});
+                    this.emit('item:stop', {x : this.x, y : this.y});
                     this._moving = false;
                 }
             }
@@ -167,7 +167,7 @@ class Bot extends Item {
 
         if (t !== this._lastTile) {
             this._lastTile = t;
-            this.emit('sprite:tile', t);
+            this.emit('item:tile', t);
         }
 
         this.render();

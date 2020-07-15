@@ -12,7 +12,9 @@ class Ghost extends Bot {
 
         const {
             addGameGlobalModeEventListener,
-            addGameGhostEatenEventListener
+            addGameGhostEatenEventListener,
+            addPacmanPillEventListener,
+            add
         } = attrs;
 
         // Modes.
@@ -31,7 +33,7 @@ class Ghost extends Bot {
         addGameGlobalModeEventListener(this._onGameGlobalMode.bind(this));
 
         // Change tile.
-        this.on('sprite:tile', (t) => {
+        this.on('item:tile', (t) => {
             if (this.mode === this.modes.frightened) this._speed = this.frightenedSpeed;
             else if (this.mode === this.modes.dead) this._speed = 130;
             else if (t.isTunnel()) this._speed = this.tunnelSpeed;
@@ -50,7 +52,7 @@ class Ghost extends Bot {
             this._eatEvent = false;
         });
 
-        this.pacman.on('sprite:pill', () => {
+        addPacmanPillEventListener(() => {
             this.setMode('frightened');
             this.score = 200;
         });
@@ -125,10 +127,10 @@ class Ghost extends Bot {
                 if (this.mode === this.modes.frightened) {
                     // Ghost eaten by Pacman!
                     this.setMode('dead');
-                    this.emit('sprite:eaten');
+                    this.emit('item:eaten');
                 } else if (this.mode !== this.modes.dead) {
                     // Eat Pacman!
-                    this.emit('sprite:eat');
+                    this.emit('item:eat');
                 }
             }
         }
