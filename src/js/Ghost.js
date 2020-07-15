@@ -10,7 +10,10 @@ class Ghost extends Bot {
     constructor(attrs) {
         super(attrs);
 
-        const { addGameGlobalModeEventListener } = attrs;
+        const {
+            addGameGlobalModeEventListener,
+            addGameGhostEatenEventListener
+        } = attrs;
 
         // Modes.
         this.modes = {
@@ -52,10 +55,9 @@ class Ghost extends Bot {
             this.score = 200;
         });
 
-        this.pacman.on('sprite:eat', () => {
+        addGameGhostEatenEventListener(() => {
             this.score = this.scores[this.score];
         });
-
     }
 
     reset(attrs = {}) {
@@ -123,10 +125,10 @@ class Ghost extends Bot {
                 if (this.mode === this.modes.frightened) {
                     // Ghost eaten by Pacman!
                     this.setMode('dead');
-                    this.pacman.emit('sprite:eat', this);
+                    this.emit('sprite:eaten');
                 } else if (this.mode !== this.modes.dead) {
                     // Eat Pacman!
-                    this.pacman.emit('sprite:eaten', this);
+                    this.emit('sprite:eat');
                 }
             }
         }

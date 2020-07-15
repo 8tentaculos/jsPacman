@@ -4,6 +4,9 @@ import Bot from './Bot.js';
 class Pacman extends Bot {
     constructor(attrs) {
         super(attrs);
+
+        const { addGameGhostEatEventListener } = attrs;
+
         // Change tile. Set direction.
         this.on('sprite:tile', (t) => {
             if (this.ghostFrightened) this._speed = this.frightenedSpeed;
@@ -25,7 +28,7 @@ class Pacman extends Bot {
 
         });
 
-        this.on('sprite:eaten', (ghost) => {
+        addGameGhostEatEventListener(ghost => {
             this._eatenTurns = 9;
             this.dir = 'r';
             this.$el.pauseAnimation();

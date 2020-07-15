@@ -236,17 +236,18 @@ class Game extends View {
             ...getLevelData(this.level, 'pacman'),
             map : this.map,
             pg : this.pg,
-            scaling : this.scaling
+            scaling : this.scaling,
+            addGameGhostEatEventListener : listener => this.on('game:ghost:eat', listener)
         });
 
-        this.pacman.on('sprite:pill', (t) => {
+        this.pacman.on('sprite:pill', t => {
             this._pauseFrames = 2;
             this.addScore(this.pillScore);
             if (!(--this.totalItems)) this._gameOver = true;
             this.sound.play('frightened');
         });
         // Pacman eats ghost
-        this.pacman.on('sprite:eat', (ghost) => {
+        this.on('game:ghost:eaten', ghost => {
             ghost.pacman.hide();
             this._pauseFrames = 15;
             this._showPacman = true;
@@ -254,7 +255,7 @@ class Game extends View {
             this.sound.play('eat');
         });
         // Ghost eats Pacman
-        this.pacman.on('sprite:eaten', (ghost) => {
+        this.on('game:ghost:eat', ghost => {
             this._pauseFrames = this.defaultPauseFrames;
             this._pacmanEaten = true;
         });
@@ -351,47 +352,56 @@ class Game extends View {
         });
 
         // GHOSTS
-        var ghostAttrs = {
+        const ghostAttrs = {
             ...getLevelData(this.level, 'ghost'),
             map : this.map,
             pg : this.pg,
             scaling : this.scaling,
             pacman : this.pacman,
-            addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener)
+            addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener),
+            addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener)
         };
 
-        var pinkyT = this.map.houseCenter.getR();
+        const pinkyTile = this.map.houseCenter.getR();
         this.pinky = makeGhost({
             ...ghostAttrs,
             id : 'bot-pinky',
-            x : pinkyT.x - this.map.tw / 2,
-            y : pinkyT.y
+            x : pinkyTile.x - this.map.tw / 2,
+            y : pinkyTile.y
         });
 
-        var blinkyT = this.map.house.getU().getR();
+        this.addEventListenersToGhost(this.pinky);
+
+        const blinkyTile = this.map.house.getU().getR();
         this.blinky = makeGhost({
             ...ghostAttrs,
             id : 'bot-blinky',
-            x : blinkyT.x - this.map.tw / 2,
-            y : blinkyT.y
+            x : blinkyTile.x - this.map.tw / 2,
+            y : blinkyTile.y
         });
 
-        var inkyT = this.map.houseCenter.getL();
+        this.addEventListenersToGhost(this.blinky);
+
+        const inkyTile = this.map.houseCenter.getL();
         this.inky = makeGhost({
             ...ghostAttrs,
             blinky : this.blinky,
             id : 'bot-inky',
-            x : inkyT.x - 16,
-            y : inkyT.y
+            x : inkyTile.x - 16,
+            y : inkyTile.y
         });
 
-        var sueT = this.map.houseCenter.getR().getR();
+        this.addEventListenersToGhost(this.inky);
+
+        const sueTile = this.map.houseCenter.getR().getR();
         this.sue = makeGhost({
             ...ghostAttrs,
             id : 'bot-sue',
-            x : sueT.x + 16,
-            y : sueT.y
+            x : sueTile.x + 16,
+            y : sueTile.y
         });
+
+        this.addEventListenersToGhost(this.sue);
 
         if (!this._win) {
             this.hideGhosts();
@@ -403,6 +413,11 @@ class Game extends View {
             this.bonus.hide();
             this._start = 1;
         }
+    }
+
+    addEventListenersToGhost(ghost) {
+        ghost.on('sprite:eat', () => this.emit('game:ghost:eat', ghost));
+        ghost.on('sprite:eaten', () => this.emit('game:ghost:eaten', ghost));
     }
 
     addScore(score) {
