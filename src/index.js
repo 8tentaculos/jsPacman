@@ -16,15 +16,15 @@ import './audio/life.mp3';
 // CSS
 import './styles.css';
 
-import $ from 'jquery';
 import Game from './js/Game';
 
-$(function() {
-    const container = $('.js-pacman');
+window.addEventListener('load', (event) => {
+    const container = document.querySelector('.js-pacman-container');
 
     const game = new Game({
-        el : container.find('.playground'),
-        w : container.width(),
-        h : container.height()
+        el : container.querySelector('.js-pacman-playground'),
+        w : container.clientWidth - 12,
+        h : container.clientHeight - 12,
+        document : document
     });
 });

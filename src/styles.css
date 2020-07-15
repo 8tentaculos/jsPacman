@@ -2,7 +2,7 @@ body {
     background-color: #222;
 }
 
-.js-pacman {
+.js-pacman-container {
     margin: 10px auto 10px auto;
     position: relative;
     /* width: 896px;
@@ -16,7 +16,7 @@ body {
     border: 1px solid #FFF;
 }
 
-.js-pacman .playground {
+.js-pacman-playground {
     display: none;
     position: relative;
     color: #EFEFEF;
@@ -26,39 +26,39 @@ body {
     background-size: 400% 200%;
 }
 
-.js-pacman .playground.maze-1 {
+.js-pacman-playground.maze-1 {
     background-position: 0 0;
 }
 
-.js-pacman .playground.maze-2 {
+.js-pacman-playground.maze-2 {
     background-position: -100% 0;
 }
 
-.js-pacman .playground.maze-3 {
+.js-pacman-playground.maze-3 {
     background-position: -200% 0;
 }
 
-.js-pacman .playground.maze-4 {
+.js-pacman-playground.maze-4 {
     background-position: -300% 0;
 }
 
-.js-pacman .playground.maze-1.blink {
+.js-pacman-playground.maze-1.blink {
     background-position: 0 -100%;
 }
 
-.js-pacman .playground.maze-2.blink {
+.js-pacman-playground.maze-2.blink {
     background-position: -100% -100%;
 }
 
-.js-pacman .playground.maze-3.blink {
+.js-pacman-playground.maze-3.blink {
     background-position: -200% -100%;
 }
 
-.js-pacman .playground.maze-4.blink {
+.js-pacman-playground.maze-4.blink {
     background-position: -300% -100%;
 }
 
-.js-pacman .splash {
+.js-pacman-playground .splash {
     background-image: url(./img/start.png);
     background-size: 100% 100%;
     text-align: center;
@@ -70,10 +70,7 @@ body {
     z-index: 1;
 }
 
-.js-pacman .splash h1 {
-}
-
-.js-pacman .splash a {
+.js-pacman-playground .splash a {
     position: relative;
     top: 64.23%;
     text-transform: uppercase;
@@ -83,11 +80,11 @@ body {
     font-weight: bold;
 }
 
-.js-pacman .splash a:hover {
+.js-pacman-playground .splash a:hover {
     color: #FFF;
 }
 
-.js-pacman .splash .title {
+.js-pacman-playground .splash .title {
     position: absolute;
     top: 22.04%;
     left: 0;
@@ -96,7 +93,7 @@ body {
     color: #FCB644;
 }
 
-.js-pacman .splash p.nerd {
+.js-pacman-playground .splash p.nerd {
     position: absolute;
     top: 33.15%;
     left: 35.26%;
@@ -104,11 +101,11 @@ body {
     color: #FFF;
 }
 
-.js-pacman .splash p span {
+.js-pacman-playground .splash p span {
     color : #FFFF00;
 }
 
-.js-pacman .splash .keys {
+.js-pacman-playground .splash .keys {
     position: absolute;
     top: 90.27%;
     left: 0;
@@ -117,7 +114,7 @@ body {
     color: #FFF;
 }
 
-.js-pacman .loadbar {
+.js-pacman-playground .loadbar {
     position: absolute;
     top: 64.23%;
     left: 22.32%;
@@ -128,14 +125,14 @@ body {
     border: 2px solid #FFF;
 }
 
-.js-pacman .loadbar .inner {
+.js-pacman-playground .loadbar .inner {
     position: relative;
     background: #FF0000;
     height: 100%;
     width: 0;
 }
 
-.js-pacman .score {
+.js-pacman-playground .score {
     position: absolute;
     top: 0;
     right: 0.4464%;
@@ -144,36 +141,36 @@ body {
     z-index: 2
 }
 
-.js-pacman .score .p1-score {
+.js-pacman-playground .score .p1-score {
     position: absolute;
     width: 22%;
     top: 0;
     left: 0;
 }
 
-.js-pacman .score .high-score {
+.js-pacman-playground .score .high-score {
     width: 40%;
     margin-left: auto;
     margin-right: auto;
 }
 
-.js-pacman .score .p2-score {
+.js-pacman-playground .score .p2-score {
     position: absolute;
     width: 22%;
     top: 0;
     right: 0;
 }
 
-.js-pacman .score span {
+.js-pacman-playground .score span {
     text-align: right;
     display: block;
 }
 
-.js-pacman .score .high-score span {
+.js-pacman-playground .score .high-score span {
     text-align: center;
 }
 
-.js-pacman .start-p1 {
+.js-pacman-playground .start-p1 {
     position: absolute;
     top: 38.71%;
     left: 0;
@@ -182,10 +179,10 @@ body {
     color: #5EE;
 }
 
-.js-pacman .game-over,
-.js-pacman .start-ready,
-.js-pacman .sound-status,
-.js-pacman .paused {
+.js-pacman-playground .game-over,
+.js-pacman-playground .start-ready,
+.js-pacman-playground .sound-status,
+.js-pacman-playground .paused {
     position: absolute;
     top: 55.55%;
     left: 0;
@@ -194,17 +191,17 @@ body {
     color: #F00;
 }
 
-.js-pacman .sound-status.on span.on,
-.js-pacman .sound-status span.off {
+.js-pacman-playground .sound-status.on span.on,
+.js-pacman-playground .sound-status span.off {
     display : inline;
 }
 
-.js-pacman .sound-status.on span.off,
-.js-pacman .sound-status span.on {
+.js-pacman-playground .sound-status.on span.off,
+.js-pacman-playground .sound-status span.on {
     display : none;
 }
 
-.js-pacman .sound-status .wrap, .js-pacman .paused .wrap {
+.js-pacman-playground .sound-status .wrap, .js-pacman .paused .wrap {
     background: #000;
 }
 

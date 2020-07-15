@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import './jquery.gamequery-0.7.1';
+import { View } from 'rasti';
 import Map from './Map';
 import Helper from './Helper';
 import getLevelData from './Levels';
@@ -12,53 +13,59 @@ import Lives from './Lives';
 import Bonuses from './Bonuses';
 import Sound from './Sound';
 import Scaling from './Scaling';
+import ts from './helper/ts';
 
-class Game {
-    constructor({ el, w, h }) {
-        this.el = $(el);
+const show = el => { el.style.display = ''; }
+const hide = el => { el.style.display = 'none'; }
+
+class Game extends View {
+    constructor(options) {
+        super(options);
 
         this.scaling = new Scaling(this.originalW, this.originalH);
 
-        this.scaling.resize(w, h);
+        this.scaling.resize(options.w, options.h);
 
-        this.el.css({
-            fontSize : this.scaling.getScale() * 2 + 'em',
-            display : 'block'
-        });
+        this.el.style.fontSize = `${this.scaling.getScale() * 2}em`;
+        show(this.el);
 
-        this.pg = this.el.playground({
+        this.render();
+
+        this.$el = $(this.el);
+
+        this.pg = this.$el.playground({
             width : this.scaling.w,
             height : this.scaling.h,
-            keyTracker : true
+            keyTracker : true,
+            disableCollision : true
         });
 
-        $(document).keydown((ev) => {
+        options.document.addEventListener('keydown', ev => {
             // Sound on/off
-            if (ev.which === 83) {
+            if (ev.keyCode === 83) {
                 // Mute Sound.
                 this._muted = !this._muted;
                 this.sound.muted(this._muted);
 
-                var el = this.$$.soundStatus;
+                var el = this.elements.soundStatus;
 
-                if (this._muted) el.removeClass('on');
-                else el.addClass('on');
+                if (this._muted) el.classList.remove('on');
+                else el.classList.add('on');
 
-                el.show();
+                show(el);
 
                 if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
-                this._hideSoundStatusTimeout = setTimeout(function() { el.hide(); }, 2000);
+                this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
             }
             // Pause Game
-            if (ev.which === 80) {
+            if (ev.keyCode === 80) {
                 this._paused = !this._paused;
                 if (this._paused) this.pause();
                 else this.resume();
             }
-
         });
 
-        this.$$ = {
+        this.elements = {
             splash : this.$('.splash'),
             start : this.$('.start'),
             startP1 : this.$('.start-p1'),
@@ -72,13 +79,8 @@ class Game {
         };
 
         // configure the loading bar
-        $.loadCallback((percent) => {
-            $('.inner', this.$$.load).width(percent + '%');
-        });
-
-        // register the start button and remove the splash screen once the game is ready to starts
-        this.$$.start.click(() => {
-            this.start();
+        $.loadCallback(percent => {
+            this.elements.load.querySelector('.inner').style.width = `${percent}%`;
         });
 
         this.sound = new Sound(this.soundEnabled);
@@ -100,7 +102,7 @@ class Game {
         });
 
         this.lives.on('lives:gameover', () => {
-            this.$$.gameOver.show();
+            show(this.elements.gameOver);
 
             this._gameOver = true;
 
@@ -118,9 +120,31 @@ class Game {
         this._makeLevel();
 
         this.pg.startGame(() => {
-            this.$$.load.hide();
-            this.$$.start.show();
+            hide(this.elements.load);
+            show(this.elements.start);
         });
+    }
+
+    template() {
+        return `
+            <div class="score">
+                <div class="p1-score">1UP<br /><span></span></div>
+                <div class="high-score">HIGH SCORE<br /><span></span></div>
+                <div class="p2-score">2UP<br /><span>00</span></div>
+            </div>
+            <div class="start-p1" style="display: none">PLAYER ONE</div>
+            <div class="start-ready" style="display: none">READY!</div>
+            <div class="game-over" style="display: none">GAME OVER</div>
+            <div class="sound-status on" style="display: none"><span class="wrap">SOUND: <span class="on">ON</span><span class="off">OFF</span></span></div>
+            <div class="paused" style="display: none"><span class="wrap">PAUSED</span></div>
+            <div class="splash">
+                <span class="title">"JS PAC-MAN"</span>
+                <p class="nerd">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
+                <a class="start" style="display: none">START</a>
+                <div class="loadbar"><div class="inner"></div></div>
+                <p class="keys"><span>&larr;&uarr;&darr;&rarr;</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
+            </div>
+        `;
     }
 
     start() {
@@ -135,12 +159,12 @@ class Game {
             this.level = 1;
             this.reset();
             this._gameOver = false;
-            this.$$.splash.hide();
+            hide(this.elements.splash);
             this.sound.play('intro');
             return;
         }
 
-        this.$$.splash.hide();
+        hide(this.elements.splash);
         this.sound.play('intro');
         this.pg.registerCallback(this.mainLoop.bind(this), 30);
     }
@@ -185,8 +209,8 @@ class Game {
         if (this.maze === 'maze-2') dotColor = 'yellow';
         if (this.maze === 'maze-3') dotColor = 'red';
 
-        if (!this._win) this.$$.startP1.show();
-        this.$$.startReady.show();
+        if (!this._win) show(this.elements.startP1);
+        show(this.elements.startReady);
 
         this.addScore();
 
@@ -289,7 +313,7 @@ class Game {
             this._pacmanEaten = false;
 
             if (this.lives.lives) {
-                this.$$.startReady.show();
+                show(this.elements.startReady);
                 this._start = 1;
             }
 
@@ -402,7 +426,7 @@ class Game {
 
     addScore(score) {
         this.score = this.score + (score || 0);
-        this.$$.score.text(this.score || '00');
+        this.elements.score.innerText = this.score || '00';
 
         if (!this.extraLife && this.score >= this.extraLifeScore) {
             this.extraLife = true;
@@ -417,7 +441,7 @@ class Game {
 
         if (!this._addedHighscore) {
             this._addedHighscore = true;
-            this.$$.highScore.text(this.highScore || '00');
+            this.elements.highScore.innerText = this.highScore || '00';
         }
     }
 
@@ -454,7 +478,7 @@ class Game {
         // Move.
         if (!this._pauseFrames) {
             if (this._start === 2) {
-                this.$$.startP1.hide();
+                show(this.elements.startP1);
 
                 this.showGhosts();
 
@@ -469,7 +493,7 @@ class Game {
             }
 
             if (this._start === 1) {
-                this.$$.startReady.hide();
+                hide(this.elements.startReady);
                 this._start--;
 
                 return;
@@ -484,8 +508,8 @@ class Game {
             }
 
             if (this._gameOver) {
-                this.$$.gameOver.hide();
-                this.$$.splash.show();
+                hide(this.elements.gameOver);
+                show(this.elements.splash);
 
                 return;
             }
@@ -541,7 +565,7 @@ class Game {
     }
 
     pause() {
-        this._pauseTime = this.ts();
+        this._pauseTime = ts();
 
         this.pinky.pause();
         this.blinky.pause();
@@ -552,11 +576,11 @@ class Game {
 
         this.pg.pauseGame();
 
-        this.$$.paused.show();
+        this.elements.paused.style.display = '';
     }
 
     resume() {
-        this._globalModeTime = this.ts() - this._pauseTime;
+        this._globalModeTime = ts() - this._pauseTime;
 
         this.pinky.resume();
         this.blinky.resume();
@@ -567,7 +591,7 @@ class Game {
 
         this.pg.resumeGame();
 
-        this.$$.paused.hide();
+        hide(this.elements.paused);
     }
 
     hideGhosts() {
@@ -606,11 +630,11 @@ class Game {
         var times = getLevelData(1, 'times');
 
         if (!this._globalModeTime) {
-            this._globalModeTime = this.ts();
+            this._globalModeTime = ts();
             return times[0].mode;
         }
         else {
-            var now = this.ts(), idx, total = 0;
+            var now = ts(), idx, total = 0;
             var i = 0;
             while (times[i]) {
                 total += times[i].time;
@@ -644,7 +668,7 @@ class Game {
     }
 }
 
-Object.assign(Game.prototype, Helper, {
+Object.assign(Game.prototype, {
     // Options.
     originalW : 896,
     originalH : 1152,
@@ -672,7 +696,11 @@ Object.assign(Game.prototype, Helper, {
     extraLifeScore : 10000,
     extraLife : false,
 
-    level : 1
+    level : 1,
+
+    events : {
+        'click .start' : 'start'
+    }
 });
 
 export default Game;
