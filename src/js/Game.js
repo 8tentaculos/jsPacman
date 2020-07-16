@@ -29,8 +29,6 @@ class Game extends View {
 
         this.el.style.fontSize = `${this.scaling.getScale() * 2}em`;
 
-        show(this.el);
-
         this.render();
 
         this.$el = $(this.el);
@@ -189,9 +187,6 @@ class Game extends View {
         if (this.maze === 'maze-2') dotColor = 'yellow';
         if (this.maze === 'maze-3') dotColor = 'red';
 
-        if (!this._win) show(this.elements.startP1);
-        show(this.elements.startReady);
-
         this.addScore();
 
         this._pauseFrames = 80;
@@ -250,7 +245,7 @@ class Game extends View {
         });
         // Pacman eats ghost
         this.on('game:ghost:eaten', ghost => {
-            ghost.pacman.hide();
+            this.pacman.hide();
             this._pauseFrames = 15;
             this._showPacman = true;
             this.addScore(parseInt(ghost.score));
@@ -407,7 +402,11 @@ class Game extends View {
 
         this.addEventListenersToGhost(this.sue);
 
+        show(this.elements.startReady);
+
         if (!this._win) {
+            show(this.elements.startP1);
+
             this.hideGhosts();
 
             this.pacman.hide();

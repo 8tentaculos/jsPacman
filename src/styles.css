@@ -17,7 +17,6 @@ body {
 }
 
 .js-pacman-playground {
-    display: none;
     position: relative;
     color: #EFEFEF;
     font-family: 'Press Start 2P', cursive;
