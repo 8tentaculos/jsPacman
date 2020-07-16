@@ -149,7 +149,10 @@ describe('Pacman', function() {
             map,
             pg,
             scaling,
-            speed : 50
+            speed : 50,
+            addGameGhostEatEventListener : () => {},
+            addGameGhostModeFrightenedEnter : () => {},
+            addGameGhostModeFrightenedExit : () => {}
         });
 
         should.exist(pacman);
