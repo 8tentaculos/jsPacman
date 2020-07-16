@@ -13,8 +13,8 @@ class Ghost extends Bot {
         const {
             addGameGlobalModeEventListener,
             addGameGhostEatenEventListener,
-            addPacmanPillEventListener,
-            add
+            addPacmanEatPillEventListener,
+            addPacmanPositionEventListener
         } = attrs;
 
         // Modes.
@@ -52,13 +52,17 @@ class Ghost extends Bot {
             this._eatEvent = false;
         });
 
-        addPacmanPillEventListener(() => {
+        addPacmanEatPillEventListener(() => {
             this.setMode('frightened');
             this.score = 200;
         });
 
         addGameGhostEatenEventListener(() => {
             this.score = this.scores[this.score];
+        });
+
+        addPacmanPositionEventListener(data => {
+            this.pacmanData = data;
         });
     }
 
@@ -109,7 +113,7 @@ class Ghost extends Bot {
     }
 
     getChaseTarget() {
-        return this.pacman.getTile();
+        return this.pacmanData.tile;
     }
 
     _onGameGlobalMode(mode) {
@@ -121,8 +125,8 @@ class Ghost extends Bot {
         this.mode.move();
         // Eat or eaten!
         if (!this._eatEvent) {
-            var pt = this.pacman.getTile(), t = this.getTile(), op = this._getOpDirection(this.dir);
-            if (pt === t || (this.pacman.dir === op && pt === t.get(op))) {
+            var pt = this.pacmanData.tile, t = this.getTile(), op = this._getOpDirection(this.dir);
+            if (pt === t || (this.pacmanData.dir === op && pt === t.get(op))) {
                 this._eatEvent = true;
                 if (this.mode === this.modes.frightened) {
                     // Ghost eaten by Pacman!
@@ -229,7 +233,6 @@ Object.assign(Ghost.prototype, {
     },
 
     mode : 'house',
-    pacman : null,
 
     score : '200',
     scores : { '200' : '400', '400' : '800', '800' : '1600' }

@@ -17,7 +17,8 @@ class Bonuses {
                 pg : attrs.pg,
                 scaling : attrs.scaling,
                 x : attrs.x - i * 64,
-                y : attrs.y
+                y : attrs.y,
+                addPacmanPositionEventListener : () => {}
             }, i));
 
             if (i >= this.level) this.bonuses[i].hide();

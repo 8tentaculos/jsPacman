@@ -60,14 +60,16 @@ class Bot extends Item {
                     this._moving = false;
                     this.$el.pauseAnimation();
                 } else if (!this._moving) {
-                    this.emit('item:move', {x : this.x, y : this.y});
+                    this.emit('item:move');
                     this.$el.resumeAnimation();
                     this._moving = true;
                 }
+
+                this.emit('item:position', this._getPositionData())
             } else {
                 // Not moving.
                 if (this._moving) {
-                    this.emit('item:stop', {x : this.x, y : this.y});
+                    this.emit('item:stop');
                     this.$el.pauseAnimation();
                     this._moving = false;
                 }
@@ -84,6 +86,15 @@ class Bot extends Item {
             // Call super.
             Item.prototype.render.apply(this, arguments);
         }
+    }
+
+    _getPositionData() {
+        return {
+            x : this.x,
+            y : this.y,
+            tile : this.getTile(),
+            dir : this.dir
+        };
     }
     // Called from Game main loop at every revolution.
     move(dir) {

@@ -5,6 +5,9 @@ import getDistance from './helper/getDistance';
 class Bonus extends Bot {
     constructor(attrs) {
         super(attrs);
+
+        const { addPacmanPositionEventListener } = attrs;
+
         // Change tile.
         this.on('item:tile', (t) => {
             let offset;
@@ -27,6 +30,10 @@ class Bonus extends Bot {
 
         });
 
+        addPacmanPositionEventListener(data => {
+            this.pacmanData = data;
+        });
+
         this._targetFound = 2;
     }
 
@@ -34,8 +41,8 @@ class Bonus extends Bot {
         Bot.prototype.move.call(this, this._dir);
         // Eat or eaten!
         if (!this._eatEvent) {
-            var pt = this.pacman.getTile(), t = this.getTile(), op = this._getOpDirection(this.dir);
-            if (pt === t || (this.pacman.dir === op && pt === t.get(op))) {
+            var pt = this.pacmanData.tile, t = this.getTile(), op = this._getOpDirection(this.dir);
+            if (pt === t || (this.pacmanData.dir === op && pt === t.get(op))) {
                 this._eatEvent = true;
 
                 this.animation =  this.animations['score_' + this.score];
@@ -97,8 +104,6 @@ Object.assign(Bonus.prototype, {
     dir : null,
     // Overriden by Level
     speed : 40,
-
-    pacman : null,
 
     score : '100',
 

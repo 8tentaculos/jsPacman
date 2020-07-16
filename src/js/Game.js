@@ -41,7 +41,7 @@ class Game extends View {
         });
 
         window.document.addEventListener('keydown', ev => {
-            // Sound on/off
+            // Sound on/off.
             if (ev.keyCode === 83) {
                 // Mute Sound.
                 this._muted = !this._muted;
@@ -57,7 +57,7 @@ class Game extends View {
                 if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
                 this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
             }
-            // Pause Game
+            // Pause Game.
             if (ev.keyCode === 80) {
                 this._paused = !this._paused;
                 if (this._paused) this.pause();
@@ -78,7 +78,7 @@ class Game extends View {
             load : this.$('.loadbar')
         };
 
-        // configure the loading bar
+        // Configure the loading bar.
         $.loadCallback(percent => {
             this.elements.load.querySelector('.inner').style.width = `${percent}%`;
         });
@@ -226,7 +226,8 @@ class Game extends View {
         }
 
         this.totalItems = total;
-        // PACMAN
+
+        // Pacman.
         this.pacman = makeMsPacman({
             ...getLevelData(this.level, 'pacman'),
             map : this.map,
@@ -243,7 +244,7 @@ class Game extends View {
             if (!(--this.totalItems)) this._gameOver = true;
             this.sound.play('frightened');
         });
-        // Pacman eats ghost
+        // Pacman eats ghost.
         this.on('game:ghost:eaten', ghost => {
             this.pacman.hide();
             this._pauseFrames = 15;
@@ -251,16 +252,16 @@ class Game extends View {
             this.addScore(parseInt(ghost.score));
             this.sound.play('eat');
         });
-        // Ghost eats Pacman
+        // Ghost eats Pacman.
         this.on('game:ghost:eat', ghost => {
             this._pauseFrames = this.defaultPauseFrames;
             this._pacmanEaten = true;
         });
-        // Pacman make die turn arround
+        // Pacman make die turn arround.
         this.pacman.on('item:die', (ghost) => {
             this.sound.play('eaten');
         });
-        // Pacman lose
+        // Pacman lose.
         this.pacman.on('item:life', () => {
             $.gQ.keyTracker = {};
 
@@ -298,7 +299,7 @@ class Game extends View {
             if (this.lives.lives) this._pauseFrames = this.defaultPauseFrames;
             else this._pauseFrames = 120;
         });
-        // Pacman eats dot
+        // Pacman eats dot.
         this.pacman.on('item:eatdot', (t) => {
             this.addScore(this.dotScore);
 
@@ -313,34 +314,33 @@ class Game extends View {
                 this.map.hideItems();
                 this.pacman.$el.pauseAnimation();
             }
-
         });
 
-        // BONUS
+        // Bonus.
         if (this.bonus) {
             this.bonus.destroy();
         }
 
-        var bonusT = this.map.tunnels[this.map.tunnels.length - 1];
+        var bonusTile = this.map.tunnels[this.map.tunnels.length - 1];
         this.bonus = makeBonus({
             id : this.bonusId,
             map : this.map,
             pg : this.pg,
             scaling : this.scaling,
             dir : 'l',
-            pacman : this.pacman,
             score : this.bonusScore,
-            x : bonusT.x,
-            y : bonusT.y
+            x : bonusTile.x,
+            y : bonusTile.y,
+            addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener)
         });
 
-        // Bonus reaches target and disappears
+        // Bonus reaches target and disappears.
         this.bonus.on('item:destroy', (bonus) => {
             this.bonus.destroy();
             this.bonus = null;
         });
 
-        // Pacman eats bonus
+        // Pacman eats bonus.
         this.bonus.on('item:eaten', (bonus) => {
             if (this._showBonus) return; // Not yet in the maze
             this._pauseFrames = 5;
@@ -349,16 +349,16 @@ class Game extends View {
             this.sound.play('bonus');
         });
 
-        // GHOSTS
+        // Ghosts.
         const ghostAttrs = {
             ...getLevelData(this.level, 'ghost'),
             map : this.map,
             pg : this.pg,
             scaling : this.scaling,
-            pacman : this.pacman,
             addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener),
             addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener),
-            addPacmanPillEventListener : listener => this.pacman.on('item:eatpill', listener)
+            addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener),
+            addPacmanEatPillEventListener : listener => this.pacman.on('item:eatpill', listener)
         };
 
         const pinkyTile = this.map.houseCenter.getR();
