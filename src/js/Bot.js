@@ -8,9 +8,6 @@ class Bot extends Item {
         this.$el.pauseAnimation();
         this._moving = false;
 
-        this.on('item:move', () => { this.$el.resumeAnimation(); });
-        this.on('item:stop', () => { this.$el.pauseAnimation(); });
-
         this._saveDefaults();
 
         this.on('item:tile', (t) => {
@@ -64,12 +61,14 @@ class Bot extends Item {
                     this.$el.pauseAnimation();
                 } else if (!this._moving) {
                     this.emit('item:move', {x : this.x, y : this.y});
+                    this.$el.resumeAnimation();
                     this._moving = true;
                 }
             } else {
                 // Not moving.
                 if (this._moving) {
                     this.emit('item:stop', {x : this.x, y : this.y});
+                    this.$el.pauseAnimation();
                     this._moving = false;
                 }
             }

@@ -261,7 +261,7 @@ class Game extends View {
             this.sound.play('eaten');
         });
         // Pacman lose
-        this.pacman.on('item:life', (ev) => {
+        this.pacman.on('item:life', () => {
             $.gQ.keyTracker = {};
 
             this._inputDir = null;
