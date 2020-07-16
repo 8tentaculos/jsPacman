@@ -21,6 +21,7 @@ body {
     color: #EFEFEF;
     font-family: 'Press Start 2P', cursive;
     font-size: 2em;
+    background-color: #000;
     background-image: url('./img/maze.png');
     background-size: 400% 200%;
 }

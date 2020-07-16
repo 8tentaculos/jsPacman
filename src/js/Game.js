@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import './jquery.gamequery-0.7.1';
-import { View } from 'rasti';
+import { Model, View } from 'rasti';
 import Map from './Map';
 import getLevelData from './Levels';
 import makeMsPacman from './factory/makeMsPacman';
@@ -17,11 +17,38 @@ import ts from './helper/ts';
 const show = el => { el.style.display = ''; }
 const hide = el => { el.style.display = 'none'; }
 
+class GameModel extends Model {
+    constructor(attrs) {
+        super({
+            score : 0,
+            highScore : 0,
+            lives : 3,
+            extraLifeScore : 10000,
+            ...attrs
+        });
+    }
+
+    addScore(score) {
+        this.score = this.score + score;
+
+        if (!this.extraLife && this.score >= this.extraLifeScore) {
+            this.extraLife = true;
+            this.lives++;
+        }
+
+        if (this.highScore < this.score) {
+            this.highScore = this.score;
+        }
+    }
+}
+
 class Game extends View {
     constructor(options) {
         super(options);
 
         const { w, h, window } = options;
+
+        this.model = new GameModel();
 
         this.scaling = new Scaling(this.originalW, this.originalH);
 
@@ -30,6 +57,19 @@ class Game extends View {
         this.el.style.fontSize = `${this.scaling.getScale() * 2}em`;
 
         this.render();
+
+        this.elements = {
+            splash : this.$('.splash'),
+            start : this.$('.start'),
+            startP1 : this.$('.start-p1'),
+            startReady : this.$('.start-ready'),
+            highScore : this.$('.high-score span'),
+            score : this.$('.p1-score span'),
+            gameOver : this.$('.game-over'),
+            soundStatus : this.$('.sound-status'),
+            paused : this.$('.paused'),
+            load : this.$('.loadbar')
+        };
 
         this.$el = $(this.el);
 
@@ -65,19 +105,6 @@ class Game extends View {
             }
         });
 
-        this.elements = {
-            splash : this.$('.splash'),
-            start : this.$('.start'),
-            startP1 : this.$('.start-p1'),
-            startReady : this.$('.start-ready'),
-            highScore : this.$('.high-score span'),
-            score : this.$('.p1-score span'),
-            gameOver : this.$('.game-over'),
-            soundStatus : this.$('.sound-status'),
-            paused : this.$('.paused'),
-            load : this.$('.loadbar')
-        };
-
         // Configure the loading bar.
         $.loadCallback(percent => {
             this.elements.load.querySelector('.inner').style.width = `${percent}%`;
@@ -101,6 +128,22 @@ class Game extends View {
             scaling : this.scaling
         });
 
+        this.model.on('change:score', (model, score) => {
+            this.elements.score.innerText = score || '00';
+        });
+
+        this.model.on('change:highScore', (model, highScore) => {
+            this.elements.highScore.innerText = highScore || '00';
+        });
+
+        this.model.on('change:lives', (model, lives) => {
+            // TODO! temp!
+            if (lives > model.previous.lives) {
+                this.lives.add();
+                this.sound.play('life');
+            }
+        });
+
         this.lives.on('lives:gameover', () => {
             show(this.elements.gameOver);
 
@@ -110,14 +153,14 @@ class Game extends View {
 
             this.pacman.hide();
 
-            if (window.localStorage) localStorage.jsPacmanHighScore = this.highScore;
+            if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
         });
 
         if (window.localStorage && localStorage.jsPacmanHighScore) {
-            this.highScore = localStorage.jsPacmanHighScore;
+            this.model.highScore = localStorage.jsPacmanHighScore;
         }
 
-        this._makeLevel();
+        this.makeLevel();
 
         this.pg.startGame(() => {
             hide(this.elements.load);
@@ -158,7 +201,7 @@ class Game extends View {
 
         if (!this._win) {
             this.lives.set(this.defaultLives + 1);
-            this.score = 0;
+            this.model.score = 0;
             this.extraLife = false;
         }
 
@@ -170,10 +213,10 @@ class Game extends View {
 
         this._lastGlobalMode = null;
 
-        this._makeLevel();
+        this.makeLevel();
     }
 
-    _makeLevel() {
+    makeLevel() {
         Object.assign(this, getLevelData(this.level, 'game'));
 
         this.bonuses.setLevel(this.level);
@@ -186,8 +229,6 @@ class Game extends View {
         var dotColor = 'white';
         if (this.maze === 'maze-2') dotColor = 'yellow';
         if (this.maze === 'maze-3') dotColor = 'red';
-
-        this.addScore();
 
         this._pauseFrames = 80;
 
@@ -240,7 +281,7 @@ class Game extends View {
 
         this.pacman.on('item:eatpill', t => {
             this._pauseFrames = 2;
-            this.addScore(this.pillScore);
+            this.model.addScore(this.pillScore);
             if (!(--this.totalItems)) this._gameOver = true;
             this.sound.play('frightened');
         });
@@ -249,7 +290,7 @@ class Game extends View {
             this.pacman.hide();
             this._pauseFrames = 15;
             this._showPacman = true;
-            this.addScore(parseInt(ghost.score));
+            this.model.addScore(parseInt(ghost.score));
             this.sound.play('eat');
         });
         // Ghost eats Pacman.
@@ -301,7 +342,7 @@ class Game extends View {
         });
         // Pacman eats dot.
         this.pacman.on('item:eatdot', (t) => {
-            this.addScore(this.dotScore);
+            this.model.addScore(this.dotScore);
 
             this.sound.play('dot');
             // Win!!!
@@ -345,7 +386,7 @@ class Game extends View {
             if (this._showBonus) return; // Not yet in the maze
             this._pauseFrames = 5;
             this._destroyBonus = 25;
-            this.addScore(parseInt(bonus.score));
+            this.model.addScore(parseInt(bonus.score));
             this.sound.play('bonus');
         });
 
@@ -423,27 +464,6 @@ class Game extends View {
         ghost.on('item:eaten', () => this.emit('game:ghost:eaten', ghost));
         ghost.on('item:modefrightened:enter', () => this.emit('game:ghost:modefrightened:enter'));
         ghost.on('item:modefrightened:exit', () => this.emit('game:ghost:modefrightened:exit'));
-    }
-
-    addScore(score) {
-        this.score = this.score + (score || 0);
-        this.elements.score.innerText = this.score || '00';
-
-        if (!this.extraLife && this.score >= this.extraLifeScore) {
-            this.extraLife = true;
-            this.lives.add();
-            this.sound.play('life');
-        }
-
-        if (this.highScore < this.score) {
-            this.highScore = this.score;
-            this._addedHighscore= false;
-        }
-
-        if (!this._addedHighscore) {
-            this._addedHighscore = true;
-            this.elements.highScore.innerText = this.highScore || '00';
-        }
     }
 
     mainLoop() {
@@ -671,8 +691,8 @@ class Game extends View {
     template() {
         return `
             <div class="score">
-                <div class="p1-score">1UP<br /><span></span></div>
-                <div class="high-score">HIGH SCORE<br /><span></span></div>
+                <div class="p1-score">1UP<br /><span>00</span></div>
+                <div class="high-score">HIGH SCORE<br /><span>00</span></div>
                 <div class="p2-score">2UP<br /><span>00</span></div>
             </div>
             <div class="start-p1" style="display: none">PLAYER ONE</div>
@@ -713,11 +733,7 @@ Object.assign(Game.prototype, {
     // Playground.
     pg : null,
 
-    score : 0,
-    highScore : 0,
 
-    extraLifeScore : 10000,
-    extraLife : false,
 
     level : 1,
 
