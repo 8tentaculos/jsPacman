@@ -23,6 +23,7 @@ class GameModel extends Model {
             score : 0,
             highScore : 0,
             lives : 3,
+            extraLives : 1,
             extraLifeScore : 10000,
             ...attrs
         });
@@ -31,8 +32,8 @@ class GameModel extends Model {
     addScore(score) {
         this.score = this.score + score;
 
-        if (!this.extraLife && this.score >= this.extraLifeScore) {
-            this.extraLife = true;
+        if (this.extraLife && this.score >= this.extraLifeScore) {
+            this.extraLife--;
             this.lives++;
         }
 
@@ -48,7 +49,10 @@ class Game extends View {
 
         const { w, h, window } = options;
 
-        this.model = new GameModel();
+        this.model = new GameModel({
+            lives : this.defaultLives,
+            highScore : window.localStorage && window.localStorage.jsPacmanHighScore || 0
+        });
 
         this.scaling = new Scaling(this.originalW, this.originalH);
 
@@ -117,7 +121,8 @@ class Game extends View {
             x : 40,
             y : 1124,
             pg : this.pg,
-            scaling : this.scaling
+            scaling : this.scaling,
+            model : this.model
         });
 
         this.bonuses = new Bonuses({
@@ -137,28 +142,20 @@ class Game extends View {
         });
 
         this.model.on('change:lives', (model, lives) => {
-            // TODO! temp!
-            if (lives > model.previous.lives) {
-                this.lives.add();
-                this.sound.play('life');
+            if (!lives) {
+                // Game over.
+                this._gameOver = true;
+                show(this.elements.gameOver);
+                this.hideGhosts();
+                this.pacman.hide();
+                if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
             }
         });
 
-        this.lives.on('lives:gameover', () => {
-            show(this.elements.gameOver);
-
-            this._gameOver = true;
-
-            this.hideGhosts();
-
-            this.pacman.hide();
-
-            if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
+        this.model.on('change:extraLives', (model, lives) => {
+            // Extra life.
+            this.sound.play('life');
         });
-
-        if (window.localStorage && localStorage.jsPacmanHighScore) {
-            this.model.highScore = localStorage.jsPacmanHighScore;
-        }
 
         this.makeLevel();
 
@@ -200,7 +197,7 @@ class Game extends View {
         this.map.destroyItems();
 
         if (!this._win) {
-            this.lives.set(this.defaultLives + 1);
+            this.model.lives = this.defaultLives + 1;
             this.model.score = 0;
             this.extraLife = false;
         }
@@ -328,17 +325,17 @@ class Game extends View {
 
             this.showGhosts();
 
-            this.lives.die();
+            this.model.lives--;
 
             this._pacmanEaten = false;
 
-            if (this.lives.lives) {
+            if (this.model.lives) {
                 show(this.elements.startReady);
                 this._start = 1;
+                this._pauseFrames = this.defaultPauseFrames;
+            } else {
+                this._pauseFrames = 120;
             }
-
-            if (this.lives.lives) this._pauseFrames = this.defaultPauseFrames;
-            else this._pauseFrames = 120;
         });
         // Pacman eats dot.
         this.pacman.on('item:eatdot', (t) => {
@@ -503,9 +500,9 @@ class Game extends View {
 
                 this.showGhosts();
 
-                this.lives.set(this.defaultLives);
-
                 this.pacman.show();
+
+                this.model.lives = this.defaultLives;
 
                 this._pauseFrames = 60;
                 this._start--;
@@ -732,8 +729,6 @@ Object.assign(Game.prototype, {
 
     // Playground.
     pg : null,
-
-
 
     level : 1,
 
