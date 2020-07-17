@@ -76,7 +76,7 @@ class Game extends View {
         });
 
         this.bonuses = new Bonuses({
-            level : this.level,
+            level : this.model.level,
             x : 860,
             y : 1124,
             pg : this.pg,
@@ -84,29 +84,10 @@ class Game extends View {
             model : this.model
         });
 
-        this.model.on('change:score', (model, score) => {
-            this.elements.score.innerText = score || '00';
-        });
-
-        this.model.on('change:highScore', (model, highScore) => {
-            this.elements.highScore.innerText = highScore || '00';
-        });
-
-        this.model.on('change:lives', (model, lives) => {
-            if (!lives) {
-                // Game over.
-                this._gameOver = true;
-                show(this.elements.gameOver);
-                this.hideGhosts();
-                this.pacman.hide();
-                if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
-            }
-        });
-
-        this.model.on('change:extraLives', (model, lives) => {
-            // Extra life.
-            this.sound.play('life');
-        });
+        this.model.on('change:score', this._onChangeScore.bind(this));
+        this.model.on('change:highScore', this._onChangeHighScore.bind(this));
+        this.model.on('change:lives', this._onChangeLives.bind(this));
+        this.model.on('change:extraLives', this._onChangeExtraLives.bind(this));
 
         this.makeLevel();
 
@@ -155,10 +136,8 @@ class Game extends View {
 
         $.gQ.keyTracker = {};
 
-        this._inputDir = null;
-
+        this._inputDirection = null;
         this._globalModeTime = null;
-
         this._lastGlobalMode = null;
 
         this.makeLevel();
@@ -194,7 +173,6 @@ class Game extends View {
                     x : t.x,
                     y : t.y
                 });
-
                 total++;
             }
 
@@ -252,10 +230,8 @@ class Game extends View {
         this.pacman.on('item:life', () => {
             $.gQ.keyTracker = {};
 
-            this._inputDir = null;
-
+            this._inputDirection = null;
             this._globalModeTime = null;
-
             this._lastGlobalMode = null;
 
             this.pacman.reset();
@@ -440,44 +416,39 @@ class Game extends View {
         }
 
         // Input
-        this._inputDir = this.stickyTurn ? this._getInputDir() || this._inputDir : this._getInputDir();
+        this._inputDirection = this.stickyTurn ?
+            (this._getInputDirection() || this._inputDirection) :
+            this._getInputDirection();
 
         // Move.
         if (!this._pauseFrames) {
             if (this._start === 2) {
                 hide(this.elements.startP1);
-
                 this.showGhosts();
-
                 this.pacman.show();
 
                 this.model.lives = this.defaultLives;
 
                 this._pauseFrames = 60;
                 this._start--;
-
                 return;
             }
 
             if (this._start === 1) {
                 hide(this.elements.startReady);
                 this._start--;
-
                 return;
             }
 
             if (this._win) {
                 this.pg.removeClass('blink');
-
                 this.start();
-
                 return;
             }
 
             if (this._gameOver) {
                 hide(this.elements.gameOver);
                 show(this.elements.splash);
-
                 return;
             }
 
@@ -487,7 +458,7 @@ class Game extends View {
             }
 
             if (!this._pauseFramesPacman) {
-                this.pacman.move(this._inputDir);
+                this.pacman.move(this._inputDirection);
             } else this._pauseFramesPacman--;
 
             if (this._pacmanEaten) {
@@ -612,7 +583,7 @@ class Game extends View {
         }
     }
 
-    _getInputDir() {
+    _getInputDirection() {
         var keys = $.gQ.keyTracker;
 
         if (keys[38]) {
@@ -661,6 +632,30 @@ class Game extends View {
             if (this._paused) this.pause();
             else this.resume();
         }
+    }
+
+    _onChangeScore(model, score) {
+        this.elements.score.innerText = score || '00';
+    }
+
+    _onChangeHighScore(model, highScore) {
+        this.elements.highScore.innerText = highScore || '00';
+    }
+
+    _onChangeLives(model, lives) {
+        if (!lives) {
+            // Game over.
+            this._gameOver = true;
+            show(this.elements.gameOver);
+            this.hideGhosts();
+            this.pacman.hide();
+            if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
+        }
+    }
+
+    _onChangeExtraLives(model, lives) {
+        // Extra life.
+        this.sound.play('life');
     }
 
     template() {

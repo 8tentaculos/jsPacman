@@ -48,6 +48,7 @@ class Item extends Emitter {
 
     destroy() {
         this.$el.remove();
+        this.off();
     }
 
     getTile() {
