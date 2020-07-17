@@ -20,6 +20,7 @@ const hide = el => { el.style.display = 'none'; }
 class GameModel extends Model {
     constructor(attrs) {
         super({
+            level : 1,
             score : 0,
             highScore : 0,
             lives : 3,
@@ -130,7 +131,8 @@ class Game extends View {
             x : 860,
             y : 1124,
             pg : this.pg,
-            scaling : this.scaling
+            scaling : this.scaling,
+            model : this.model
         });
 
         this.model.on('change:score', (model, score) => {
@@ -167,14 +169,14 @@ class Game extends View {
 
     start() {
         if (this._win) {
-            this.level++;
+            this.model.level++;
             this.reset();
             this._win = false;
             return;
         }
 
         if (this._gameOver) {
-            this.level = 1;
+            this.model.level = 1;
             this.reset();
             this._gameOver = false;
             hide(this.elements.splash);
@@ -214,9 +216,7 @@ class Game extends View {
     }
 
     makeLevel() {
-        Object.assign(this, getLevelData(this.level, 'game'));
-
-        this.bonuses.setLevel(this.level);
+        Object.assign(this, getLevelData(this.model.level, 'game'));
 
         this.map = new Map(this.map);
 
@@ -267,7 +267,7 @@ class Game extends View {
 
         // Pacman.
         this.pacman = makeMsPacman({
-            ...getLevelData(this.level, 'pacman'),
+            ...getLevelData(this.model.level, 'pacman'),
             map : this.map,
             pg : this.pg,
             scaling : this.scaling,
@@ -389,7 +389,7 @@ class Game extends View {
 
         // Ghosts.
         const ghostAttrs = {
-            ...getLevelData(this.level, 'ghost'),
+            ...getLevelData(this.model.level, 'ghost'),
             map : this.map,
             pg : this.pg,
             scaling : this.scaling,
@@ -725,12 +725,8 @@ Object.assign(Game.prototype, {
 
     soundEnabled : true,
 
-    DEBUG : true,
-
     // Playground.
     pg : null,
-
-    level : 1,
 
     events : {
         'click .start' : 'start'
