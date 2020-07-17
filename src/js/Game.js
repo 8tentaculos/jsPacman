@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import './jquery.gamequery-0.7.1';
-import { Model, View } from 'rasti';
+import { View } from 'rasti';
 import Map from './Map';
 import getLevelData from './Levels';
 import makeMsPacman from './factory/makeMsPacman';
@@ -8,6 +8,7 @@ import makeGhost from './factory/makeGhost';
 import makeDot from './factory/makeDot';
 import makePill from './factory/makePill';
 import makeBonus from './factory/makeBonus';
+import GameModel from './GameModel';
 import Lives from './Lives';
 import Bonuses from './Bonuses';
 import Sound from './Sound';
@@ -16,33 +17,6 @@ import ts from './helper/ts';
 
 const show = el => { el.style.display = ''; }
 const hide = el => { el.style.display = 'none'; }
-
-class GameModel extends Model {
-    constructor(attrs) {
-        super({
-            level : 1,
-            score : 0,
-            highScore : 0,
-            lives : 3,
-            extraLives : 1,
-            extraLifeScore : 10000,
-            ...attrs
-        });
-    }
-
-    addScore(score) {
-        this.score = this.score + score;
-
-        if (this.extraLife && this.score >= this.extraLifeScore) {
-            this.extraLife--;
-            this.lives++;
-        }
-
-        if (this.highScore < this.score) {
-            this.highScore = this.score;
-        }
-    }
-}
 
 class Game extends View {
     constructor(options) {
@@ -85,35 +59,10 @@ class Game extends View {
             disableCollision : true
         });
 
-        window.document.addEventListener('keydown', ev => {
-            // Sound on/off.
-            if (ev.keyCode === 83) {
-                // Mute Sound.
-                this._muted = !this._muted;
-                this.sound.muted(this._muted);
-
-                var el = this.elements.soundStatus;
-
-                if (this._muted) el.classList.remove('on');
-                else el.classList.add('on');
-
-                show(el);
-
-                if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
-                this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
-            }
-            // Pause Game.
-            if (ev.keyCode === 80) {
-                this._paused = !this._paused;
-                if (this._paused) this.pause();
-                else this.resume();
-            }
-        });
+        window.document.addEventListener('keydown', this._onKeyDown.bind(this));
 
         // Configure the loading bar.
-        $.loadCallback(percent => {
-            this.elements.load.querySelector('.inner').style.width = `${percent}%`;
-        });
+        $.loadCallback(this._onLoadbar.bind(this));
 
         this.sound = new Sound(this.soundEnabled);
 
@@ -683,6 +632,35 @@ class Game extends View {
         }
 
         return null;
+    }
+
+    _onLoadbar(percent) {
+        this.elements.load.querySelector('.inner').style.width = `${percent}%`;
+    }
+
+    _onKeyDown(ev) {
+        // Sound on/off.
+        if (ev.keyCode === 83) {
+            // Mute Sound.
+            this._muted = !this._muted;
+            this.sound.muted(this._muted);
+
+            var el = this.elements.soundStatus;
+
+            if (this._muted) el.classList.remove('on');
+            else el.classList.add('on');
+
+            show(el);
+
+            if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
+            this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
+        }
+        // Pause Game.
+        if (ev.keyCode === 80) {
+            this._paused = !this._paused;
+            if (this._paused) this.pause();
+            else this.resume();
+        }
     }
 
     template() {
