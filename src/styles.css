@@ -1,29 +1,25 @@
 body {
     background-color: #222;
-}
-
-.js-pacman-container {
-    margin: 10px auto 10px auto;
-    position: relative;
-    /* width: 896px;
-    height: 1152px; */
-    width: 448px;
-    height: 576px;
-    padding : 6px;
-    background: #000;
-    border-radius: 5px;
-    box-shadow: 0 0 40px 5px #888;
-    border: 1px solid #FFF;
+    margin: 0;
+    padding: 0;
 }
 
 .js-pacman-playground {
-    position: relative;
+    position: absolute;
     color: #EFEFEF;
     font-family: 'Press Start 2P', cursive;
     font-size: 2em;
     background-color: #000;
     background-image: url('./img/maze.png');
     background-size: 400% 200%;
+    display: none;
+    cursor: default;
+}
+
+.js-pacman-playground.with-border {
+    border-radius: 0.5em;
+    box-shadow: 0 0 1em 0.1em #EEE;
+    border: 1em solid #000;
 }
 
 .js-pacman-playground.maze-1 {
@@ -71,17 +67,20 @@ body {
 }
 
 .js-pacman-playground .splash a {
-    position: relative;
-    top: 64.23%;
-    text-transform: uppercase;
     color: #DDDDDD;
-    font-size: 1.6em;
     cursor: pointer;
     font-weight: bold;
 }
 
 .js-pacman-playground .splash a:hover {
     color: #FFF;
+}
+
+.js-pacman-playground .splash a.start {
+    position: relative;
+    top: 65%;
+    text-transform: uppercase;
+    font-size: 1.6em;
 }
 
 .js-pacman-playground .splash .title {
@@ -107,16 +106,39 @@ body {
 
 .js-pacman-playground .splash .keys {
     position: absolute;
-    top: 90.27%;
+    top: 85%;
     left: 0;
     right: 0;
     text-align: center;
     color: #FFF;
 }
 
+.js-pacman-playground .splash .credits {
+    font-family: 'Press Start 2P', cursive;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: #FFF;
+    padding: 5px;
+    font-size: 0.6em;
+}
+
+.js-pacman-playground .splash .credits span {
+    color: #FF3333;
+}
+
+.js-pacman-playground .splash .credits a {
+    color: #FFFF00;
+}
+
+.js-pacman-playground .splash .credits a:hover {
+    color: #FFFF4D;
+}
+
 .js-pacman-playground .loadbar {
     position: absolute;
-    top: 64.23%;
+    top: 65%;
     left: 22.32%;
     right: 22.32%;
     background: #FF0;
@@ -208,25 +230,4 @@ body {
 .hdn {
     position: absolute;
     left: -10000px;
-}
-
-.credits {
-    font-family: 'Press Start 2P', cursive;
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    color: #FFF;
-    background: #000;
-    padding: 5px;
-    font-size: 0.9em;
-    box-shadow: 2px 2px 5px #000 inset,-1px -1px 0px #CCC inset;
-    background: #111;
-}
-
-.credits span {
-    color: #FF3333;
-}
-
-.credits a {
-    color: #FFFF00;
 }

@@ -21,11 +21,24 @@ import Game from './js/Game';
 window.addEventListener('load', (event) => {
     const container = document.querySelector('.js-pacman-container');
 
-    const game = new Game({
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    class GameWithPosition extends Game {
+        constructor(options) {
+            super(options);
+            this.el.style.left = '50%';
+            this.el.style.marginLeft = `-${this.el.offsetWidth / 2}px`;
+            this.el.style.top = '50%';
+            this.el.style.marginTop = `-${this.el.offsetHeight / 2}px`;
+        }
+    }
+
+    const game = new GameWithPosition({
         window,
-        el : container.querySelector('.js-pacman-playground'),
-        w : container.clientWidth - 12,
-        h : container.clientHeight - 12
+        el : document.querySelector('.js-pacman-playground'),
+        w : vw * 0.85,
+        h : vh * 0.85
     });
 
 });
