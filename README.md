@@ -3,9 +3,7 @@
 jsPacman
 ========
 
-jsPacman is a Javascript remake of the classic [Ms Pac-Man](https://en.wikipedia.org/wiki/Ms._Pac-Man) game.
-It is written in [JavaScript](https://en.wikipedia.org/wiki/JavaScript), using [jQuery](http://jquery.com/) and the [gameQuery](http://gamequeryjs.com/) plug-in.
-Animations are made using pure CSS3 DOM manipulation. Sound is native HTML5.
+jsPacman is a HTML5 / Javascript DOM based remake of the classic [Ms Pac-Man](https://en.wikipedia.org/wiki/Ms._Pac-Man) game.
 
 Play Demo
 -----------
@@ -22,31 +20,22 @@ Development
 
 Install [nodejs and npm](http://www.nodejs.org/).
 
-Then install globally [mocha-phantomjs](https://github.com/metaskills/mocha-phantomjs) and [grunt-cli](http://gruntjs.com/getting-started):
-```
-$ npm install -g mocha-phantomjs phantomjs
-$ npm install -g grunt-cli
-```
-Then install local modules:
+Install local modules:
 ```
 $ npm install
 ```
-### Grunt tasks ###
-Run tests and lint once:
+### NPM scripts ###
+Run tests:
 ```
-$ grunt test
+$ npm test
 ```
-Run local server at localhost:8000
+Run local dev server at localhost:8080
 ```
-$ grunt &
+$ npm start
 ```
-Watch changes and run tests, lint and livereload:
+Build production bundle:
 ```
-$ grunt watch
-```
-Build (concatenate and uglify modules):
-```
-$ grunt build
+$ npm run build
 ```
 
 Licences
