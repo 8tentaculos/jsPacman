@@ -7,7 +7,7 @@ jsPacman is a HTML5 / Javascript DOM based remake of the classic [Ms Pac-Man](ht
 
 Play Demo
 -----------
-[jspacman.bitbucket.org](http://jspacman.bitbucket.org/)
+[jspacman.bitbucket.io](http://jspacman.bitbucket.io/)
 
 Credits
 -----------
