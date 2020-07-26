@@ -3,7 +3,7 @@
 jsPacman
 ========
 
-jsPacman is a HTML5 / Javascript DOM based remake of the classic [Ms Pac-Man](https://en.wikipedia.org/wiki/Ms._Pac-Man) game.
+jsPacman is a HTML5 / JavaScript DOM based remake of the classic [Ms Pac-Man](https://en.wikipedia.org/wiki/Ms._Pac-Man) game.
 
 Play Demo
 -----------
