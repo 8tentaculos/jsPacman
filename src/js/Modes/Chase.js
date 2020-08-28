@@ -1,5 +1,3 @@
-import $ from 'jquery';
-import Bot from '../Bot';
 import Mode from './Mode';
 
 class Chase extends Mode {

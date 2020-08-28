@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import Bot from '../Bot';
+import Character from '../Character';
 import Mode from './Mode';
 
 class Dead extends Mode {
@@ -8,7 +7,7 @@ class Dead extends Mode {
 
         this._target = this.ghost.map.house.getR().getU();
 
-        this._endX = this.ghost.defaults.x;
+        this._endX = this.ghost._defaults.x;
         this._endY = this.ghost.map.houseCenter.y;
 
         this._end = this.ghost.map.getTile(this._endX, this._endY, true);
@@ -16,13 +15,11 @@ class Dead extends Mode {
 
     onEnter() {
         this._prepareEnter = false;
-        this.ghost.animation =  this.ghost.animations['score_' + this.ghost.score];
+        this.ghost.animation =  this.ghost.animations[`score${this.ghost.score}`];
         this.ghost.render();
     }
 
     move() {
-        var t = this.ghost.getTile();
-
         if (!this._prepareEnter && this.ghost.getTile() === this._target) {
             this._prepareEnter = true;
         }
@@ -54,7 +51,7 @@ class Dead extends Mode {
 
         } else {
 
-            Bot.prototype.move.call(this.ghost, this.ghost._dir);
+            Character.prototype.move.call(this.ghost, this.ghost._dir);
 
         }
     }
@@ -78,12 +75,12 @@ class Dead extends Mode {
         return this._target;
     }
 
-    canGo(dir, t) {
-        if (!t) t = this.ghost.getTile();
+    canGo(dir, tile) {
+        if (!tile) tile = this.ghost.getTile();
 
-        var nt = t.get(dir);
+        var nextTile = tile.get(dir);
 
-        return !nt || !nt.isWall();
+        return !nextTile || !nextTile.isWall();
     }
 
     exit() {
@@ -91,8 +88,8 @@ class Dead extends Mode {
     }
 
     onExit() {
-        var attrs = this.ghost.id === 'bot-blinky' ? {x : this.ghost.x, y : this.ghost.y} : {};
-        this.ghost.reset(attrs);
+        // var attrs = this.ghost.id === 'bot-blinky' ? {x : this.ghost.x, y : this.ghost.y} : {};
+        this.ghost.reset();
     }
 }
 

@@ -1,21 +1,124 @@
-import $ from 'jquery';
-import Bot from './Bot';
+import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation';
+import Character from './Character';
 import ModeChase from './modes/Chase';
 import ModeDead from './modes/Dead';
 import ModeFrightened from './modes/Frightened';
 import ModeHouse from './modes/House';
 import ModeScatter from './modes/Scatter';
 
-class Ghost extends Bot {
-    constructor(attrs) {
-        super(attrs);
+export const animationBase = {
+    imageURL : 'img/bots.png',
+    numberOfFrame : 2,
+    delta : 64,
+    rate : 180,
+    type : ANIMATION_HORIZONTAL
+};
+
+export const animations = {
+    'frightened' : new Animation({
+        ...animationBase,
+        offsetY : 376,
+        offsetX : -2
+    }),
+
+    'frightenedBlink' : new Animation({
+        ...animationBase,
+        offsetY : 376,
+        offsetX : -2,
+        numberOfFrame : 4
+    }),
+
+    'deadRight' : new Animation({
+        ...animationBase,
+        offsetY : 376,
+        offsetX : 64 * 4 - 2,
+        numberOfFrame : 1
+    }),
+
+    'deadDown' : new Animation({
+        ...animationBase,
+        offsetY : 376,
+        offsetX : 64 * 5 - 2,
+        numberOfFrame : 1
+    }),
+
+    'deadUp' : new Animation({
+        ...animationBase,
+        offsetY : 376,
+        offsetX : 64 * 6 - 2,
+        numberOfFrame : 1
+    }),
+
+    'deadLeft' : new Animation({
+        ...animationBase,
+        offsetY : 376,
+        offsetX : 64 * 7 - 2,
+        numberOfFrame : 1
+    }),
+
+    'score200' : new Animation({
+        ...animationBase,
+        imageURL : 'img/misc.png',
+        numberOfFrame : 1,
+        offsetX : -2,
+        offsetY : 110
+    }),
+
+    'score400' : new Animation({
+        ...animationBase,
+        imageURL : 'img/misc.png',
+        numberOfFrame : 1,
+        offsetX : 64 * 1 - 2,
+        offsetY : 110
+    }),
+
+    'score800' : new Animation({
+        ...animationBase,
+        imageURL : 'img/misc.png',
+        numberOfFrame : 1,
+        offsetX : 64 * 2 - 2,
+        offsetY : 110
+    }),
+
+    'score1600' : new Animation({
+        ...animationBase,
+        imageURL : 'img/misc.png',
+        numberOfFrame : 1,
+        offsetX : 64 * 3,
+        offsetY : 110
+    })
+};
+
+const defaults = {
+    animations,
+    width : 64,
+    speed : 75,
+    frightenedTime : 5,
+    waitTime : 4,
+    scatterTarget : 0,
+    mode : 'house',
+    score : '200',
+    scores : { '200' : '400', '400' : '800', '800' : '1600' },
+    blinky : null,
+    getChaseTarget : function() {
+        return this.pacmanData.tile;
+    }
+};
+
+class Ghost extends Character {
+    constructor(options) {
+        super(options);
+
+        Object.keys(defaults).forEach(key => {
+            if (key in options) this[key] = options[key];
+        });
 
         const {
             addGameGlobalModeEventListener,
             addGameGhostEatenEventListener,
             addPacmanEatPillEventListener,
             addPacmanPositionEventListener
-        } = attrs;
+        } = options;
 
         // Modes.
         this.modes = {
@@ -66,10 +169,9 @@ class Ghost extends Bot {
         });
     }
 
-    reset(attrs = {}) {
-        Object.assign(this, this.defaults, attrs);
+    reset() {
+        super.reset();
         this.setMode(this.mode);
-        this.render(true);
     }
 
     pause() {
@@ -112,10 +214,6 @@ class Ghost extends Bot {
         return this.mode === this.modes.dead;
     }
 
-    getChaseTarget() {
-        return this.pacmanData.tile;
-    }
-
     _onGameGlobalMode(mode) {
         if (typeof mode === 'string') mode = this.modes[mode];
         this.globalMode = mode;
@@ -149,93 +247,6 @@ class Ghost extends Bot {
     }
 }
 
-Object.assign(Ghost.prototype, {
-    w : 64,
-    // Options.
-    dir : null,
-    // Overriden by Level
-    speed : 75,
-    frightenedTime : 5,
-
-    waitTime : 4,
-
-    animationBase : {
-        imageURL : 'img/bots.png',
-        numberOfFrame : 2,
-        delta : 64,
-        rate : 180,
-        type : $.gQ.ANIMATION_HORIZONTAL
-    },
-
-    animations : {
-        frightened : {
-            offsety : 376,
-            offsetx : -2
-        },
-
-        frightenedBlink : {
-            offsety : 376,
-            offsetx : -2,
-            numberOfFrame : 4
-        },
-
-        deadRight : {
-            offsety : 376,
-            offsetx : 64 * 4 - 2,
-            numberOfFrame : 1
-        },
-
-        deadDown : {
-            offsety : 376,
-            offsetx : 64 * 5 - 2,
-            numberOfFrame : 1
-        },
-
-        deadUp : {
-            offsety : 376,
-            offsetx : 64 * 6 - 2,
-            numberOfFrame : 1
-        },
-
-        deadLeft : {
-            offsety : 376,
-            offsetx : 64 * 7 - 2,
-            numberOfFrame : 1
-        },
-
-        score_200 : {
-            imageURL : 'img/misc.png',
-            numberOfFrame : 1,
-            offsetx : -2,
-            offsety : 110
-        },
-
-        score_400 : {
-            imageURL : 'img/misc.png',
-            numberOfFrame : 1,
-            offsetx : 64 * 1 - 2,
-            offsety : 110
-        },
-
-        score_800 : {
-            imageURL : 'img/misc.png',
-            numberOfFrame : 1,
-            offsetx : 64 * 2 - 2,
-            offsety : 110
-        },
-
-        score_1600 : {
-            imageURL : 'img/misc.png',
-            numberOfFrame : 1,
-            offsetx : 64 * 3,
-            offsety : 110
-        }
-    },
-
-    mode : 'house',
-
-    score : '200',
-    scores : { '200' : '400', '400' : '800', '800' : '1600' }
-});
+Object.assign(Ghost.prototype, defaults);
 
 export default Ghost;

@@ -1,10 +1,9 @@
 import $ from 'jquery';
 import Pacman from '../Pacman';
 
-export default (attrs) => new Pacman({
-    id : 'bot-ms-pacman',
+export default (options) => new Pacman({
     preturn : true,
     x : 452,
     y : 848,
-    ...attrs
+    ...options
 });

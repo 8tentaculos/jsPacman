@@ -1,5 +1,3 @@
-import $ from 'jquery';
-import Bot from '../Bot';
 import Mode from './Mode';
 import ts from '../helper/ts';
 import rnd from '../helper/rnd';

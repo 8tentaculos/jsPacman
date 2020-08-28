@@ -1,15 +1,51 @@
-import $ from 'jquery';
-import Bot from './Bot.js';
+import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation';
+import Character from './Character.js';
 
-class Pacman extends Bot {
-    constructor(attrs) {
-        super(attrs);
+const animationBase = {
+    imageURL : 'img/bots.png',
+    numberOfFrame : 4,
+    delta : 64,
+    rate : 60,
+    offsetY : 60,
+    type : ANIMATION_HORIZONTAL
+};
+
+const animations = {
+    'right' : new Animation({
+        ...animationBase
+    }),
+
+    'down' : new Animation({
+        ...animationBase,
+        offsetX : 64 * 4
+    }),
+
+    'up' : new Animation({
+        ...animationBase,
+        offsetX : 64 * 8
+    }),
+
+    'left' : new Animation({
+        ...animationBase,
+        offsetX : 64 * 12
+    })
+};
+
+const defaults = {
+    animations,
+    dir : 'l',
+    defaultAnimation : 'left'
+};
+
+class Pacman extends Character {
+    constructor(options) {
+        super(options);
 
         const {
             addGameGhostEatEventListener,
             addGameGhostModeFrightenedEnter,
             addGameGhostModeFrightenedExit
-        } = attrs;
+        } = options;
 
         this._ghostFrightened = 0;
 
@@ -36,7 +72,7 @@ class Pacman extends Bot {
         addGameGhostEatEventListener(ghost => {
             this._eatenTurns = 9;
             this.dir = 'r';
-            this.$el.pauseAnimation();
+            this.pauseAnimation();
         });
 
         addGameGhostModeFrightenedEnter(() => {
@@ -49,18 +85,18 @@ class Pacman extends Bot {
     }
 
     reset() {
-        Bot.prototype.reset.apply(this);
+        Character.prototype.reset.apply(this);
         this._lastEatenTurnsTime = null;
     }
 
     move() {
-        if (!this._eatenTurns) Bot.prototype.move.apply(this, arguments);
+        if (!this._eatenTurns) Character.prototype.move.apply(this, arguments);
         else if (!this._eatenTurnsFrames) {
             if (this._eatenTurns === 9) this.emit('item:die');
             if (this._eatenTurns > 2) {
                 var directions = {'d' : 'l', 'l' : 'u', 'u' : 'r', 'r' : 'd'};
                 this.dir = directions[this.dir];
-                this._setAnimation();
+                this._setNextAnimation();
                 this.render();
                 this._eatenTurnsFrames = 5;
             } else this._eatenTurnsFrames = 25;
@@ -74,35 +110,6 @@ class Pacman extends Bot {
 
 };
 
-Object.assign(Pacman.prototype, {
-    animationBase : {
-        imageURL : 'img/bots.png',
-        numberOfFrame : 4,
-        delta : 64,
-        rate : 60,
-        offsety : 60,
-        type : $.gQ.ANIMATION_HORIZONTAL
-    },
-
-    animations : {
-        right : {},
-
-        down : {
-            offsetx : 64 * 4
-        },
-
-        up : {
-            offsetx : 64 * 8
-        },
-
-        left : {
-            offsetx : 64 * 12
-        }
-    },
-
-    dir : 'l',
-
-    defaultAnimation : 'left'
-});
+Object.assign(Pacman.prototype, defaults);
 
 export default Pacman;

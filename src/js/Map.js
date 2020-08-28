@@ -13,23 +13,23 @@ class Map {
         // Store tiles in array.
         this.tiles = [];
         // Set with and height according to data.
-        this.w = data[0].length;
-        this.h = data.length;
+        this.width = data[0].length;
+        this.height = data.length;
 
         this.tunnels = [];
 
         // Instantiate tiles and store them.
-        for (var y = 0; y < this.h; y++) {
+        for (var y = 0; y < this.height; y++) {
             var r = data[y];
-            for (var x = 0; x < this.w; x++) {
+            for (var x = 0; x < this.width; x++) {
                 var code = r.charAt(x);
-                var t = new Tile(code, x, y, this);
-                this.tiles.push(t);
-                if (t.isHouse() && !this.house) { // Store left house door
-                    this.house = t;
+                var tile = new Tile(code, x, y, this);
+                this.tiles.push(tile);
+                if (tile.isHouse() && !this.house) { // Store left house door
+                    this.house = tile;
                 }
-                if (t.isTunnel() && (t.col === 0 || t.col === this.w - 1)) {
-                    this.tunnels.push(t);
+                if (tile.isTunnel() && (tile.col === 0 || tile.col === this.width - 1)) {
+                    this.tunnels.push(tile);
                 }
             }
         }
@@ -37,23 +37,23 @@ class Map {
         this.houseCenter = this.house.getD().getD();
 
         // Cache tile dimensions
-        this.tw = this.tiles[0].w;
-        this.th = this.tiles[0].h;
+        this.tileWidth = this.tiles[0].width;
+        this.tileHeight = this.tiles[0].height;
     }
 
     // Return tile object.
     getTile(col, row, inPixels) {
         if (inPixels) {
-            col = parseInt(col / this.tw);
-            row = parseInt(row / this.th);
+            col = parseInt(col / this.tileWidth);
+            row = parseInt(row / this.tileHeight);
         }
 
-        if (col > this.w - 1) col = 0;
-        if (col < 0) col = this.w - 1;
-        if (row > this.h - 1) row = 0;
-        if (row < 0) row = this.h - 1;
+        if (col > this.width - 1) col = 0;
+        if (col < 0) col = this.width - 1;
+        if (row > this.height - 1) row = 0;
+        if (row < 0) row = this.height - 1;
 
-        var idx = (row * this.w) + col;
+        var idx = (row * this.width) + col;
 
         return this.tiles[idx] || null;
     }

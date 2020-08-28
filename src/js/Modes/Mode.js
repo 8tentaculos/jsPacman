@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import Bot from '../Bot';
+import Character from '../Character';
 import ts from '../helper/ts';
 import getDistance from '../helper/getDistance';
 
@@ -11,7 +11,7 @@ class Mode {
     move() {
         if (this.exit()) this.onExit();
         else {
-            Bot.prototype.move.call(this.ghost, this.ghost._dir);
+            Character.prototype.move.call(this.ghost, this.ghost._dir);
         }
     }
 
@@ -54,16 +54,16 @@ class Mode {
     _getTarget() {}
 
     setAnimation() {
-        Bot.prototype._setAnimation.call(this.ghost);
+        Character.prototype._setNextAnimation.call(this.ghost);
     }
 
-    canGo(dir, t) {
-        if (!t) t = this.ghost.getTile();
-        var nt = t.get(dir);
+    canGo(dir, tile) {
+        if (!tile) tile = this.ghost.getTile();
+        var nextTile = tile.get(dir);
 
-        if (!nt) return false;
+        if (!nextTile) return false;
 
-        return !nt.isWall() && !nt.isHouse();
+        return !nextTile.isWall() && !nextTile.isHouse();
     }
 
     exit() {
@@ -72,8 +72,8 @@ class Mode {
     }
 
     onExit() {
-        var t = this.ghost.getTile();
-        if (!t.isHouse()) {
+        var tile = this.ghost.getTile();
+        if (!tile.isHouse()) {
             this.ghost._turnBack = true;
         }
         this.ghost.setMode();

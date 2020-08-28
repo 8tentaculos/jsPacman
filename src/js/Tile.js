@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 class Tile {
     constructor(code, col, row, map)  {
         this.code = code;
@@ -9,12 +7,12 @@ class Tile {
 
         this.map = map;
 
-        this.w = 32;
-        this.h = 32;
+        this.width = 32;
+        this.height = 32;
 
-        this.x = this.col * this.w + this.w / 2;
+        this.x = this.col * this.width + this.width / 2;
 
-        this.y = this.row * this.h + this.h / 2 + 4; // Original Pacman has tile's center at x : 4, y : 5 position.
+        this.y = this.row * this.height + this.height / 2 + 4; // Original Pacman has tile's center at x : 4, y : 5 position.
     }
 
     isWall() { return this.code === '='; }

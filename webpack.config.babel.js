@@ -39,15 +39,6 @@ export default {
                 }
             },
             {
-                test: /jquery\.gamequery\-0\.7\.1\.js/,
-                exclude : /node_modules/,
-                use : [
-                    {
-                        loader : path.resolve(__dirname, 'src/gameQueryLoader.js')
-                    }
-                ]
-            },
-            {
                 test : /\.css$/,
                 use : [ 'style-loader', 'css-loader' ]
             },
