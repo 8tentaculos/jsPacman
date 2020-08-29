@@ -2,13 +2,16 @@ class Sound {
     constructor(url, options = {}) {
         this.pool = [];
 
+        const loop = !!options.loop;
+        const size = options.size || 1;
+
         function makeAudio() {
             const audio = new Audio(url);
-            audio.loop = !!options.loop;
+            audio.loop = loop;
             return audio;
         }
 
-        for (var i = 0; i < options.size || 1; i++) {
+        for (let i = 0; i < size; i++) {
             this.pool.push(makeAudio());
         }
     }
@@ -21,7 +24,7 @@ class Sound {
         }
 
         return new Promise((resolve, reject) => {
-            this.getAudio.addEventListener('canplaythrough', resolve);
+            this.pool[0].addEventListener('canplaythrough', resolve);
         });
     }
 

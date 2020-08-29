@@ -47,7 +47,7 @@ class Sprite extends View {
 
     isReady() {
         return Object.keys(this.animations)
-            .some(label => !this.animations[label].isReady());
+            .some(label => !!this.animations[label].isReady());
     }
 
     render() {

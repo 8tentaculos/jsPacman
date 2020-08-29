@@ -31,7 +31,7 @@ class Game extends View {
         this.loadedSpritesIndex = 0; // Keep track of the last loaded animation
         this.loadedSoundsIndex = 0; // Keep track of the last loaded sound
 
-        this.keyTracker = new KeyTracker({ el : document.body });
+        this.keyTracker = new KeyTracker();
 
         this.scaling = new Scaling(this.originalWidth, this.originalHeight);
         this.scaling.resize(this.width, this.height);
@@ -96,13 +96,16 @@ class Game extends View {
                 soundCount++;
             }
         }
+
+        const rest = this.sprites.length + this.sounds.length - this.loadedSpritesIndex - this.loadedSoundsIndex;
+
         // Call the load callback with the current progress
         if (typeof this.onLoadProgress === 'function') {
-            let percent = (spriteCount + soundCount) / (this.sprites.length + this.sounds.length - this.loadedSpritesIndex - this.loadedSoundsIndex) * 100;
+            let percent = (spriteCount + soundCount) / rest * 100;
             this.onLoadProgress(percent);
         }
 
-        if (spriteCount + soundCount < (this.sprites.length + this.sounds.length - this.loadedSpritesIndex - this.loadedSoundsIndex)) {
+        if (spriteCount + soundCount < rest) {
             setTimeout(this.waitForResources.bind(this), 100);
         } else {
             this.loadedSpritesIndex = this.sprites.length;

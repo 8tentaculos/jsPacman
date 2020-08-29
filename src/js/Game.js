@@ -32,7 +32,7 @@ const defaults = {
     // Remember last input direction when arriving to intersection.
     stickyTurn : false,
 
-    soundEnabled : true,
+    soundEnabled : false,
 
     events : {
         'click .start' : 'start'
@@ -65,7 +65,10 @@ class JsPacman extends Game {
 
         this.keyTracker.el.addEventListener('keydown', this._onKeyDown.bind(this));
 
-        this.sound = new SoundManager(this.soundEnabled);
+        this.sound = new SoundManager({
+            soundEnabled : this.soundEnabled,
+            addSound : this.addSound.bind(this)
+        });
 
         this.lives = new Lives({
             lives : this.defaultLives + 1,

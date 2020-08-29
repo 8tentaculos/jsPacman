@@ -2,7 +2,10 @@ import { View } from 'rasti';
 
 class KeyTracker extends View {
     constructor(options) {
-        super(options);
+        super({
+            el : document && document.body,
+            ...options
+        });
 
         this.keys = {};
     }
