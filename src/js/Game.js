@@ -117,7 +117,7 @@ class JsPacman extends Game {
 
         hide(this.elements.splash);
         this.sound.play('intro');
-        this.addCallback(this.mainLoop.bind(this), 30);
+        this.addCallback(this.mainLoop.bind(this));
     }
 
     reset() {
@@ -625,9 +625,9 @@ class JsPacman extends Game {
         this.elements.load.querySelector('.inner').style.width = `${percent}%`;
     }
 
-    _onKeyDown(ev) {
+    _onKeyDown(event) {
         // Sound on/off.
-        if (ev.keyCode === 83) {
+        if (event.keyCode === 83) {
             // Mute Sound.
             this._muted = !this._muted;
             this.sound.muted(this._muted);
@@ -643,7 +643,7 @@ class JsPacman extends Game {
             this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
         }
         // Pause Game.
-        if (ev.keyCode === 80) {
+        if (event.keyCode === 80) {
             this._paused = !this._paused;
             if (this._paused) this.pause();
             else this.resume();

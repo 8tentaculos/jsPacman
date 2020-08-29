@@ -31,7 +31,7 @@ class Game extends View {
         this.loadedSpritesIndex = 0; // Keep track of the last loaded animation
         this.loadedSoundsIndex = 0; // Keep track of the last loaded sound
 
-        this.keyTracker = new KeyTracker({ el : document });
+        this.keyTracker = new KeyTracker({ el : document.body });
 
         this.scaling = new Scaling(this.originalWidth, this.originalHeight);
         this.scaling.resize(this.width, this.height);
@@ -53,7 +53,7 @@ class Game extends View {
         });
 
         this.scenegraph = this.createElement('div', {
-            style : 'visibility: hidden;' 
+            style : 'visibility: hidden;'
         });
 
         this.el.appendChild(this.scenegraph);
@@ -155,8 +155,8 @@ class Game extends View {
      * @param {function} fn the callback
      * @param {integer} rate the rate in ms at which the callback should be called (should be a multiple of the playground rate or will be rounded)
      */
-    addCallback(callback, rate) {
-        this.callbacks.push({ fn : callback, rate : Math.round(rate / this.refreshRate) || rate, idleCounter : 0 });
+    addCallback(callback, refreshRate = this.refreshRate) {
+        this.callbacks.push({ fn : callback, refreshRate : this.normalizeRefrashRate(refreshRate), idleCounter : 0 });
     }
     /**
      * Called periodically to refresh the state of the game.
@@ -165,26 +165,26 @@ class Game extends View {
         if (this.state === STATE_RUNNING) {
             this.sprites.forEach(sprite => { sprite.refresh() });
 
-            var deadCallback = [];
-            for (var i = this.callbacks.length - 1; i >= 0; i--){
-                if(this.callbacks[i].idleCounter === this.callbacks[i].rate - 1) {
+            var deadCallbacks = [];
+            for (var i = this.callbacks.length - 1; i >= 0; i--) {
+                if (this.callbacks[i].idleCounter === this.callbacks[i].refreshRate - 1) {
                     const value = this.callbacks[i].fn();
                     if (typeof value === 'boolean'){
                         // If we have a boolean: 'true' means 'no more execution', 'false' means 'keep on executing'
-                        if (value){
-                            deadCallback.push(i);
+                        if (value) {
+                            deadCallbacks.push(i);
                         }
                     } else if (typeof value === 'number') {
                         // If we have a number it re-defines the time to the next call
-                        this.callbacks[i].rate = Math.round(value / this.refreshRate);
+                        this.callbacks[i].refreshRate = this.normalizeRefrashRate(value);
                         this.callbacks[i].idleCounter = 0;
                     }
                 }
-                this.callbacks[i].idleCounter = (this.callbacks[i].idleCounter + 1) % this.callbacks[i].rate;
+                this.callbacks[i].idleCounter = (this.callbacks[i].idleCounter + 1) % this.callbacks[i].refreshRate;
             }
 
-            for (var i = deadCallback.length - 1; i >= 0; i--){
-                this.callbacks.splice(deadCallback[i], 1);
+            for (var i = deadCallbacks.length - 1; i >= 0; i--){
+                this.callbacks.splice(deadCallbacks[i], 1);
             }
         }
     }

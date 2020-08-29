@@ -10,7 +10,7 @@ export const animationBase = {
     imageURL : 'img/bots.png',
     numberOfFrame : 2,
     delta : 64,
-    rate : 180,
+    refreshRate : 180,
     type : ANIMATION_HORIZONTAL
 };
 

@@ -5,9 +5,7 @@ import {
     ANIMATION_VERTICAL,
     ANIMATION_ONCE,
     ANIMATION_CALLBACK,
-    ANIMATION_MULTI,
-    ANIMATION_PINGPONG,
-
+    ANIMATION_PINGPONG
 } from './Animation';
 
 const defaults = {
@@ -57,7 +55,8 @@ class Sprite extends View {
             position : 'absolute',
             overflow : 'hidden',
             height : `${this.height}px`,
-            width : `${this.width}px`
+            width : `${this.width}px`,
+            zIndex : this.z
         });
 
         this.setAnimation(this.animations[this.defaultAnimation]);
@@ -108,11 +107,11 @@ class Sprite extends View {
                 let x = 0, y = 0;
 
                 if (this.animation.type & ANIMATION_VERTICAL) {
-                    x = -this.animation.offsetX - (this.multi || 0);
+                    x = -this.animation.offsetX;
                     y = -this.animation.offsetY - this.animation.delta * this.currentFrame;
                 } else if (this.animation.type & ANIMATION_HORIZONTAL) {
                     x = -this.animation.offsetX - this.animation.delta * this.currentFrame;
-                    y = -this.animation.offsetY - (this.multi || 0);
+                    y = -this.animation.offsetY;
                 }
 
                 this.el.style.backgroundPosition = `${x}px ${y}px`;
@@ -142,9 +141,7 @@ class Sprite extends View {
         this.currentFrame = 0;
         this.frameIncrement = 1;
 
-        if (animation.imageURL !== '') {
-            this.el.style.backgroundImage = `url('${animation.imageURL}')`;
-        }
+        this.el.style.backgroundImage = `url('${animation.imageURL}')`;
 
         if (animation.type & ANIMATION_VERTICAL) {
             this.el.style.backgroundRepeat = 'repeat-x';
@@ -156,17 +153,6 @@ class Sprite extends View {
 
         let distanceX = 0;
         let distanceY = 0;
-
-        if (typeof index === 'number' && animation.type & ANIMATION_MULTI) {
-            const distance = this.animation.distance * animation;
-            this.multi = distance;
-
-            if (animation.type & ANIMATION_VERTICAL) {
-                distanceX = distance;
-            } else if (gameQuery.animation.type & ANIMATION_HORIZONTAL) {
-                distanceY = distance;
-            }
-        }
 
         this.el.style.backgroundPosition = `${-distanceX - animation.offsetX}px ${-distanceY - animation.offsetY}px`;
 
@@ -187,18 +173,14 @@ class Sprite extends View {
      * @param {Number} angle the angle in degrees
      * @param {Boolean} relative or not
      */
-    rotate(angle, relative){
-        if (angle !== undefined) {
-            if (relative === true){
-                angle += this.angle;
-                angle %= 360;
-            }
-
-            this.angle = parseFloat(angle);
-            this.transform();
-        } else {
-            return this.angle;
+    rotate(angle, relative) {
+        if (relative === true){
+            angle += this.angle;
+            angle %= 360;
         }
+
+        this.angle = parseFloat(angle);
+        this.transform();
     }
     /**
      * Change the scale of the selected element(s). The passed argument is a ratio:
@@ -206,21 +188,17 @@ class Sprite extends View {
      * @param {Number} factor a ratio: 1.0 = original size, 0.5 = half the original size etc.
      * @param {Boolean} relative or not
      */
-    scale(factor, relative){
-        if (factor !== undefined) {
-            if (relative === true){
-                factor *= this.factor;
-            }
-            this.factor = parseFloat(factor);
-            this.transform();
-        } else {
-            return this.factor;
+    scale(factor, relative) {
+        if (relative === true){
+            factor *= this.factor;
         }
+        this.factor = parseFloat(factor);
+        this.transform();
     }
     /**
      * Flips the element(s) horizontally.
      */
-    flipH(flip){
+    flipH(flip) {
         if (flip === undefined) {
             return (this.factorH !== undefined) ? (this.factorH === -1) : false;
         } else if (flip) {
@@ -247,6 +225,8 @@ class Sprite extends View {
     }
 
     setXYZ(options, relative) {
+        let transform = false;
+
         Object.keys(options).forEach(coordinate => {
             // Update the gameQuery object
             switch (coordinate) {
@@ -255,7 +235,7 @@ class Sprite extends View {
                         options.x += this.x;
                     }
                     this.x = options.x;
-                    this.transform();
+                    transform = true;
                     break;
 
                 case 'y':
@@ -263,7 +243,7 @@ class Sprite extends View {
                         options.y += this.y;
                     }
                     this.y = options.y;
-                    this.transform();
+                    transform = true;
                     break;
 
                 case 'z':
@@ -275,6 +255,8 @@ class Sprite extends View {
                     break;
             }
         });
+
+        if (transform) this.transform();
     }
 
     setWH(options, relative) {

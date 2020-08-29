@@ -5,7 +5,7 @@ const animationBase = {
     imageURL : 'img/pills.png',
     numberOfFrame : 2,
     delta : 24,
-    rate : 450,
+    refreshRate : 450,
     type : ANIMATION_VERTICAL
 };
 

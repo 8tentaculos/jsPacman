@@ -5,7 +5,7 @@ const animationBase = {
     imageURL : 'img/bots.png',
     numberOfFrame : 4,
     delta : 64,
-    rate : 60,
+    refreshRate : 60,
     offsetY : 60,
     type : ANIMATION_HORIZONTAL
 };
