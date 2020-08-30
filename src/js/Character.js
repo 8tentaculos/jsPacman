@@ -33,7 +33,7 @@ class Character extends Item {
 
         this.pauseAnimation();
 
-        this.on('item:tile', (t) => {
+        this.on('item:tile', (tile) => {
             this._setNextAnimation();
         });
 
@@ -87,11 +87,7 @@ class Character extends Item {
         if (this._lastX !== this.x || this._lastY != this.y) {
             // _offsetY stuff is for bonus movement up and down
             if (this._offsetY === undefined) this._offsetY = 0;
-            // Actually move element.
-            // this.setXYZ({
-            //     x : this.x - this.hw,
-            //     y : this.y - this.hh + this._offsetY
-            // });
+
             this.setXYZ({
                 x : this.x,
                 y : this.y + this._offsetY

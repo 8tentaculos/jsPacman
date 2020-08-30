@@ -112,7 +112,7 @@ describe('Item', function() {
                 default : {
                     imageURL : '../img/pills.png',
                     numberOfFrame : 1,
-                    offsetx : 12
+                    offsetX : 12
                 }
             }
         });

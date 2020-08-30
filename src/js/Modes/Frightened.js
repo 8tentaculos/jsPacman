@@ -31,9 +31,10 @@ class Frightened extends Mode {
 
     setAnimation() {
         if (this.ghost.frightenedTime - this.ghost.frightenedTime * 0.2 > ts() - this._startTime) {
-            this.ghost.animation = this.ghost.animations.frightened;
-        } else
-            this.ghost.animation = this.ghost.animations.frightenedBlink;
+            this.ghost._nextAnimation = this.ghost.animations.frightened;
+        } else {
+            this.ghost._nextAnimation = this.ghost.animations.frightenedBlink;
+        }
     }
 
     exit() {

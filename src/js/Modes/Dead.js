@@ -15,7 +15,7 @@ class Dead extends Mode {
 
     onEnter() {
         this._prepareEnter = false;
-        this.ghost.animation =  this.ghost.animations[`score${this.ghost.score}`];
+        this.ghost._nextAnimation =  this.ghost.animations[`score${this.ghost.score}`];
         this.ghost.render();
     }
 
@@ -58,16 +58,16 @@ class Dead extends Mode {
 
     setAnimation() {
         if (this.ghost.dir === 'u') {
-            this.ghost.animation = this.ghost.animations.deadUp;
+            this.ghost._nextAnimation = this.ghost.animations.deadUp;
         }
         if (this.ghost.dir === 'r') {
-            this.ghost.animation = this.ghost.animations.deadRight;
+            this.ghost._nextAnimation = this.ghost.animations.deadRight;
         }
         if (this.ghost.dir === 'd') {
-            this.ghost.animation = this.ghost.animations.deadDown;
+            this.ghost._nextAnimation = this.ghost.animations.deadDown;
         }
         if (this.ghost.dir === 'l') {
-            this.ghost.animation = this.ghost.animations.deadLeft;
+            this.ghost._nextAnimation = this.ghost.animations.deadLeft;
         }
     }
 

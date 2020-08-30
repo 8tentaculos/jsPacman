@@ -18,11 +18,11 @@ export default (options) => new Item({
         }),
         'yellow' : new Animation({
             ...animationBase,
-            offsetx : 24 + 8
+            offsetX : 24 + 8
         }),
         'red' : new Animation({
             ...animationBase,
-            offsetx : (24 + 8) * 2
+            offsetX : (24 + 8) * 2
         })
     },
     ...options

@@ -241,7 +241,7 @@ class Ghost extends Character {
         }
     }
 
-    _setAnimation() {
+    _setNextAnimation() {
         this.mode.setAnimation();
     }
 

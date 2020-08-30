@@ -52,7 +52,7 @@ class Mode {
 
     _getTarget() {}
 
-    setAnimation() {
+    setAnimation () {
         Character.prototype._setNextAnimation.call(this.ghost);
     }
 
