@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import Character from '../Character';
 import ts from '../helper/ts';
 import getDistance from '../helper/getDistance';

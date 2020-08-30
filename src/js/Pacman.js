@@ -34,12 +34,20 @@ const animations = {
 const defaults = {
     animations,
     dir : 'l',
-    defaultAnimation : 'left'
+    defaultAnimation : 'left',
+    preturn : true,
+    frightenedSpeed : null,
+    frightenedDotSpeed : null,
+    dotSpeed : null
 };
 
 class Pacman extends Character {
     constructor(options) {
         super(options);
+
+        Object.keys(defaults).forEach(key => {
+            if (key in options) this[key] = options[key];
+        });
 
         const {
             addGameGhostEatEventListener,
@@ -50,21 +58,21 @@ class Pacman extends Character {
         this._ghostFrightened = 0;
 
         // Change tile. Set direction.
-        this.on('item:tile', (t) => {
+        this.on('item:tile', (tile) => {
             if (this._ghostFrightened) this._speed = this.frightenedSpeed;
             else this._speed = this.speed;
 
-            if (t.item) {
-                if (t.hasPill()) { // Pill!
-                    this.emit('item:eatpill', t);
+            if (tile.item) {
+                if (tile.hasPill()) { // Pill!
+                    this.emit('item:eatpill', tile);
                 }
-                else if (t.hasDot()) { // Dot!
-                    this.emit('item:eatdot', t);
+                else if (tile.hasDot()) { // Dot!
+                    this.emit('item:eatdot', tile);
                     if (this._ghostFrightened) this._speed = this.frightenedDotSpeed;
                     else this._speed = this.dotSpeed;
                 }
-                t.item.destroy();
-                delete t.item;
+                tile.item.destroy();
+                tile.item = null;
             }
 
         });

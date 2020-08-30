@@ -1,6 +1,4 @@
 import chai from 'chai';
-import $ from 'jquery';
-import '../src/js/jquery.gamequery-0.7.1';
 import Scaling from '../src/js/Scaling';
 import Map from '../src/js/Map';
 import map1 from '../src/js/maps/map-1';

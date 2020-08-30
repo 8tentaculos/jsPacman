@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import Tile from './Tile.js';
 
 class Map {

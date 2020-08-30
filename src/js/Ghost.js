@@ -102,7 +102,10 @@ const defaults = {
     blinky : null,
     getChaseTarget : function() {
         return this.pacmanData.tile;
-    }
+    },
+    tunnelSpeed : null,
+    frightenedSpeed : null,
+    frightenedFlashes : null
 };
 
 class Ghost extends Character {

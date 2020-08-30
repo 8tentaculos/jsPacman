@@ -6,8 +6,7 @@ const defaults = {
     step : 10,
     speed : 80,
     dir : null,
-    preturn : false,
-    scileatterTarget : 3
+    preturn : false
 };
 
 const animationLabelsByDirections = {
@@ -201,21 +200,10 @@ class Character extends Item {
             }
         }
         // Pass away limits.
-        // if (this.x < 0 - this.hw) this.x = this.map.w * this.map.tw + this.hw;
-        // if (this.x > this.map.w * this.map.tw + this.hw) this.x = 0 - this.hw;
-        // if (this.y < 0 - this.hh) this.y = this.map.h * this.map.th + this.hh;
-        // if (this.y > this.map.h * this.map.th + this.hh) this.y = 0 - this.hh;
-
-        // if (this.x < 0 - this.offsetx) this.x = this.map.width * this.map.tileWidth + this.offsetX;
-        // if (this.x > this.map.width * this.map.tileWidth + this.offsetX) this.x = 0 - this.offsetX;
-        // if (this.y < 0 - this.offsetY) this.y = this.map.height * this.map.tileHeight + this.offsetY;
-        // if (this.y > this.map.height * this.map.tileHeight + this.offsetY) this.y = 0 - this.offsetY;
         if (this.x < 0) this.x = this.map.width * this.map.tileWidth;
         if (this.x > this.map.width * this.map.tileWidth) this.x = 0;
         if (this.y < 0) this.y = this.map.height * this.map.tileHeight;
         if (this.y > this.map.height * this.map.tileHeight) this.y = 0;
-
-
 
         tile = this.getTile();
 

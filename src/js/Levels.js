@@ -73,8 +73,8 @@ export default function(level, key) {
     var i = keys.length;
 
     while(i--) {
-        var spl = keys[i].split('.');
-        if (spl[0] === key) obj[spl[1]] = data[level - 1][i];
+        var parts = keys[i].split('.');
+        if (parts[0] === key) obj[parts[1]] = data[level - 1][i];
     }
 
     return obj;

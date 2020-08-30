@@ -33,7 +33,7 @@ export default {
         rules : [
             {
                 test : /\.js$/,
-                exclude : /(node_modules|jquery\.gamequery\-0\.7\.1\.js)/,
+                exclude : /node_modules/,
                 use : {
                     loader : 'babel-loader'
                 }
