@@ -16,7 +16,7 @@ class Dead extends Mode {
     onEnter() {
         this._prepareEnter = false;
         this.ghost._nextAnimation =  this.ghost.animations[`score${this.ghost.score}`];
-        this.ghost.render();
+        this.ghost.update();
     }
 
     move() {
@@ -47,7 +47,7 @@ class Dead extends Mode {
 
             this.setAnimation();
 
-            this.ghost.render();
+            this.ghost.update();
 
         } else {
 

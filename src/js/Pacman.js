@@ -105,7 +105,7 @@ class Pacman extends Character {
                 var directions = {'d' : 'l', 'l' : 'u', 'u' : 'r', 'r' : 'd'};
                 this.dir = directions[this.dir];
                 this._setNextAnimation();
-                this.render();
+                this.update();
                 this._eatenTurnsFrames = 5;
             } else this._eatenTurnsFrames = 25;
 

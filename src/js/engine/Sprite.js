@@ -26,7 +26,8 @@ const defaults = {
     factorV : 1,
     animations : {},
     defaultAnimation : 'default',
-    normalizeRefrashRate : null
+    normalizeRefrashRate : null,
+    type : null
 };
 
 class Sprite extends View {

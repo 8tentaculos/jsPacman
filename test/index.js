@@ -163,7 +163,7 @@ describe('Pacman', function() {
     it('Should be centered', function() {
         pacman.x = 16;
         pacman.y = 20;
-        pacman.render();
+        pacman.update();
 
         pacman._isCentered().should.equal(true);
     });

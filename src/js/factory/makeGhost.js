@@ -2,10 +2,16 @@ import Animation from '../engine/Animation';
 import Ghost, { animations, animationBase } from '../Ghost';
 import getDistance from '../helper/getDistance';
 
+export const SPRITE_PINKY = 'SPRITE_PINKY';
+export const SPRITE_BLINKY = 'SPRITE_BLINKY';
+export const SPRITE_INKY = 'SPRITE_INKY';
+export const SPRITE_SUE = 'SPRITE_SUE';
+
 export default (label, options) => {
     // Pink Ghost
     if (label === 'pinky') {
         options = Object.assign({
+            type : SPRITE_PINKY,
             dir : 'd',
             defaultAnimation : 'down',
             getChaseTarget : function() {
@@ -44,6 +50,7 @@ export default (label, options) => {
     // Red Ghost
     if (label === 'blinky') {
         options = Object.assign({
+            type : SPRITE_BLINKY,
             dir : 'l',
             waitTime : 0,
             scatterTarget : 25,
@@ -79,6 +86,7 @@ export default (label, options) => {
     // Cyan Ghost
     if (label === 'inky') {
         options = Object.assign({
+            type : SPRITE_INKY,
             dir : 'u',
             waitTime : 6,
             scatterTarget : 979,
@@ -124,6 +132,7 @@ export default (label, options) => {
     // Orange Ghost
     if (label === 'sue') {
         options = Object.assign({
+            type : SPRITE_SUE,
             dir : 'u',
             waitTime : 8,
             scatterTarget : 953,

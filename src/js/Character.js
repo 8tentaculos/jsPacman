@@ -72,8 +72,12 @@ class Character extends Item {
 
     reset() {
         Object.assign(this, this._defaults);
+        this.setXYZ({
+            x : this.x,
+            y : this.y + this._offsetY
+        });
+        this.setAnimation(this.animation);
         this.pauseAnimation();
-        this.update();
     }
 
     update() {
