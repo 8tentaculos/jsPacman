@@ -16,6 +16,10 @@ class Item extends Sprite {
         return this.map.getTile(this.x, this.y, true);
     }
 
+    destroy() {
+        super.destroy({ remove : true });
+    }
+
     hide() {
         this.el.style.display = 'none';
     }
