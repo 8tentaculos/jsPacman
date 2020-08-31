@@ -139,7 +139,6 @@ class JsPacman extends Game {
         if (!this._win) {
             this.model.lives = this.defaultLives + 1;
             this.model.score = 0;
-            this.extraLife = false;
         }
 
         this.keyTracker.clear();

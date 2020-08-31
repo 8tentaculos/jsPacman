@@ -8,7 +8,7 @@ class GameModel extends Model {
             highScore : 0,
             lives : 3,
             extraLives : 1,
-            extraLifeScore : 10000,
+            extraLifeScore : 2000,
             ...attrs
         });
     }
@@ -16,8 +16,8 @@ class GameModel extends Model {
     addScore(score) {
         this.score = this.score + score;
 
-        if (this.extraLife && this.score >= this.extraLifeScore) {
-            this.extraLife--;
+        if (this.extraLives && this.score >= this.extraLifeScore) {
+            this.extraLives--;
             this.lives++;
         }
 
