@@ -681,11 +681,11 @@ class JsPacman extends Game {
         this.sound.play('life');
     }
 
-    template() {
+    template(model) {
         return `
             <div class="score">
                 <div class="p1-score">1UP<br /><span>00</span></div>
-                <div class="high-score">HIGH SCORE<br /><span>00</span></div>
+                <div class="high-score">HIGH SCORE<br /><span>${model.highScore || '00'}</span></div>
                 <div class="p2-score">2UP<br /><span>00</span></div>
             </div>
             <div class="start-p1" style="display: none">PLAYER ONE</div>
