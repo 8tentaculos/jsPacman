@@ -32,7 +32,7 @@ const defaults = {
     // Remember last input direction when arriving to intersection.
     stickyTurn : false,
 
-    soundEnabled : false,
+    soundEnabled : true,
 
     events : {
         'click .start' : 'start'
@@ -40,8 +40,12 @@ const defaults = {
 };
 
 class JsPacman extends Game {
-    constructor(options) {
+    constructor(options = {}) {
         super(options);
+
+        Object.keys(defaults).forEach(key => {
+            if (key in options) this[key] = options[key];
+        });
 
         this.model = new GameModel({
             lives : this.defaultLives,

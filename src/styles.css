@@ -57,6 +57,7 @@ body {
 .js-pacman-playground .splash {
     background-image: url(./img/start.png);
     background-size: 100% 100%;
+    background-color: #000;
     text-align: center;
     position: absolute;
     top: 0;

@@ -58,17 +58,19 @@ class Bonus extends Character {
     constructor(options) {
         super(options);
 
-        if (options.score) this.score = options.score;
+        Object.keys(defaults).forEach(key => {
+            if (key in options) this[key] = options[key];
+        })
 
         const { addPacmanPositionEventListener } = options;
 
         // Change tile.
-        this.on('item:tile', (t) => {
-            let offset;
-            if (this.y === t.y) offset = 1;
-            else offset = 2;
-            if (t.col % 2) this._offsetY = -offset;
-            else this._offsetY = offset;
+        this.on('item:tile', (tile) => {
+            // let offset;
+            // if (this.y === tile.y) offset = 1;
+            // else offset = 2;
+            // if (tile.col % 2) this._offsetY = -offset;
+            // else this._offsetY = offset;
 
             this._dir = this._nextDir;
             this._nextDir = this.getNextDirection();
@@ -95,7 +97,7 @@ class Bonus extends Character {
         Character.prototype.move.call(this, this._dir);
         // Eat or eaten!
         if (!this._eatEvent) {
-            var pacmanTile = this.pacmanData.tile, tile = this.getTile(), opposite = this._getOpDirection(this.dir);
+            var pacmanTile = this.pacmanData.tile, tile = this.getTile(), opposite = this._getOpDirection(this._dir);
             if (pacmanTile === tile || (this.pacmanData.dir === opposite && pacmanTile === tile.get(opposite))) {
                 this._eatEvent = true;
 
@@ -137,13 +139,14 @@ class Bonus extends Character {
         return nextDirection;
     }
 
-    canGo(dir, t) {
-        if (!t) t = this.ghost.getTile();
-        var nt = t.get(dir);
+    canGo(dir, tile) {
+        if (!tile) tile = this.getTile();
 
-        if (!nt) return false;
+        var nextTile = tile.get(dir);
 
-        return !nt.isWall() && !nt.isHouse();
+        if (!nextTile) return false;
+
+        return !nextTile.isWall() && !nextTile.isHouse();
     }
 
     _getTarget() {

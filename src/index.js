@@ -37,7 +37,8 @@ window.addEventListener('load', (event) => {
     const game = new GameWithPosition({
         el : document.querySelector('.js-pacman-playground'),
         width : vw * 0.85,
-        height : vh * 0.85
+        height : vh * 0.85,
+        soundEnabled : false
     });
 
 });
