@@ -1,10 +1,10 @@
-import $ from 'jquery';
 import Pacman from '../Pacman';
 
-export default (attrs) => new Pacman({
-    id : 'bot-ms-pacman',
-    preturn : true,
+export const SPRITE_MS_PACMAN = 'SPRITE_MS_PACMAN';
+
+export default (options) => new Pacman({
     x : 452,
     y : 848,
-    ...attrs
+    type : SPRITE_MS_PACMAN,
+    ...options
 });

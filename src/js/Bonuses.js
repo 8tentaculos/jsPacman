@@ -1,10 +1,8 @@
-import $ from 'jquery';
 import makeBonus from './factory/makeBonus';
 
 class Bonuses {
     constructor(options) {
         this.bonuses = [];
-        this.pg = options.pg;
 
         this.x = options.x;
         this.y = options.y;
@@ -12,14 +10,16 @@ class Bonuses {
         this.model = options.model;
 
         for (var i = 0; i < 8; i++) {
-            this.bonuses.push(makeBonus({
-                id : 'bonuses-' + i,
-                pg : options.pg,
-                scaling : options.scaling,
+            let bonus = makeBonus(i, {
                 x : options.x - i * 64,
                 y : options.y,
-                addPacmanPositionEventListener : () => {}
-            }, i));
+                factor : options.factor,
+                addPacmanPositionEventListener : () => {},
+                normalizeRefrashRate : () => 1
+            });
+
+            options.addSprite(bonus);
+            this.bonuses.push(bonus);
 
             if (i >= this.model.level) this.bonuses[i].hide();
         }

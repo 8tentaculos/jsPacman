@@ -1,39 +1,56 @@
-import $ from 'jquery';
-import './jquery.gamequery-0.7.1';
-import { View } from 'rasti';
+import Game from './engine/Game';
+import SoundManager from './SoundManager';
 import Map from './Map';
+import GameModel from './GameModel';
 import getLevelData from './Levels';
-import makeMsPacman from './factory/makeMsPacman';
 import makeGhost from './factory/makeGhost';
 import makeDot from './factory/makeDot';
 import makePill from './factory/makePill';
 import makeBonus from './factory/makeBonus';
-import GameModel from './GameModel';
+import Pacman from './Pacman';
 import Lives from './Lives';
 import Bonuses from './Bonuses';
-import Sound from './Sound';
-import Scaling from './Scaling';
+
 import ts from './helper/ts';
 
 const show = el => { el.style.display = ''; }
 const hide = el => { el.style.display = 'none'; }
 
-class Game extends View {
-    constructor(options) {
+const defaults = {
+    // Options.
+    width : 896 / 2,
+    height : 1152 / 2,
+    originalWidth : 896,
+    originalHeight : 1152,
+
+    dotScore : 10,
+    pillScore : 50,
+
+    defaultPauseFrames : 40,
+
+    defaultLives : 3,
+    // Remember last input direction when arriving to intersection.
+    stickyTurn : false,
+
+    soundEnabled : true,
+
+    events : {
+        'click .start' : 'start'
+    }
+};
+
+class JsPacman extends Game {
+    constructor(options = {}) {
         super(options);
 
-        const { w, h, window } = options;
+        Object.keys(defaults).forEach(key => {
+            if (key in options) this[key] = options[key];
+        });
 
         this.model = new GameModel({
             lives : this.defaultLives,
             highScore : window.localStorage && window.localStorage.jsPacmanHighScore || 0
         });
-
-        this.scaling = new Scaling(this.originalW, this.originalH);
-
-        this.scaling.resize(w, h);
-
-        this.el.style.fontSize = `${this.scaling.getScale() * 2}em`;
 
         this.render();
 
@@ -50,39 +67,33 @@ class Game extends View {
             load : this.$('.loadbar')
         };
 
-        this.$el = $(this.el);
+        this.keyTracker.el.addEventListener('keydown', this._onKeyDown.bind(this));
 
-        this.pg = this.$el.playground({
-            width : this.scaling.w,
-            height : this.scaling.h,
-            keyTracker : true,
-            disableCollision : true
+        this.sound = new SoundManager({
+            soundEnabled : this.soundEnabled,
+            addSound : this.addSound.bind(this)
         });
-
-        window.document.addEventListener('keydown', this._onKeyDown.bind(this));
-
-        // Configure the loading bar.
-        $.loadCallback(this._onLoadbar.bind(this));
-
-        this.sound = new Sound(this.soundEnabled);
 
         this.lives = new Lives({
             lives : this.defaultLives + 1,
             x : 40,
             y : 1124,
-            pg : this.pg,
-            scaling : this.scaling,
-            model : this.model
+            model : this.model,
+            factor : this.scaling.getFactor(),
+            addSprite : this.addSprite.bind(this)
         });
 
         this.bonuses = new Bonuses({
             level : this.model.level,
             x : 860,
             y : 1124,
-            pg : this.pg,
-            scaling : this.scaling,
-            model : this.model
+            model : this.model,
+            factor : this.scaling.getFactor(),
+            addSprite : this.addSprite.bind(this)
         });
+
+        this._onGhostEaten = this._onGhostEaten.bind(this);
+        this._onGhostEat = this._onGhostEat.bind(this);
 
         this.model.on('change:score', this._onChangeScore.bind(this));
         this.model.on('change:highScore', this._onChangeHighScore.bind(this));
@@ -91,7 +102,7 @@ class Game extends View {
 
         this.makeLevel();
 
-        this.pg.startGame(() => {
+        this.startGame(() => {
             hide(this.elements.load);
             show(this.elements.start);
         });
@@ -116,7 +127,7 @@ class Game extends View {
 
         hide(this.elements.splash);
         this.sound.play('intro');
-        this.pg.registerCallback(this.mainLoop.bind(this), 30);
+        this.addCallback(this.mainLoop.bind(this));
     }
 
     reset() {
@@ -127,14 +138,15 @@ class Game extends View {
         this.pacman.destroy();
 
         this.map.destroyItems();
+        this.off('game:ghost:eaten', this._onGhostEaten);
+        this.off('game:ghost:eat', this._onGhostEat);
 
         if (!this._win) {
             this.model.lives = this.defaultLives + 1;
             this.model.score = 0;
-            this.extraLife = false;
         }
 
-        $.gQ.keyTracker = {};
+        this.keyTracker.clear();
 
         this._inputDirection = null;
         this._globalModeTime = null;
@@ -148,12 +160,16 @@ class Game extends View {
 
         this.map = new Map(this.map);
 
-        this.pg.removeClass('maze-1 maze-2 maze-3 maze-4');
-        this.pg.addClass(this.maze);
+        this.el.classList.remove('maze-1');
+        this.el.classList.remove('maze-2');
+        this.el.classList.remove('maze-3');
+        this.el.classList.remove('maze-4');
 
-        var dotColor = 'white';
-        if (this.maze === 'maze-2') dotColor = 'yellow';
-        if (this.maze === 'maze-3') dotColor = 'red';
+        this.el.classList.add(this.maze);
+
+        var dotAnimationLabel = 'white';
+        if (this.maze === 'maze-2') dotAnimationLabel = 'yellow';
+        if (this.maze === 'maze-3') dotAnimationLabel = 'red';
 
         this._pauseFrames = 80;
 
@@ -162,30 +178,32 @@ class Game extends View {
 
         var i = this.map.tiles.length, total = 0;
         while (i--) {
-            var t = this.map.tiles[i];
-            if (t.code === '.') {
-                t.item = makeDot({
-                    defaultAnimation : dotColor,
-                    id : 'item-dot-' + i,
+            var tile = this.map.tiles[i];
+            if (tile.code === '.') {
+                let dot = makeDot({
+                    defaultAnimation : dotAnimationLabel,
                     map : this.map,
-                    pg : this.pg,
-                    scaling : this.scaling,
-                    x : t.x,
-                    y : t.y
+                    factor : this.scaling.getFactor(),
+                    normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+                    x : tile.x,
+                    y : tile.y
                 });
+                tile.item = dot;
+                this.addSprite(dot);
                 total++;
             }
 
-            if (t.code === '*') {
-                t.item = makePill({
-                    defaultAnimation : dotColor,
-                    id : 'item-pill-' + i,
+            if (tile.code === '*') {
+                let pill = makePill({
+                    defaultAnimation : dotAnimationLabel,
                     map : this.map,
-                    pg : this.pg,
-                    scaling : this.scaling,
-                    x : t.x,
-                    y : t.y
+                    factor : this.scaling.getFactor(),
+                    normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+                    x : tile.x,
+                    y : tile.y
                 });
+                tile.item = pill;
+                this.addSprite(pill);
                 total++;
             }
         }
@@ -193,11 +211,14 @@ class Game extends View {
         this.totalItems = total;
 
         // Pacman.
-        this.pacman = makeMsPacman({
+        this.pacman = new Pacman({
+            preturn : true,
+            x : 452,
+            y : 848,
             ...getLevelData(this.model.level, 'pacman'),
             map : this.map,
-            pg : this.pg,
-            scaling : this.scaling,
+            factor : this.scaling.getFactor(),
+            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
             addGameGhostEatEventListener : listener => this.on('game:ghost:eat', listener),
             addGameGhostModeFrightenedEnter : listener => this.on('game:ghost:modefrightened:enter', listener),
             addGameGhostModeFrightenedExit : listener => this.on('game:ghost:modefrightened:exit', listener)
@@ -210,25 +231,16 @@ class Game extends View {
             this.sound.play('frightened');
         });
         // Pacman eats ghost.
-        this.on('game:ghost:eaten', ghost => {
-            this.pacman.hide();
-            this._pauseFrames = 15;
-            this._showPacman = true;
-            this.model.addScore(parseInt(ghost.score));
-            this.sound.play('eat');
-        });
+        this.on('game:ghost:eaten', this._onGhostEaten);
         // Ghost eats Pacman.
-        this.on('game:ghost:eat', ghost => {
-            this._pauseFrames = this.defaultPauseFrames;
-            this._pacmanEaten = true;
-        });
+        this.on('game:ghost:eat', this._onGhostEat);
         // Pacman make die turn arround.
         this.pacman.on('item:die', (ghost) => {
             this.sound.play('eaten');
         });
         // Pacman lose.
         this.pacman.on('item:life', () => {
-            $.gQ.keyTracker = {};
+            this.keyTracker.clear();
 
             this._inputDirection = null;
             this._globalModeTime = null;
@@ -275,9 +287,11 @@ class Game extends View {
 
                 this.hideGhosts();
                 this.map.hideItems();
-                this.pacman.$el.pauseAnimation();
+                this.pacman.pauseAnimation();
             }
         });
+
+        this.addSprite(this.pacman);
 
         // Bonus.
         if (this.bonus) {
@@ -285,15 +299,15 @@ class Game extends View {
         }
 
         var bonusTile = this.map.tunnels[this.map.tunnels.length - 1];
-        this.bonus = makeBonus({
-            id : this.bonusId,
+
+        this.bonus = makeBonus(this.bonusIndex, {
             map : this.map,
-            pg : this.pg,
-            scaling : this.scaling,
             dir : 'l',
             score : this.bonusScore,
             x : bonusTile.x,
             y : bonusTile.y,
+            factor : this.scaling.getFactor(),
+            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
             addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener)
         });
 
@@ -312,12 +326,14 @@ class Game extends View {
             this.sound.play('bonus');
         });
 
+        this.addSprite(this.bonus);
+
         // Ghosts.
         const ghostAttrs = {
             ...getLevelData(this.model.level, 'ghost'),
             map : this.map,
-            pg : this.pg,
-            scaling : this.scaling,
+            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+            factor : this.scaling.getFactor(),
             addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener),
             addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener),
             addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener),
@@ -325,45 +341,50 @@ class Game extends View {
         };
 
         const pinkyTile = this.map.houseCenter.getR();
-        this.pinky = makeGhost({
+
+        this.pinky = makeGhost('pinky', {
             ...ghostAttrs,
-            id : 'bot-pinky',
-            x : pinkyTile.x - this.map.tw / 2,
+            x : pinkyTile.x - this.map.tileWidth / 2,
             y : pinkyTile.y
         });
 
         this.addEventListenersToGhost(this.pinky);
 
+        this.addSprite(this.pinky);
+
         const blinkyTile = this.map.house.getU().getR();
-        this.blinky = makeGhost({
+        this.blinky = makeGhost('blinky', {
             ...ghostAttrs,
-            id : 'bot-blinky',
-            x : blinkyTile.x - this.map.tw / 2,
+            x : blinkyTile.x - this.map.tileWidth / 2,
             y : blinkyTile.y
         });
 
         this.addEventListenersToGhost(this.blinky);
 
+        this.addSprite(this.blinky);
+
         const inkyTile = this.map.houseCenter.getL();
-        this.inky = makeGhost({
+        this.inky = makeGhost('inky', {
             ...ghostAttrs,
             blinky : this.blinky,
-            id : 'bot-inky',
             x : inkyTile.x - 16,
             y : inkyTile.y
         });
 
         this.addEventListenersToGhost(this.inky);
 
+        this.addSprite(this.inky);
+
         const sueTile = this.map.houseCenter.getR().getR();
-        this.sue = makeGhost({
+        this.sue = makeGhost('sue', {
             ...ghostAttrs,
-            id : 'bot-sue',
             x : sueTile.x + 16,
             y : sueTile.y
         });
 
         this.addEventListenersToGhost(this.sue);
+
+        this.addSprite(this.sue);
 
         show(this.elements.startReady);
 
@@ -391,10 +412,7 @@ class Game extends View {
     mainLoop() {
         if (this._win) {
             if (!this._mazeBlinkPauseFrames) {
-                if (this.pg.hasClass('blink')) {
-                    this.pg.removeClass('blink');
-                } else this.pg.addClass('blink');
-
+                this.el.classList.toggle('blink');
                 this._mazeBlinkPauseFrames = 8;
             } else this._mazeBlinkPauseFrames--;
         }
@@ -407,11 +425,11 @@ class Game extends View {
 
         if (!this._start) {
             if (!this._isGhostFrightened()) {
-                this.sound.sounds.frightened.stop();
+                // this.sound.sounds.frightened.stop();
             } else if (this._isGhostDead()) {
-                this.sound.sounds.frightened.audio.volume = 0;
+                // this.sound.sounds.frightened.audio.volume = 0;
             } else {
-                this.sound.sounds.frightened.audio.volume = 1;
+                // this.sound.sounds.frightened.audio.volume = 1;
             }
         }
 
@@ -441,7 +459,7 @@ class Game extends View {
             }
 
             if (this._win) {
-                this.pg.removeClass('blink');
+                this.el.classList.remove('blink');
                 this.start();
                 return;
             }
@@ -510,9 +528,9 @@ class Game extends View {
         this.inky.pause();
         this.sue.pause();
 
-        this.sound.muted(true);
+        this.muteSound(true);
 
-        this.pg.pauseGame();
+        this.pauseGame();
 
         this.elements.paused.style.display = '';
     }
@@ -525,9 +543,9 @@ class Game extends View {
         this.inky.resume();
         this.sue.resume();
 
-        this.sound.muted(this._muted);
+        this.muteSound.muted(this._muted);
 
-        this.pg.resumeGame();
+        this.resumeGame();
 
         hide(this.elements.paused);
     }
@@ -584,7 +602,7 @@ class Game extends View {
     }
 
     _getInputDirection() {
-        var keys = $.gQ.keyTracker;
+        var keys = this.keyTracker.keys;
 
         if (keys[38]) {
             return 'u';
@@ -605,13 +623,13 @@ class Game extends View {
         return null;
     }
 
-    _onLoadbar(percent) {
+    onLoadProgress(percent) {
         this.elements.load.querySelector('.inner').style.width = `${percent}%`;
     }
 
-    _onKeyDown(ev) {
+    _onKeyDown(event) {
         // Sound on/off.
-        if (ev.keyCode === 83) {
+        if (event.keyCode === 83) {
             // Mute Sound.
             this._muted = !this._muted;
             this.sound.muted(this._muted);
@@ -627,7 +645,7 @@ class Game extends View {
             this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
         }
         // Pause Game.
-        if (ev.keyCode === 80) {
+        if (event.keyCode === 80) {
             this._paused = !this._paused;
             if (this._paused) this.pause();
             else this.resume();
@@ -641,7 +659,7 @@ class Game extends View {
     _onChangeHighScore(model, highScore) {
         this.elements.highScore.innerText = highScore || '00';
     }
-
+    // Cange lives. Check game over.
     _onChangeLives(model, lives) {
         if (!lives) {
             // Game over.
@@ -652,17 +670,29 @@ class Game extends View {
             if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
         }
     }
-
+    // Extra life.
     _onChangeExtraLives(model, lives) {
-        // Extra life.
         this.sound.play('life');
     }
+    // Pacman eats ghost.
+    _onGhostEaten(ghost) {
+        this.pacman.hide();
+        this._pauseFrames = 15;
+        this._showPacman = true;
+        this.model.addScore(parseInt(ghost.score));
+        this.sound.play('eat');
+    }
+    // Ghost eats Pacman.
+    _onGhostEat() {
+        this._pauseFrames = this.defaultPauseFrames;
+        this._pacmanEaten = true;
+    }
 
-    template() {
+    template(model) {
         return `
             <div class="score">
                 <div class="p1-score">1UP<br /><span>00</span></div>
-                <div class="high-score">HIGH SCORE<br /><span>00</span></div>
+                <div class="high-score">HIGH SCORE<br /><span>${model.highScore || '00'}</span></div>
                 <div class="p2-score">2UP<br /><span>00</span></div>
             </div>
             <div class="start-p1" style="display: none">PLAYER ONE</div>
@@ -676,35 +706,12 @@ class Game extends View {
                 <a class="start" style="display: none">START</a>
                 <div class="loadbar"><div class="inner"></div></div>
                 <p class="keys"><span>&larr;&uarr;&darr;&rarr;</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
-                <div class="credits">&#169; 2014-2020 <span>8</span>TENTACULOS <a href="http://bitbucket.org/8tentaculos/jspacman">SOURCE+INFO</a></div>
+                <div class="credits">&#169; 2014-2020 <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman">SOURCE+INFO</a></div>
             </div>
         `;
     }
 }
 
-Object.assign(Game.prototype, {
-    // Options.
-    originalW : 896,
-    originalH : 1152,
+Object.assign(JsPacman.prototype, defaults);
 
-    dotScore : 10,
-    pillScore : 50,
-
-    defaultPauseFrames : 40,
-
-    defaultLives :  3,
-
-    // Remember last input direction when arriving to intersection.
-    stickyTurn : false,
-
-    soundEnabled : true,
-
-    // Playground.
-    pg : null,
-
-    events : {
-        'click .start' : 'start'
-    }
-});
-
-export default Game;
+export default JsPacman;

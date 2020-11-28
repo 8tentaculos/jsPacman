@@ -1,34 +1,78 @@
-import $ from 'jquery';
-import Bot from './Bot.js';
+import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation';
+import Character from './Character.js';
 
-class Pacman extends Bot {
-    constructor(attrs) {
-        super(attrs);
+const animationBase = {
+    imageURL : 'img/bots.png',
+    numberOfFrame : 4,
+    delta : 64,
+    refreshRate : 60,
+    offsetY : 60,
+    type : ANIMATION_HORIZONTAL
+};
+
+const animations = {
+    'right' : new Animation({
+        ...animationBase
+    }),
+
+    'down' : new Animation({
+        ...animationBase,
+        offsetX : 64 * 4
+    }),
+
+    'up' : new Animation({
+        ...animationBase,
+        offsetX : 64 * 8
+    }),
+
+    'left' : new Animation({
+        ...animationBase,
+        offsetX : 64 * 12
+    })
+};
+
+const defaults = {
+    animations,
+    dir : 'l',
+    defaultAnimation : 'left',
+    preturn : true,
+    frightenedSpeed : null,
+    frightenedDotSpeed : null,
+    dotSpeed : null
+};
+
+class Pacman extends Character {
+    constructor(options) {
+        super(options);
+
+        Object.keys(defaults).forEach(key => {
+            if (key in options) this[key] = options[key];
+        });
 
         const {
             addGameGhostEatEventListener,
             addGameGhostModeFrightenedEnter,
             addGameGhostModeFrightenedExit
-        } = attrs;
+        } = options;
 
         this._ghostFrightened = 0;
 
         // Change tile. Set direction.
-        this.on('item:tile', (t) => {
+        this.on('item:tile', (tile) => {
             if (this._ghostFrightened) this._speed = this.frightenedSpeed;
             else this._speed = this.speed;
 
-            if (t.item) {
-                if (t.hasPill()) { // Pill!
-                    this.emit('item:eatpill', t);
+            if (tile.item) {
+                if (tile.hasPill()) { // Pill!
+                    this.emit('item:eatpill', tile);
                 }
-                else if (t.hasDot()) { // Dot!
-                    this.emit('item:eatdot', t);
+                else if (tile.hasDot()) { // Dot!
+                    this.emit('item:eatdot', tile);
                     if (this._ghostFrightened) this._speed = this.frightenedDotSpeed;
                     else this._speed = this.dotSpeed;
                 }
-                t.item.destroy();
-                delete t.item;
+                tile.item.destroy();
+                tile.item = null;
             }
 
         });
@@ -36,7 +80,7 @@ class Pacman extends Bot {
         addGameGhostEatEventListener(ghost => {
             this._eatenTurns = 9;
             this.dir = 'r';
-            this.$el.pauseAnimation();
+            this.pauseAnimation();
         });
 
         addGameGhostModeFrightenedEnter(() => {
@@ -49,19 +93,19 @@ class Pacman extends Bot {
     }
 
     reset() {
-        Bot.prototype.reset.apply(this);
+        Character.prototype.reset.apply(this);
         this._lastEatenTurnsTime = null;
     }
 
     move() {
-        if (!this._eatenTurns) Bot.prototype.move.apply(this, arguments);
+        if (!this._eatenTurns) Character.prototype.move.apply(this, arguments);
         else if (!this._eatenTurnsFrames) {
             if (this._eatenTurns === 9) this.emit('item:die');
             if (this._eatenTurns > 2) {
                 var directions = {'d' : 'l', 'l' : 'u', 'u' : 'r', 'r' : 'd'};
                 this.dir = directions[this.dir];
-                this._setAnimation();
-                this.render();
+                this._setNextAnimation();
+                this.update();
                 this._eatenTurnsFrames = 5;
             } else this._eatenTurnsFrames = 25;
 
@@ -74,35 +118,6 @@ class Pacman extends Bot {
 
 };
 
-Object.assign(Pacman.prototype, {
-    animationBase : {
-        imageURL : 'img/bots.png',
-        numberOfFrame : 4,
-        delta : 64,
-        rate : 60,
-        offsety : 60,
-        type : $.gQ.ANIMATION_HORIZONTAL
-    },
-
-    animations : {
-        right : {},
-
-        down : {
-            offsetx : 64 * 4
-        },
-
-        up : {
-            offsetx : 64 * 8
-        },
-
-        left : {
-            offsetx : 64 * 12
-        }
-    },
-
-    dir : 'l',
-
-    defaultAnimation : 'left'
-});
+Object.assign(Pacman.prototype, defaults);
 
 export default Pacman;

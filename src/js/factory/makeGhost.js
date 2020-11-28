@@ -1,12 +1,17 @@
-import $ from 'jquery';
-import Ghost from '../Ghost';
+import Animation from '../engine/Animation';
+import Ghost, { animations, animationBase } from '../Ghost';
 import getDistance from '../helper/getDistance';
 
-export default function(attrs) {
-    if (!attrs) attrs = { id : 'bot-pinky' };
+export const SPRITE_PINKY = 'SPRITE_PINKY';
+export const SPRITE_BLINKY = 'SPRITE_BLINKY';
+export const SPRITE_INKY = 'SPRITE_INKY';
+export const SPRITE_SUE = 'SPRITE_SUE';
+
+export default (label, options) => {
     // Pink Ghost
-    if (attrs.id === 'bot-pinky') {
-        attrs = Object.assign({
+    if (label === 'pinky') {
+        options = Object.assign({
+            type : SPRITE_PINKY,
             dir : 'd',
             defaultAnimation : 'down',
             getChaseTarget : function() {
@@ -15,103 +20,119 @@ export default function(attrs) {
                 return t.get(dir).get(dir).get(dir).get(dir);
             },
             animations : {
-                right : {
-                    offsety : 252,
-                    offsetx : -2
-                },
+                ...animations,
+                right : new Animation({
+                    ...animationBase,
+                    offsetY : 252,
+                    offsetX : -2
+                }),
 
-                down : {
-                    offsety : 252,
-                    offsetx : 64 * 2 - 2
-                },
+                down : new Animation({
+                    ...animationBase,
+                    offsetY : 252,
+                    offsetX : 64 * 2 - 2
+                }),
 
-                up : {
-                    offsety : 252,
-                    offsetx : 64 * 4 - 2
-                },
+                up : new Animation({
+                    ...animationBase,
+                    offsetY : 252,
+                    offsetX : 64 * 4 - 2
+                }),
 
-                left : {
-                    offsety : 252,
-                    offsetx : 64 * 6 - 2
-                }
+                left : new Animation({
+                    ...animationBase,
+                    offsetY : 252,
+                    offsetX : 64 * 6 - 2
+                })
             }
-        }, attrs);
+        }, options);
     }
     // Red Ghost
-    if (attrs.id === 'bot-blinky') {
-        attrs = Object.assign({
+    if (label === 'blinky') {
+        options = Object.assign({
+            type : SPRITE_BLINKY,
             dir : 'l',
             waitTime : 0,
             scatterTarget : 25,
             defaultAnimation : 'left',
             animations : {
-                right : {
-                    offsety : 124,
-                    offsetx : -2
-                },
+                ...animations,
+                right : new Animation({
+                    ...animationBase,
+                    offsetY : 124,
+                    offsetX : -2
+                }),
 
-                down : {
-                    offsety : 124,
-                    offsetx : 64 * 2 - 2
-                },
+                down : new Animation({
+                    ...animationBase,
+                    offsetY : 124,
+                    offsetX : 64 * 2 - 2
+                }),
 
-                up : {
-                    offsety : 124,
-                    offsetx : 64 * 4 - 2
-                },
+                up : new Animation({
+                    ...animationBase,
+                    offsetY : 124,
+                    offsetX : 64 * 4 - 2
+                }),
 
-                left : {
-                    offsety : 124,
-                    offsetx : 64 * 6 - 2
-                }
+                left : new Animation({
+                    ...animationBase,
+                    offsetY : 124,
+                    offsetX : 64 * 6 - 2
+                })
             }
-        }, attrs);
+        }, options);
     }
     // Cyan Ghost
-    if (attrs.id === 'bot-inky') {
-        attrs = Object.assign({
+    if (label === 'inky') {
+        options = Object.assign({
+            type : SPRITE_INKY,
             dir : 'u',
             waitTime : 6,
             scatterTarget : 979,
             defaultAnimation : 'up',
             getChaseTarget : function() {
-                var pt = this.pacmanData.tile;
-                var bt = this.blinky.getTile();
+                var pacmanTile = this.pacmanData.tile;
+                var blinkyTile = this.blinky.getTile();
                 var dir = this.pacmanData.dir;
 
-                pt = pt.get(dir).get(dir); // Two tiles in front of pacman
+                pacmanTile = pacmanTile.get(dir).get(dir); // Two tiles in front of pacman
 
-                return this.map.getTile(pt.col + pt.col - bt.col, pt.row + pt.row - bt.row);
+                return this.map.getTile(pacmanTile.col + pacmanTile.col - blinkyTile.col, pacmanTile.row + pacmanTile.row - blinkyTile.row);
 
             },
             animations : {
-                right : {
-                    offsety : 316,
-                    offsetx : -2
-                },
+                ...animations,
+                right : new Animation({
+                    ...animationBase,
+                    offsetY : 316,
+                    offsetX : -2
+                }),
 
-                down : {
-                    offsety : 316,
-                    offsetx : 64 * 2 - 2
-                },
+                down : new Animation({
+                    ...animationBase,
+                    offsetY : 316,
+                    offsetX : 64 * 2 - 2
+                }),
 
-                up : {
-                    offsety : 316,
-                    offsetx : 64 * 4 - 2
-                },
+                up : new Animation({
+                    ...animationBase,
+                    offsetY : 316,
+                    offsetX : 64 * 4 - 2
+                }),
 
-                left : {
-                    offsety : 316,
-                    offsetx : 64 * 6 - 2
-                }
+                left : new Animation({
+                    ...animationBase,
+                    offsetY : 316,
+                    offsetX : 64 * 6 - 2
+                })
             }
-
-        }, attrs);
+        }, options);
     }
-
     // Orange Ghost
-    if (attrs.id === 'bot-sue') {
-        attrs = Object.assign({
+    if (label === 'sue') {
+        options = Object.assign({
+            type : SPRITE_SUE,
             dir : 'u',
             waitTime : 8,
             scatterTarget : 953,
@@ -123,30 +144,34 @@ export default function(attrs) {
                 else return this.scatterTarget;
             },
             animations : {
-                right : {
-                    offsety : 188,
-                    offsetx : -2
-                },
+                ...animations,
+                'right' : new Animation({
+                    ...animationBase,
+                    offsetY : 188,
+                    offsetX : -2
+                }),
 
-                down : {
-                    offsety : 188,
-                    offsetx : 64 * 2 - 2
-                },
+                'down' : new Animation({
+                    ...animationBase,
+                    offsetY : 188,
+                    offsetX : 64 * 2 - 2
+                }),
 
-                up : {
-                    offsety : 188,
-                    offsetx : 64 * 4 - 2
-                },
+                'up' : new Animation({
+                    ...animationBase,
+                    offsetY : 188,
+                    offsetX : 64 * 4 - 2
+                }),
 
-                left : {
-                    offsety : 188,
-                    offsetx : 64 * 6 - 2
-                }
+                'left' : new Animation({
+                    ...animationBase,
+                    offsetY : 188,
+                    offsetX : 64 * 6 - 2
+                })
            }
 
-        }, attrs);
+       }, options);
     }
 
-    return new Ghost(attrs);
-
+    return new Ghost(options);
 }

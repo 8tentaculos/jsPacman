@@ -1,28 +1,25 @@
-import $ from 'jquery';
-import { Emitter } from 'rasti';
-import makeMsPacman from './factory/makeMsPacman';
+import Pacman from './Pacman';
 
-class Lives extends Emitter {
+class Lives  {
     constructor(options) {
-        super();
-
         this.pacmans = [];
 
-        this.pg = options.pg;
         this.model = options.model;
 
         for (var i = 0; i < 5; i++) {
-            this.pacmans.push(makeMsPacman({
-                id : 'live-' + i,
-                pg : options.pg,
-                scaling : options.scaling,
+            let pacman = new Pacman({
                 x : options.x + i * 70,
                 y : options.y,
+                factor : options.factor,
                 defaultAnimation : 'right',
                 addGameGhostEatEventListener : () => {},
                 addGameGhostModeFrightenedEnter : () => {},
-                addGameGhostModeFrightenedExit : () => {}
-            }));
+                addGameGhostModeFrightenedExit : () => {},
+                normalizeRefrashRate : () => 1
+            });
+
+            options.addSprite(pacman);
+            this.pacmans.push(pacman);
 
             if (i > this.model.lives - 2) this.pacmans[i].hide();
         }

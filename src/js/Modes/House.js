@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import Bot from '../Bot';
+import Character from '../Character';
 import Mode from './Mode';
 import ts from '../helper/ts';
 
@@ -7,10 +6,10 @@ class House extends Mode {
     constructor(ghost) {
         super(ghost);
 
-        this._houseTop = this.ghost.y - this.ghost.getTile().h / 2;
-        this._houseBottom = this.ghost.y + this.ghost.getTile().h / 2;
+        this._houseTop = this.ghost.y - this.ghost.getTile().height / 2;
+        this._houseBottom = this.ghost.y + this.ghost.getTile().height / 2;
         this._exitTile = this.ghost.map.house.getR();
-        this._exitTileX = this._exitTile.x  - this.ghost.map.tw / 2;
+        this._exitTileX = this._exitTile.x  - this.ghost.map.tileWidth / 2;
     }
 
     onEnter() {
@@ -27,11 +26,11 @@ class House extends Mode {
     move() {
         if (!this._startTime) this._startTime = ts();
 
-        var t = this.ghost.getTile();
+        var tile = this.ghost.getTile();
 
-        if (!this._prepareExit && ts() - this._startTime > this.ghost.waitTime && !t.isWall()) {
+        if (!this._prepareExit && ts() - this._startTime > this.ghost.waitTime && !tile.isWall()) {
             this._prepareExit = true;
-            this.ghost.y = t.y;
+            this.ghost.y = tile.y;
         }
 
         if (this.exit()) {
@@ -52,7 +51,7 @@ class House extends Mode {
 
             this.setAnimation();
 
-            this.ghost.render();
+            this.ghost.update();
 
         } else {
 
@@ -66,14 +65,13 @@ class House extends Mode {
 
             this.setAnimation();
 
-            this.ghost.render();
-
+            this.ghost.update();
         }
     }
 
     setAnimation() {
         if (this.ghost.frightened) this.ghost.frightened.setAnimation();
-        else Bot.prototype._setAnimation.call(this.ghost);
+        else Character.prototype._setNextAnimation.call(this.ghost);
     }
 
     exit() {
@@ -87,11 +85,11 @@ class House extends Mode {
     onExit() {
         this._startTime = null;
 
-        var t = this.ghost.getTile();
+        var tile = this.ghost.getTile();
 
         this.ghost._dir = 'l';
         this.ghost._nextDir = 'l';
-        this.ghost._lastTile = t.getD();
+        this.ghost._lastTile = tile.getD();
         this.ghost._speed = this.ghost.speed;
         this.ghost.setMode();
     }

@@ -1,7 +1,5 @@
 import chai from 'chai';
-import $ from 'jquery';
-import '../src/js/jquery.gamequery-0.7.1';
-import Scaling from '../src/js/Scaling';
+import Animation from '../src/js/engine/Animation';
 import Map from '../src/js/Map';
 import map1 from '../src/js/maps/map-1';
 import Game from '../src/js/Game';
@@ -9,8 +7,7 @@ import Item from '../src/js/Item';
 import makeMsPacman from '../src/js/factory/makeMsPacman';
 
 const should = chai.should();
-let pg;
-let scaling;
+
 let map;
 
 document.body.innerHTML = '<div id="playground"></div>';
@@ -69,53 +66,23 @@ describe('Map', function() {
 
 });
 
-describe('PlayGround', function() {
-    it('Should exist and be initialized', function() {
-        let el = $('#playground');
-
-        should.exist(el);
-
-        pg = $(el).playground({width : 100, height : 100, keyTracker : true});
-
-        should.exist(pg);
-
-        pg.should.have.property('addSprite');
-
-    });
-});
-
-
-describe('Scaling', function() {
-    it('Should exist and be initialized', function() {
-        scaling = new Scaling(100, 100);
-
-        should.exist(scaling);
-    });
-});
-
 describe('Item', function() {
     let item;
 
     it('Should exist and be initialized', function() {
         item = new Item({
-            pg,
-            scaling,
             map,
-
-            id : 'test-item',
-
-            w : 4,
-            h : 4,
-
+            width : 4,
+            height : 4,
             x : 218,
             y : 424,
 
             animations : {
-                default : {
+                default : new Animation({
                     imageURL : '../img/pills.png',
                     numberOfFrame : 1,
-                    offsetx : 12
-                }
+                    offsetX : 12
+                })
             }
         });
 
@@ -125,11 +92,8 @@ describe('Item', function() {
 
     });
 
-    it('Should be positioned', function() {
+    it('Should be in a tile', function() {
         item.getTile().should.be.an('object');
-
-        item.x.should.equal(item.$el.x() + parseInt(item.w / 2));
-        item.y.should.equal(item.$el.y() + parseInt(item.h / 2));
     });
 
     it('Should bind/trigger events', function(done) {
@@ -147,8 +111,6 @@ describe('Pacman', function() {
     it('Should exist and be initialized', function() {
         pacman = makeMsPacman({
             map,
-            pg,
-            scaling,
             speed : 50,
             addGameGhostEatEventListener : () => {},
             addGameGhostModeFrightenedEnter : () => {},
@@ -165,7 +127,7 @@ describe('Pacman', function() {
     it('Should be centered', function() {
         pacman.x = 16;
         pacman.y = 20;
-        pacman.render();
+        pacman.update();
 
         pacman._isCentered().should.equal(true);
     });

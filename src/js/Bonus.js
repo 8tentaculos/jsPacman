@@ -1,20 +1,76 @@
-import $ from 'jquery';
-import Bot from './Bot';
+import Animation from './engine/Animation';
+import Character from './Character';
 import getDistance from './helper/getDistance';
 
-class Bonus extends Bot {
-    constructor(attrs) {
-        super(attrs);
+export const animationBase = {
+    imageURL : 'img/misc.png',
+    offsetY : 0,
+    offsetX : 0
+}
 
-        const { addPacmanPositionEventListener } = attrs;
+export const animations = {
+    'default' : new Animation({
+        ...animationBase
+    }),
+    'score100' : new Animation({
+        ...animationBase,
+        offsetY : 60
+    }),
+    'score200' : new Animation({
+        ...animationBase,
+        offsetX : 60,
+        offsetY : 60
+    }),
+    'score500' : new Animation({
+        ...animationBase,
+        offsetX : 60 * 2,
+        offsetY : 60
+    }),
+    'score700' : new Animation({
+        ...animationBase,
+        offsetX : 60 * 3,
+        offsetY : 60
+    }),
+    'score1000' : new Animation({
+        ...animationBase,
+        offsetX : 60 * 4,
+        offsetY : 60
+    }),
+    'score2000' : new Animation({
+        ...animationBase,
+        offsetX : 60 * 5,
+        offsetY : 60
+    }),
+    'score5000' : new Animation({
+        ...animationBase,
+        offsetX : 60 * 6,
+        offsetY : 60
+    })
+};
+
+const defaults = {
+    animations,
+    speed : 40,
+    score : '100'
+};
+
+class Bonus extends Character {
+    constructor(options) {
+        super(options);
+
+        Object.keys(defaults).forEach(key => {
+            if (key in options) this[key] = options[key];
+        })
+
+        const { addPacmanPositionEventListener } = options;
 
         // Change tile.
-        this.on('item:tile', (t) => {
-            let offset;
-            if (this.y === t.y) offset = 1;
-            else offset = 2;
-            if (t.col % 2) this._offsetY = -offset;
-            else this._offsetY = offset;
+        this.on('item:tile', (tile) => {
+            // let offset;
+            // if (this.y === tile.y) offset = 1;
+            // else offset = 2;
+            // if (tile.col % 2) this._offsetY = -offset;
+            // else this._offsetY = offset;
 
             this._dir = this._nextDir;
             this._nextDir = this.getNextDirection();
@@ -38,15 +94,15 @@ class Bonus extends Bot {
     }
 
     move() {
-        Bot.prototype.move.call(this, this._dir);
+        Character.prototype.move.call(this, this._dir);
         // Eat or eaten!
         if (!this._eatEvent) {
-            var pt = this.pacmanData.tile, t = this.getTile(), op = this._getOpDirection(this.dir);
-            if (pt === t || (this.pacmanData.dir === op && pt === t.get(op))) {
+            var pacmanTile = this.pacmanData.tile, tile = this.getTile(), opposite = this._getOpDirection(this._dir);
+            if (pacmanTile === tile || (this.pacmanData.dir === opposite && pacmanTile === tile.get(opposite))) {
                 this._eatEvent = true;
 
-                this.animation =  this.animations['score_' + this.score];
-                this.render();
+                this._nextAnimation =  this.animations[`score${this.score}`];
+                this.update();
 
                 this.emit('item:eaten', this);
             }
@@ -83,73 +139,23 @@ class Bonus extends Bot {
         return nextDirection;
     }
 
-    canGo(dir, t) {
-        if (!t) t = this.ghost.getTile();
-        var nt = t.get(dir);
+    canGo(dir, tile) {
+        if (!tile) tile = this.getTile();
 
-        if (!nt) return false;
+        var nextTile = tile.get(dir);
 
-        return !nt.isWall() && !nt.isHouse();
+        if (!nextTile) return false;
+
+        return !nextTile.isWall() && !nextTile.isHouse();
     }
 
     _getTarget() {
         return this.map.tunnels[0];
     }
 
-    _setAnimation() {}
+    _setNextAnimation() {}
 }
 
-Object.assign(Bonus.prototype, {
-    // Options.
-    dir : null,
-    // Overriden by Level
-    speed : 40,
-
-    score : '100',
-
-    animationBase : {
-        imageURL : 'img/misc.png',
-        offsety : 0,
-        offsetx : 0
-    },
-
-    animations : {
-        default : {},
-
-        score_100 : {
-            offsety : 60
-        },
-
-        score_200 : {
-            offsetx : 60,
-            offsety : 60
-        },
-
-        score_500 : {
-            offsetx : 60 * 2,
-            offsety : 60
-        },
-
-        score_700 : {
-            offsetx : 60 * 3,
-            offsety : 60
-        },
-
-        score_1000 : {
-            offsetx : 60 * 4,
-            offsety : 60
-        },
-
-        score_2000 : {
-            offsetx : 60 * 5,
-            offsety : 60
-        },
-
-        score_5000 : {
-            offsetx : 60 * 6,
-            offsety : 60
-        }
-    }
-});
+Object.assign(Bonus.prototype, defaults);
 
 export default Bonus;
