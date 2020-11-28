@@ -1,0 +1,234 @@
+body {
+    background-color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+.js-pacman-playground {
+    position: absolute;
+    color: #EFEFEF;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2em;
+    background-color: #000;
+    background-image: url('./img/maze.png');
+    background-size: 400% 200%;
+    display: none;
+    cursor: default;
+}
+
+.js-pacman-playground.with-border {
+    border-radius: 0.5em;
+    box-shadow: 0 0 1em 0.1em #EEE;
+    border: 1em solid #000;
+}
+
+.js-pacman-playground.maze-1 {
+    background-position: 0 0;
+}
+
+.js-pacman-playground.maze-2 {
+    background-position: -100% 0;
+}
+
+.js-pacman-playground.maze-3 {
+    background-position: -200% 0;
+}
+
+.js-pacman-playground.maze-4 {
+    background-position: -300% 0;
+}
+
+.js-pacman-playground.maze-1.blink {
+    background-position: 0 -100%;
+}
+
+.js-pacman-playground.maze-2.blink {
+    background-position: -100% -100%;
+}
+
+.js-pacman-playground.maze-3.blink {
+    background-position: -200% -100%;
+}
+
+.js-pacman-playground.maze-4.blink {
+    background-position: -300% -100%;
+}
+
+.js-pacman-playground .splash {
+    background-image: url(./img/start.png);
+    background-size: 100% 100%;
+    background-color: #000;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.js-pacman-playground .splash a {
+    color: #DDDDDD;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.js-pacman-playground .splash a:hover {
+    color: #FFF;
+}
+
+.js-pacman-playground .splash a.start {
+    position: relative;
+    top: 65%;
+    text-transform: uppercase;
+    font-size: 1.6em;
+}
+
+.js-pacman-playground .splash .title {
+    position: absolute;
+    top: 22.04%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #FCB644;
+}
+
+.js-pacman-playground .splash p.nerd {
+    position: absolute;
+    top: 33.15%;
+    left: 35.26%;
+    text-align: center;
+    color: #FFF;
+}
+
+.js-pacman-playground .splash p span {
+    color : #FFFF00;
+}
+
+.js-pacman-playground .splash .keys {
+    position: absolute;
+    top: 85%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #FFF;
+}
+
+.js-pacman-playground .splash .credits {
+    font-family: 'Press Start 2P', cursive;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: #FFF;
+    padding: 5px;
+    font-size: 0.6em;
+}
+
+.js-pacman-playground .splash .credits span {
+    color: #FF3333;
+}
+
+.js-pacman-playground .splash .credits a {
+    color: #FFFF00;
+}
+
+.js-pacman-playground .splash .credits a:hover {
+    color: #FFFF4D;
+}
+
+.js-pacman-playground .loadbar {
+    position: absolute;
+    top: 65%;
+    left: 22.32%;
+    right: 22.32%;
+    background: #FF0;
+    height: 3.472%;
+    overflow: visible;
+    border: 2px solid #FFF;
+}
+
+.js-pacman-playground .loadbar .inner {
+    position: relative;
+    background: #FF0000;
+    height: 100%;
+    width: 0;
+}
+
+.js-pacman-playground .score {
+    position: absolute;
+    top: 0;
+    right: 0.4464%;
+    left: 0.4464%;
+    text-align: center;
+    z-index: 2
+}
+
+.js-pacman-playground .score .p1-score {
+    position: absolute;
+    width: 22%;
+    top: 0;
+    left: 0;
+}
+
+.js-pacman-playground .score .high-score {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.js-pacman-playground .score .p2-score {
+    position: absolute;
+    width: 22%;
+    top: 0;
+    right: 0;
+}
+
+.js-pacman-playground .score span {
+    text-align: right;
+    display: block;
+}
+
+.js-pacman-playground .score .high-score span {
+    text-align: center;
+}
+
+.js-pacman-playground .start-p1 {
+    position: absolute;
+    top: 38.71%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #5EE;
+}
+
+.js-pacman-playground .game-over,
+.js-pacman-playground .start-ready,
+.js-pacman-playground .sound-status,
+.js-pacman-playground .paused {
+    position: absolute;
+    top: 55.55%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #F00;
+}
+
+.js-pacman-playground .sound-status.on span.on,
+.js-pacman-playground .sound-status span.off {
+    display : inline;
+}
+
+.js-pacman-playground .sound-status.on span.off,
+.js-pacman-playground .sound-status span.on {
+    display : none;
+}
+
+.js-pacman-playground .sound-status .wrap, .js-pacman .paused .wrap {
+    background: #000;
+}
+
+.hdn {
+    position: absolute;
+    left: -10000px;
+}
