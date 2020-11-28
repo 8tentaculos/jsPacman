@@ -34,6 +34,6 @@ Build production bundle:
 $ npm run build
 ```
 
-Licences
+Licence
 -----------
 Source code is under [MIT Licence](http://opensource.org/licenses/mit-license.php).
