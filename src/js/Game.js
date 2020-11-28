@@ -706,7 +706,7 @@ class JsPacman extends Game {
                 <a class="start" style="display: none">START</a>
                 <div class="loadbar"><div class="inner"></div></div>
                 <p class="keys"><span>&larr;&uarr;&darr;&rarr;</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
-                <div class="credits">&#169; 2014-2020 <span>8</span>TENTACULOS <a href="http://bitbucket.org/8tentaculos/jspacman">SOURCE+INFO</a></div>
+                <div class="credits">&#169; 2014-2020 <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman">SOURCE+INFO</a></div>
             </div>
         `;
     }
