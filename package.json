@@ -1,20 +1,35 @@
 {
   "name": "jsPacman",
-  "version": "0.0.1",
-  "description": "Javascript version of the classic arcade.",
-  "main": "index.html",
+  "version": "0.2.0",
+  "description": "HTML5 / JavaScript DOM based remake of the classic Ms Pac-Man game",
+  "main": "dost/index.html",
   "scripts": {
-    "test": "grunt test"
+    "start": "webpack-dev-server",
+    "build": "cross-env NODE_ENV=production webpack",
+    "test": "webpack test/*.js -o tmp/test.js && mocha --require jsdom-global/register --reporter nyan tmp/test.js",
+    "docs:publish": "npm run test && npm run build && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -m 'Updated demo' && git push https://github.com/8tentaculos/jsPacman.git gh-pages --force"
   },
-  "author": "Al",
-  "license": "",
+  "author": "Alberto Masuelli <alberto.masuelli@gmail.com> (https://github.com/8tentaculos)",
+  "license": "MIT",
   "devDependencies": {
-    "grunt": "^0.4.2",
-    "grunt-contrib-watch": "^0.5.3",
-    "grunt-contrib-connect": "^0.7.1",
-    "grunt-contrib-jshint": "^0.8.0",
-    "grunt-shell": "^0.6.4",
-    "connect-livereload": "^0.3.2",
-    "grunt-contrib-requirejs": "^0.4.3"
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
+    "babel-preset-env": "^1.7.0",
+    "chai": "^4.2.0",
+    "cross-env": "^5.2.0",
+    "css-loader": "^1.0.0",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
+    "jsdom": "15.1.1",
+    "jsdom-global": "3.0.2",
+    "mocha": "^6.1.4",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.16.3",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
+  },
+  "dependencies": {
+    "rasti": "0.0.14"
   }
 }
