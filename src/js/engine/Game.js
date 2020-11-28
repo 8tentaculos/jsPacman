@@ -3,10 +3,10 @@ import { View } from 'rasti';
 import KeyTracker from './KeyTracker';
 import Scaling from './Scaling';
 
-// Those are the possible states of the engine
-export const STATE_NEW = 0; // Not yet started for the first time
-export const STATE_RUNNING = 1; // Started and running
-export const STATE_PAUSED = 2; // Paused
+// Game states
+export const STATE_NEW = 0;
+export const STATE_RUNNING = 1;
+export const STATE_PAUSED = 2;
 
 const defaults = {
     height : 320,

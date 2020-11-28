@@ -8,7 +8,7 @@ class GameModel extends Model {
             highScore : 0,
             lives : 3,
             extraLives : 1,
-            extraLifeScore : 2000,
+            extraLifeScore : 10000,
             ...attrs
         });
     }

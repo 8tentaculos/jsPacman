@@ -28,7 +28,7 @@ const defaults = {
 
     defaultPauseFrames : 40,
 
-    defaultLives :  3,
+    defaultLives : 3,
     // Remember last input direction when arriving to intersection.
     stickyTurn : false,
 
@@ -92,6 +92,9 @@ class JsPacman extends Game {
             addSprite : this.addSprite.bind(this)
         });
 
+        this._onGhostEaten = this._onGhostEaten.bind(this);
+        this._onGhostEat = this._onGhostEat.bind(this);
+
         this.model.on('change:score', this._onChangeScore.bind(this));
         this.model.on('change:highScore', this._onChangeHighScore.bind(this));
         this.model.on('change:lives', this._onChangeLives.bind(this));
@@ -135,6 +138,8 @@ class JsPacman extends Game {
         this.pacman.destroy();
 
         this.map.destroyItems();
+        this.off('game:ghost:eaten', this._onGhostEaten);
+        this.off('game:ghost:eat', this._onGhostEat);
 
         if (!this._win) {
             this.model.lives = this.defaultLives + 1;
@@ -226,18 +231,9 @@ class JsPacman extends Game {
             this.sound.play('frightened');
         });
         // Pacman eats ghost.
-        this.on('game:ghost:eaten', ghost => {
-            this.pacman.hide();
-            this._pauseFrames = 15;
-            this._showPacman = true;
-            this.model.addScore(parseInt(ghost.score));
-            this.sound.play('eat');
-        });
+        this.on('game:ghost:eaten', this._onGhostEaten);
         // Ghost eats Pacman.
-        this.on('game:ghost:eat', ghost => {
-            this._pauseFrames = this.defaultPauseFrames;
-            this._pacmanEaten = true;
-        });
+        this.on('game:ghost:eat', this._onGhostEat);
         // Pacman make die turn arround.
         this.pacman.on('item:die', (ghost) => {
             this.sound.play('eaten');
@@ -663,7 +659,7 @@ class JsPacman extends Game {
     _onChangeHighScore(model, highScore) {
         this.elements.highScore.innerText = highScore || '00';
     }
-
+    // Cange lives. Check game over.
     _onChangeLives(model, lives) {
         if (!lives) {
             // Game over.
@@ -674,10 +670,22 @@ class JsPacman extends Game {
             if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
         }
     }
-
+    // Extra life.
     _onChangeExtraLives(model, lives) {
-        // Extra life.
         this.sound.play('life');
+    }
+    // Pacman eats ghost.
+    _onGhostEaten(ghost) {
+        this.pacman.hide();
+        this._pauseFrames = 15;
+        this._showPacman = true;
+        this.model.addScore(parseInt(ghost.score));
+        this.sound.play('eat');
+    }
+    // Ghost eats Pacman.
+    _onGhostEat() {
+        this._pauseFrames = this.defaultPauseFrames;
+        this._pacmanEaten = true;
     }
 
     template(model) {
