@@ -227,8 +227,3 @@ body {
 .js-pacman-playground .sound-status .wrap, .js-pacman .paused .wrap {
     background: #000;
 }
-
-.hdn {
-    position: absolute;
-    left: -10000px;
-}
