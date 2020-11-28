@@ -11,8 +11,8 @@ Play Demo
 
 Credits
 -----------
-Game algorithm is based on [The Pac-Man Dossier](https://pacman.holenet.info/).
-Sprites are from [spriters-resource](http://www.spriters-resource.com/game_boy_advance/namcomuseum/sheet/22732).
+* Game algorithm is based on [The Pac-Man Dossier](https://pacman.holenet.info/).
+* Sprites are from [spriters-resource](http://www.spriters-resource.com/game_boy_advance/namcomuseum/sheet/22732).
 
 Development
 -----------
@@ -25,7 +25,7 @@ Run tests:
 ```
 $ npm test
 ```
-Run local dev server at localhost:8080
+Run local dev server at `localhost:8080`
 ```
 $ npm start
 ```
