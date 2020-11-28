@@ -2,12 +2,13 @@
   "name": "jsPacman",
   "version": "0.2.0",
   "description": "HTML5 / JavaScript DOM based remake of the classic Ms Pac-Man game",
-  "main": "dost/index.html",
+  "main": "dist/index.html",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "cross-env NODE_ENV=production webpack",
+    "build": "npm run clean && cross-env NODE_ENV=production webpack",
+    "clean": "rm -f ./dist",
     "test": "webpack test/*.js -o tmp/test.js && mocha --require jsdom-global/register --reporter nyan tmp/test.js",
-    "docs:publish": "npm run test && npm run build && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -m 'Updated demo' && git push https://github.com/8tentaculos/jsPacman.git gh-pages --force"
+    "demo:publish": "npm run clean && npm run test && npm run build && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -m 'Updated demo' && git push https://github.com/8tentaculos/jsPacman.git gh-pages --force"
   },
   "author": "Alberto Masuelli <alberto.masuelli@gmail.com> (https://github.com/8tentaculos)",
   "license": "MIT",
