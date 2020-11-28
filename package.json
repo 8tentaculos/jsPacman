@@ -1,6 +1,6 @@
 {
   "name": "jsPacman",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "HTML5 / JavaScript DOM based remake of the classic Ms Pac-Man game",
   "main": "dost/index.html",
   "scripts": {
