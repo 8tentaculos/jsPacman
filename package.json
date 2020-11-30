@@ -6,10 +6,19 @@
   "scripts": {
     "start": "webpack-dev-server",
     "build": "npm run clean && cross-env NODE_ENV=production webpack",
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist ./tmp",
     "test": "webpack test/*.js -o tmp/test.js && mocha --require jsdom-global/register --reporter nyan tmp/test.js",
     "demo:publish": "npm run test && npm run build && cp CNAME ./dist/ && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -m 'Update demo' && git push https://github.com/8tentaculos/jsPacman.git gh-pages --force"
   },
+  "repository": "github:8tentaculos/jsPacman",
+  "homepage": "https://pacman.js.org",
+  "bugs": "https://github.com/8tentaculos/jsPacman/issues",
+  "keywords": [
+    "game",
+    "javascript",
+    "html5",
+    "pacman"
+  ],
   "author": "Alberto Masuelli <alberto.masuelli@gmail.com> (https://github.com/8tentaculos)",
   "license": "MIT",
   "devDependencies": {

@@ -49,7 +49,7 @@ class JsPacman extends Game {
 
         this.model = new GameModel({
             lives : this.defaultLives,
-            highScore : window.localStorage && window.localStorage.jsPacmanHighScore || 0
+            highScore : (window.localStorage && window.localStorage.jsPacmanHighScore) || 0
         });
 
         this.render();
