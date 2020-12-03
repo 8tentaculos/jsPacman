@@ -126,9 +126,7 @@ class Game extends View {
         }
     }
     /**
-     * Add a sprite to the current node. Works only on the playground or any of its sub-nodes
-     *
-     * This is a non-destructive call
+     * Add a sprite.
      */
     addSprite(sprite, callback) {
         this.scenegraph.appendChild(this.addChild(sprite).el);
@@ -141,7 +139,7 @@ class Game extends View {
             Promise.resolve();
     }
     /**
-     * Add a sound to the resource Manager
+     * Add a sound.
      */
     addSound(sound, callback) {
         this.sounds.push(sound);
@@ -153,7 +151,7 @@ class Game extends View {
             Promise.resolve();
     }
     /**
-     * Register a callback
+     * Register a callback.
      *
      * @param {function} fn the callback
      * @param {integer} rate the rate in ms at which the callback should be called (should be a multiple of the playground rate or will be rounded)
@@ -192,7 +190,7 @@ class Game extends View {
         }
     }
     /**
-     * Clear the animations and sounds
+     * Clear the animations and sounds.
      */
     clear(clearCallbacks){
         this.destroyChildren();
@@ -214,11 +212,6 @@ class Game extends View {
     }
     /**
     * Starts the game.
-    *
-    * Resources from the resource manager are preloaded if necesary
-    * Works only for the playground node.
-    *
-    * This is a non-destructive call
     */
     startGame(callback) {
         if (typeof callback === 'function') this.onStart = callback;

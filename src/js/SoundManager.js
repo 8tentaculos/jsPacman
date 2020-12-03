@@ -10,7 +10,7 @@ class SoundManager {
                 back : new Sound('audio/back.mp3', { size : 20 }),
                 dot : new Sound('audio/dot.mp3', { size : 20 }),
                 eaten : new Sound('audio/eaten.mp3'),
-                eat : new Sound('audio/eat.mp3', { size : 8 }),
+                eat : new Sound('audio/eat.mp3', { size : 4 }),
                 frightened : new Sound('audio/frightened.mp3'),
                 dead : new Sound('audio/dead.mp3', { size : 20 }),
                 bonus : new Sound('audio/bonus.mp3'),

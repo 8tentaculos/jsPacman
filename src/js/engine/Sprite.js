@@ -66,9 +66,8 @@ class Sprite extends View {
     }
 
     refresh() {
-        // Does 'this' has an animation ?
         if (!this.animation) return;
-        // Do we have anything to do?
+
         if ((this.idleCounter === this.normalizeRefrashRate(this.animation.refreshRate) - 1) && this.playing) {
             // Does 'this' loops?
             if (this.animation.type & ANIMATION_ONCE) {
@@ -121,7 +120,7 @@ class Sprite extends View {
         this.idleCounter = (this.idleCounter + 1) % this.normalizeRefrashRate(this.animation.refreshRate);
     }
     /**
-     * Stop the animation at the current frame
+     * Stop the animation at the current frame.
      */
     pauseAnimation() {
         this.playing = false;
@@ -229,7 +228,6 @@ class Sprite extends View {
         let transform = false;
 
         Object.keys(options).forEach(coordinate => {
-            // Update the gameQuery object
             switch (coordinate) {
                 case 'x':
                     if (relative) {
@@ -262,7 +260,6 @@ class Sprite extends View {
 
     setWH(options, relative) {
         Object.keys(options).forEach(coordinate => {
-            // Update the gameQuery object
             switch (coordinate) {
                 case 'w':
                     if (relative) {
