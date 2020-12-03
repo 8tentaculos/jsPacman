@@ -630,9 +630,10 @@ class JsPacman extends Game {
     _onKeyDown(event) {
         // Sound on/off.
         if (event.keyCode === 83) {
+            if (!this.soundEnabled) return;
             // Mute Sound.
             this._muted = !this._muted;
-            this.sound.muted(this._muted);
+            this.muteSound(this._muted);
 
             var el = this.elements.soundStatus;
 
