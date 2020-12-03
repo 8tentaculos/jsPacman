@@ -66,12 +66,6 @@ class Bonus extends Character {
 
         // Change tile.
         this.on('item:tile', (tile) => {
-            // let offset;
-            // if (this.y === tile.y) offset = 1;
-            // else offset = 2;
-            // if (tile.col % 2) this._offsetY = -offset;
-            // else this._offsetY = offset;
-
             this._dir = this._nextDir;
             this._nextDir = this.getNextDirection();
             this._eatEvent = false;

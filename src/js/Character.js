@@ -72,10 +72,7 @@ class Character extends Item {
 
     reset() {
         Object.assign(this, this._defaults);
-        this.setXYZ({
-            x : this.x,
-            y : this.y + this._offsetY
-        });
+        this.transform();
         this.setAnimation(this.animation);
         this.pauseAnimation();
     }
@@ -89,12 +86,9 @@ class Character extends Item {
 
         // Position change, move.
         if (this._lastX !== this.x || this._lastY != this.y) {
-            // _offsetY stuff is for bonus movement up and down
-            if (this._offsetY === undefined) this._offsetY = 0;
-
             this.setXYZ({
                 x : this.x,
-                y : this.y + this._offsetY
+                y : this.y
             });
 
             this._lastX = this.x;
