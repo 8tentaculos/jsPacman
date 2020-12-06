@@ -12,6 +12,7 @@ import Lives from './Lives';
 import Bonuses from './Bonuses';
 import ts from './helper/ts';
 
+import { KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard';
 import { SWIPE_UP, SWIPE_RIGHT, SWIPE_DOWN, SWIPE_LEFT } from './engine/Touch';
 
 const show = el => { el.style.display = ''; }
@@ -605,25 +606,44 @@ class JsPacman extends Game {
     }
 
     _getInputDirection() {
-        var keys = this.keyboard.keys;
-console.log(this._lastSwipe);
-        if (keys[38] || this._lastSwipe === SWIPE_UP) {
-            return 'u';
+        const keys = this.keyboard.keys;
+        let direction = null;
+
+        if (keys[KEY_UP]) {
+            direction = 'u';
         }
 
-        if (keys[39] || this._lastSwipe === SWIPE_RIGHT) {
-            return 'r';
+        else if (keys[KEY_RIGHT]) {
+            direction = 'r';
         }
 
-        if (keys[40] || this._lastSwipe === SWIPE_DOWN) {
-            return 'd';
+        else if (keys[KEY_DOWN]) {
+            direction = 'd';
         }
 
-        if (keys[37] || this._lastSwipe === SWIPE_LEFT) {
-            return 'l';
+        else if (keys[KEY_LEFT]) {
+            direction = 'l';
         }
 
-        return null;
+        if (direction) this._lastSwipe = null;
+
+        else if (this._lastSwipe === SWIPE_UP) {
+            direction = 'u';
+        }
+
+        else if (this._lastSwipe === SWIPE_RIGHT) {
+            direction = 'r';
+        }
+
+        else if (this._lastSwipe === SWIPE_DOWN) {
+            direction = 'd';
+        }
+
+        else if (this._lastSwipe === SWIPE_LEFT) {
+            direction = 'l';
+        }
+
+        return direction;
     }
 
     onLoadProgress(percent) {
