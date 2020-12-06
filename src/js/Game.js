@@ -10,8 +10,9 @@ import makeBonus from './factory/makeBonus';
 import Pacman from './Pacman';
 import Lives from './Lives';
 import Bonuses from './Bonuses';
-
 import ts from './helper/ts';
+
+import { SWIPE_UP, SWIPE_RIGHT, SWIPE_DOWN, SWIPE_LEFT } from './engine/Touch';
 
 const show = el => { el.style.display = ''; }
 const hide = el => { el.style.display = 'none'; }
@@ -67,7 +68,7 @@ class JsPacman extends Game {
             load : this.$('.loadbar')
         };
 
-        this.keyTracker.el.addEventListener('keydown', this._onKeyDown.bind(this));
+        this.keyboard.el.addEventListener('keydown', this._onKeyDown.bind(this));
 
         this.sound = new SoundManager({
             soundEnabled : this.soundEnabled,
@@ -146,9 +147,10 @@ class JsPacman extends Game {
             this.model.score = 0;
         }
 
-        this.keyTracker.clear();
+        this.keyboard.clear();
 
         this._inputDirection = null;
+        this._lastSwipe = null;
         this._globalModeTime = null;
         this._lastGlobalMode = null;
 
@@ -240,9 +242,10 @@ class JsPacman extends Game {
         });
         // Pacman lose.
         this.pacman.on('item:life', () => {
-            this.keyTracker.clear();
+            this.keyboard.clear();
 
             this._inputDirection = null;
+            this._lastSwipe = null;
             this._globalModeTime = null;
             this._lastGlobalMode = null;
 
@@ -602,21 +605,21 @@ class JsPacman extends Game {
     }
 
     _getInputDirection() {
-        var keys = this.keyTracker.keys;
-
-        if (keys[38]) {
+        var keys = this.keyboard.keys;
+console.log(this._lastSwipe);
+        if (keys[38] || this._lastSwipe === SWIPE_UP) {
             return 'u';
         }
 
-        if (keys[39]) {
+        if (keys[39] || this._lastSwipe === SWIPE_RIGHT) {
             return 'r';
         }
 
-        if (keys[40]) {
+        if (keys[40] || this._lastSwipe === SWIPE_DOWN) {
             return 'd';
         }
 
-        if (keys[37]) {
+        if (keys[37] || this._lastSwipe === SWIPE_LEFT) {
             return 'l';
         }
 
@@ -625,6 +628,10 @@ class JsPacman extends Game {
 
     onLoadProgress(percent) {
         this.elements.load.querySelector('.inner').style.width = `${percent}%`;
+    }
+
+    onSwipe(type, ev) {
+        this._lastSwipe = type;
     }
 
     _onKeyDown(event) {

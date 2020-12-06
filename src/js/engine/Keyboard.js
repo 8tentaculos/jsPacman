@@ -1,6 +1,6 @@
 import { View } from 'rasti';
 
-class KeyTracker extends View {
+class Keyboard extends View {
     constructor(options) {
         super({
             el : document && document.body,
@@ -23,9 +23,9 @@ class KeyTracker extends View {
     }
 }
 
-KeyTracker.prototype.events = {
+Keyboard.prototype.events = {
     keyup : 'onKeyUp',
     keydown : 'onKeyDown'
 };
 
-export default KeyTracker;
+export default Keyboard;
