@@ -1,5 +1,10 @@
 import { View } from 'rasti';
 
+export const KEY_UP = 38;
+export const KEY_RIGHT = 39;
+export const KEY_DOWN = 40;
+export const KEY_LEFT = 37;
+
 class Keyboard extends View {
     constructor(options) {
         super({
