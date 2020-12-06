@@ -2,7 +2,7 @@ import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation';
 import Character from './Character.js';
 
 const animationBase = {
-    imageURL : 'img/bots.png',
+    imageURL : 'img/characters.png',
     numberOfFrame : 4,
     delta : 64,
     refreshRate : 60,

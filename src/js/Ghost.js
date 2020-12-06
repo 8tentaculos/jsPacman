@@ -7,7 +7,7 @@ import ModeHouse from './modes/House';
 import ModeScatter from './modes/Scatter';
 
 export const animationBase = {
-    imageURL : 'img/bots.png',
+    imageURL : 'img/characters.png',
     numberOfFrame : 2,
     delta : 64,
     refreshRate : 180,
