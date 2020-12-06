@@ -1,5 +1,5 @@
 // Images
-import './img/bots.png';
+import './img/characters.png';
 import './img/maze.png';
 import './img/misc.png';
 import './img/pills.png';
