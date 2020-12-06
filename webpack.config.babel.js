@@ -55,6 +55,13 @@ export default {
                 options : {
                     name : './audio/[name].[ext]'
                 }
+            },
+            {
+                test : /\.(woff|woff2)$/,
+                loader : 'file-loader',
+                options : {
+                    name : './fonts/[name].[ext]'
+                }
             }
         ]
     },
