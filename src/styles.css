@@ -239,3 +239,15 @@ body {
 .js-pacman-playground .sound-status .wrap, .js-pacman .paused .wrap {
     background: #000;
 }
+
+@media screen and (orientation: portrait) {
+    body {
+        background-color: #000;
+    }
+
+    .js-pacman-playground.with-border {
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+    }
+}

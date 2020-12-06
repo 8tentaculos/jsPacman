@@ -1,6 +1,7 @@
 import { View } from 'rasti';
 
-import KeyTracker from './KeyTracker';
+import Keyboard from './Keyboard';
+import Touch from './Touch';
 import Scaling from './Scaling';
 
 // Game states
@@ -31,7 +32,11 @@ class Game extends View {
         this.loadedSpritesIndex = 0; // Keep track of the last loaded animation
         this.loadedSoundsIndex = 0; // Keep track of the last loaded sound
 
-        this.keyTracker = new KeyTracker();
+        this.keyboard = new Keyboard();
+
+        this.touch = new Touch({
+            onSwipe : this.onSwipe.bind(this)
+        });
 
         this.scaling = new Scaling(this.originalWidth, this.originalHeight);
         this.scaling.resize(this.width, this.height);
