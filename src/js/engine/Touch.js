@@ -1,41 +1,53 @@
 import { View } from 'rasti';
 
-export const SWIPE_UP = 'swipe:up';
-export const SWIPE_RIGHT = 'swipe:right';
-export const SWIPE_DOWN = 'swipe:down';
-export const SWIPE_LEFT = 'swipe:left';
+export const EVENT_SWIPE = 'swipe';
+
+export const EVENT_SWIPE_UP = 'swipe:up';
+export const EVENT_SWIPE_RIGHT = 'swipe:right';
+export const EVENT_SWIPE_DOWN = 'swipe:down';
+export const EVENT_SWIPE_LEFT = 'swipe:left';
 
 const defaults = {
     threshold : 100, // required min distance traveled to be considered swipe
     restraint : 150, // maximum distance allowed at the same time in perpendicular direction
-    allowedTime : 400, // maximum time allowed to travel that distance
-    onSwipe : null
+    allowedTime : 400 // maximum time allowed to travel that distance
 };
 
-class Touch {
-    constructor(options) {
-        this.el = options.el || document && document.body;
+class Touch extends View {
+    constructor(options = {}) {
+        super({
+            ...options,
+            el : options.el || (document && document.body)
+        });
 
         Object.keys(defaults).forEach((key) => {
             if (key in options) this[key] = options[key];
         });
 
-        this.el.addEventListener('touchstart', this.onTouchStart.bind(this), false);
-        this.el.addEventListener('touchend', this.onTouchEnd.bind(this), false);
+        this.onTouchStart = this.onTouchStart.bind(this);
+        this.onTouchEnd = this.onTouchEnd.bind(this);
+
+        this.el.addEventListener('touchstart', this.onTouchStart, false);
+        this.el.addEventListener('touchend', this.onTouchEnd, false);
     }
 
-    onTouchStart(ev) {
-        const touch = ev.changedTouches[0];
+    onDestroy() {
+        this.el.removeEventListener('touchstart', this.onTouchStart);
+        this.el.removeEventListener('touchend', this.onTouchEnd);
+    }
+
+    onTouchStart(event) {
+        const touch = event.changedTouches[0];
 
         this.startX = touch.pageX;
         this.startY = touch.pageY;
         this.startTime = new Date(); // record time when finger first makes contact with surface
     }
 
-    onTouchEnd(ev) {
+    onTouchEnd(event) {
         let type = null;
 
-        const touch = ev.changedTouches[0];
+        const touch = event.changedTouches[0];
 
         const distX = touch.pageX - this.startX; // get horizontal dist traveled by finger while in contact with surface
         const distY = touch.pageY - this.startY; // get vertical dist traveled by finger while in contact with surface
@@ -43,14 +55,14 @@ class Touch {
 
         if (elapsedTime <= this.allowedTime) { // first condition for awipe met
             if (Math.abs(distX) >= this.threshold && Math.abs(distY) <= this.restraint) { // 2nd condition for horizontal swipe met
-                type = (distX < 0) ? SWIPE_LEFT : SWIPE_RIGHT; // if dist traveled is negative, it indicates left swipe
+                type = (distX < 0) ? EVENT_SWIPE_LEFT : EVENT_SWIPE_RIGHT; // if dist traveled is negative, it indicates left swipe
             }
 
             else if (Math.abs(distY) >= this.threshold && Math.abs(distX) <= this.restraint) { // 2nd condition for vertical swipe met
-                type = (distY < 0) ? SWIPE_UP : SWIPE_DOWN; // if dist traveled is negative, it indicates up swipe
+                type = (distY < 0) ? EVENT_SWIPE_UP : EVENT_SWIPE_DOWN; // if dist traveled is negative, it indicates up swipe
             }
 
-            if (typeof this.onSwipe === 'function') this.onSwipe(type, ev);
+            this.emit(EVENT_SWIPE, type, event);
         }
     }
 }

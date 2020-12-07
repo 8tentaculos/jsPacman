@@ -33,10 +33,7 @@ class Game extends View {
         this.loadedSoundsIndex = 0; // Keep track of the last loaded sound
 
         this.keyboard = new Keyboard();
-
-        this.touch = new Touch({
-            onSwipe : this.onSwipe.bind(this)
-        });
+        this.touch = new Touch();
 
         this.scaling = new Scaling(this.originalWidth, this.originalHeight);
         this.scaling.resize(this.width, this.height);
@@ -64,6 +61,11 @@ class Game extends View {
         this.el.appendChild(this.scenegraph);
 
         return this;
+    }
+
+    onDestroy() {
+        this.keyboard.destroy();
+        this.touch.destroy();
     }
 
     /**
@@ -197,7 +199,7 @@ class Game extends View {
     /**
      * Clear the animations and sounds.
      */
-    clear(clearCallbacks){
+    clear(clearCallbacks) {
         this.destroyChildren();
         this.loadedSpritesIndex = 0;
         this.sounds = [];
@@ -210,7 +212,7 @@ class Game extends View {
     /**
     * Mute (or unmute) all the sounds.
     */
-    muteSound(muted){
+    muteSound(muted) {
         for (var i = this.sounds.length - 1 ; i >= 0; i --) {
             this.sounds[i].mute(muted);
         }

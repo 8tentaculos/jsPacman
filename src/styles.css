@@ -30,8 +30,11 @@ body {
 
 .js-pacman-playground.with-border {
     border-radius: 0.5em;
-    box-shadow: 0 0 1em 0.1em #EEE;
     border: 1em solid #000;
+}
+
+.js-pacman-playground.with-border.with-light {
+    box-shadow: 0 0 1em 0.1em #EEE;
 }
 
 .js-pacman-playground.maze-1 {
@@ -243,7 +246,7 @@ body {
 }
 
 @media screen and (orientation: portrait) {
-    body {
+    /* body {
         background-color: #000;
     }
 
@@ -251,5 +254,5 @@ body {
         border-radius: 0;
         box-shadow: none;
         border: none;
-    }
+    } */
 }
