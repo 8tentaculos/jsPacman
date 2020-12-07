@@ -12,8 +12,8 @@ import Lives from './Lives';
 import Bonuses from './Bonuses';
 import ts from './helper/ts';
 
-import { KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard';
-import { SWIPE_UP, SWIPE_RIGHT, SWIPE_DOWN, SWIPE_LEFT } from './engine/Touch';
+import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard';
+import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch';
 
 const show = el => { el.style.display = ''; }
 const hide = el => { el.style.display = 'none'; }
@@ -69,7 +69,9 @@ class JsPacman extends Game {
             load : this.$('.loadbar')
         };
 
-        this.keyboard.on('keydown', this._onKeyDown.bind(this));
+        this.keyboard.on(EVENT_KEY_DOWN, this._onKeyDown.bind(this));
+
+        this.touch.on(EVENT_SWIPE, this._onSwipe.bind(this));
 
         this.sound = new SoundManager({
             soundEnabled : this.soundEnabled,
@@ -627,19 +629,19 @@ class JsPacman extends Game {
 
         if (direction) this._lastSwipe = null;
 
-        else if (this._lastSwipe === SWIPE_UP) {
+        else if (this._lastSwipe === EVENT_SWIPE_UP) {
             direction = 'u';
         }
 
-        else if (this._lastSwipe === SWIPE_RIGHT) {
+        else if (this._lastSwipe === EVENT_SWIPE_RIGHT) {
             direction = 'r';
         }
 
-        else if (this._lastSwipe === SWIPE_DOWN) {
+        else if (this._lastSwipe === EVENT_SWIPE_DOWN) {
             direction = 'd';
         }
 
-        else if (this._lastSwipe === SWIPE_LEFT) {
+        else if (this._lastSwipe === EVENT_SWIPE_LEFT) {
             direction = 'l';
         }
 
@@ -650,7 +652,7 @@ class JsPacman extends Game {
         this.elements.load.querySelector('.inner').style.width = `${percent}%`;
     }
 
-    onSwipe(type, ev) {
+    _onSwipe(type, ev) {
         this._lastSwipe = type;
     }
 
