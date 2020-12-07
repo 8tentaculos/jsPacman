@@ -69,7 +69,7 @@ class JsPacman extends Game {
             load : this.$('.loadbar')
         };
 
-        this.keyboard.el.addEventListener('keydown', this._onKeyDown.bind(this));
+        this.keyboard.on('keydown', this._onKeyDown.bind(this));
 
         this.sound = new SoundManager({
             soundEnabled : this.soundEnabled,
@@ -547,7 +547,7 @@ class JsPacman extends Game {
         this.inky.resume();
         this.sue.resume();
 
-        this.muteSound.muted(this._muted);
+        this.muteSound(this._muted);
 
         this.resumeGame();
 
