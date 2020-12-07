@@ -125,8 +125,9 @@ class Game extends View {
 
             this.state = STATE_RUNNING;
 
-            if (typeof this.onStart === 'function'){
-                this.onStart();
+            if (typeof this._onReadyCallback === 'function'){
+                this._onReadyCallback();
+                this._onReadyCallback = null;
             }
             // Make the scenegraph visible
             this.scenegraph.style.visibility = 'visible';
@@ -221,7 +222,7 @@ class Game extends View {
     * Starts the game.
     */
     startGame(callback) {
-        if (typeof callback === 'function') this.onStart = callback;
+        if (typeof callback === 'function') this._onReadyCallback = callback;
         this.preload();
     }
     /**
@@ -236,7 +237,7 @@ class Game extends View {
      */
     resumeGame(callback) {
         if (this.state === STATE_PAUSED){
-            if (typeof callback === 'function') this.onStart = callback;
+            if (typeof callback === 'function') this._onReadyCallback = callback;
             this.preload();
         }
     }
