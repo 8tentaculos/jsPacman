@@ -1,4 +1,4 @@
-import { Model } from 'rasti';
+import Model from './engine/Model';
 
 class GameModel extends Model {
     constructor(attrs) {
@@ -11,11 +11,17 @@ class GameModel extends Model {
             extraLifeScore : 10000,
             ...attrs
         });
+
+        this.url = 'jsPacman';
+
+        this.on('change:score', this.onChangeScore.bind(this));
     }
 
     addScore(score) {
         this.score = this.score + score;
+    }
 
+    onChangeScore() {
         if (this.extraLives && this.score >= this.extraLifeScore) {
             this.extraLives--;
             this.lives++;
@@ -24,6 +30,10 @@ class GameModel extends Model {
         if (this.highScore < this.score) {
             this.highScore = this.score;
         }
+    }
+
+    toJSON() {
+        return { highScore : this.highScore };
     }
 }
 

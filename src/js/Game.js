@@ -50,9 +50,10 @@ class JsPacman extends Game {
         });
 
         this.model = new GameModel({
-            lives : this.defaultLives,
-            highScore : (window.localStorage && window.localStorage.jsPacmanHighScore) || 0
+            lives : this.defaultLives
         });
+
+        this.model.fetch();
 
         this.render();
 
@@ -697,7 +698,7 @@ class JsPacman extends Game {
             show(this.elements.gameOver);
             this.hideGhosts();
             this.pacman.hide();
-            if (window.localStorage) localStorage.jsPacmanHighScore = this.model.highScore;
+            this.model.save();
         }
     }
     // Extra life.
