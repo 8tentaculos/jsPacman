@@ -5,6 +5,9 @@ export const KEY_RIGHT = 39;
 export const KEY_DOWN = 40;
 export const KEY_LEFT = 37;
 
+export const EVENT_KEY_UP = 'keyup';
+export const EVENT_KEY_DOWN = 'keydown';
+
 class Keyboard extends View {
     constructor(options) {
         super({
@@ -15,12 +18,14 @@ class Keyboard extends View {
         this.keys = {};
     }
 
-    onKeyUp() {
+    onKeyUp(event) {
         this.keys[event.keyCode] = false;
+        this.emit(EVENT_KEY_UP, event);
     }
 
-    onKeyDown() {
+    onKeyDown(event) {
         this.keys[event.keyCode] = true;
+        this.emit(EVENT_KEY_DOWN, event);
     }
 
     clear() {
