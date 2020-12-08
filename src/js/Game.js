@@ -2,7 +2,6 @@ import Game from './engine/Game';
 import SoundManager from './SoundManager';
 import Map from './Map';
 import GameModel from './GameModel';
-import getLevelData from './Levels';
 import makeGhost from './factory/makeGhost';
 import makeDot from './factory/makeDot';
 import makePill from './factory/makePill';
@@ -104,6 +103,7 @@ class JsPacman extends Game {
         this.model.on('change:highScore', this._onChangeHighScore.bind(this));
         this.model.on('change:lives', this._onChangeLives.bind(this));
         this.model.on('change:extraLives', this._onChangeExtraLives.bind(this));
+        this.model.on('change:mode', this._onChangeMode.bind(this));
 
         this.makeLevel();
 
@@ -136,6 +136,8 @@ class JsPacman extends Game {
     }
 
     reset() {
+        this.model.modeTime = null;
+
         this.pinky.destroy();
         this.blinky.destroy();
         this.inky.destroy();
@@ -155,14 +157,12 @@ class JsPacman extends Game {
 
         this._inputDirection = null;
         this._lastSwipe = null;
-        this._globalModeTime = null;
-        this._lastGlobalMode = null;
 
         this.makeLevel();
     }
 
     makeLevel() {
-        Object.assign(this, getLevelData(this.model.level, 'game'));
+        Object.assign(this, this.model.getSettings('game'));
 
         this.map = new Map(this.map);
 
@@ -221,7 +221,7 @@ class JsPacman extends Game {
             preturn : true,
             x : 452,
             y : 848,
-            ...getLevelData(this.model.level, 'pacman'),
+            ...this.model.getSettings('pacman'),
             map : this.map,
             factor : this.scaling.getFactor(),
             normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
@@ -250,8 +250,7 @@ class JsPacman extends Game {
 
             this._inputDirection = null;
             this._lastSwipe = null;
-            this._globalModeTime = null;
-            this._lastGlobalMode = null;
+            this.model.modeTime = null;
 
             this.pacman.reset();
 
@@ -337,7 +336,7 @@ class JsPacman extends Game {
 
         // Ghosts.
         const ghostAttrs = {
-            ...getLevelData(this.model.level, 'ghost'),
+            ...this.model.getSettings('ghost'),
             map : this.map,
             normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
             factor : this.scaling.getFactor(),
@@ -424,11 +423,7 @@ class JsPacman extends Game {
             } else this._mazeBlinkPauseFrames--;
         }
         // Global mode.
-        var globalMode = this._getGlobalMode();
-        if (this._lastGlobalMode !== globalMode) {
-            this.emit('game:globalmode', globalMode);
-            this._lastGlobalMode = globalMode;
-        }
+        this.model.updateMode();
 
         if (!this._start) {
             if (!this._isGhostFrightened()) {
@@ -528,8 +523,6 @@ class JsPacman extends Game {
     }
 
     pause() {
-        this._pauseTime = ts();
-
         this.pinky.pause();
         this.blinky.pause();
         this.inky.pause();
@@ -539,12 +532,12 @@ class JsPacman extends Game {
 
         this.pauseGame();
 
+        this.model.pause();
+
         this.elements.paused.style.display = '';
     }
 
     resume() {
-        this._globalModeTime = ts() - this._pauseTime;
-
         this.pinky.resume();
         this.blinky.resume();
         this.inky.resume();
@@ -553,6 +546,8 @@ class JsPacman extends Game {
         this.muteSound(this._muted);
 
         this.resumeGame();
+
+        this.model.resume();
 
         hide(this.elements.paused);
     }
@@ -589,25 +584,6 @@ class JsPacman extends Game {
                 this.sue.isDead();
     }
 
-    _getGlobalMode() {
-        var times = getLevelData(1, 'times');
-
-        if (!this._globalModeTime) {
-            this._globalModeTime = ts();
-            return times[0].mode;
-        }
-        else {
-            var now = ts(), idx, total = 0;
-            var i = 0;
-            while (times[i]) {
-                total += times[i].time;
-                if (total + this._globalModeTime > now) return times[i].mode;
-                i++;
-            }
-            return times[times.length - 1].mode;
-        }
-    }
-
     _getInputDirection() {
         const keys = this.keyboard.keys;
         let direction = null;
@@ -615,33 +591,28 @@ class JsPacman extends Game {
         if (keys[KEY_UP]) {
             direction = 'u';
         }
-
         else if (keys[KEY_RIGHT]) {
             direction = 'r';
         }
-
         else if (keys[KEY_DOWN]) {
             direction = 'd';
         }
-
         else if (keys[KEY_LEFT]) {
             direction = 'l';
         }
 
-        if (direction) this._lastSwipe = null;
-
+        if (direction) {
+            this._lastSwipe = null;
+        }
         else if (this._lastSwipe === EVENT_SWIPE_UP) {
             direction = 'u';
         }
-
         else if (this._lastSwipe === EVENT_SWIPE_RIGHT) {
             direction = 'r';
         }
-
         else if (this._lastSwipe === EVENT_SWIPE_DOWN) {
             direction = 'd';
         }
-
         else if (this._lastSwipe === EVENT_SWIPE_LEFT) {
             direction = 'l';
         }
@@ -704,6 +675,10 @@ class JsPacman extends Game {
     // Extra life.
     _onChangeExtraLives(model, lives) {
         this.sound.play('life');
+    }
+    // Change global mode.
+    _onChangeMode(model, mode) {
+        this.emit('game:globalmode', mode);
     }
     // Pacman eats ghost.
     _onGhostEaten(ghost) {
