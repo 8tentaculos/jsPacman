@@ -138,6 +138,7 @@ class JsPacman extends Game {
         this.pacman.destroy();
 
         this.map.destroyItems();
+
         this.off('game:ghost:eaten', this._onGhostEaten);
         this.off('game:ghost:eat', this._onGhostEat);
 
@@ -225,9 +226,15 @@ class JsPacman extends Game {
 
         this.pacman.on('item:eatpill', t => {
             this._pauseFrames = 2;
+
             this.model.addScore(this.pillScore);
-            if (!(--this.totalItems)) this._gameOver = true;
-            this.sound.play('frightened');
+
+            this.totalItems--;
+
+            if (this.totalItems === 0) {
+                this.win();
+            }
+            else this.sound.play('frightened');
         });
         // Pacman eats ghost.
         this.on('game:ghost:eaten', this._onGhostEaten);
@@ -278,15 +285,11 @@ class JsPacman extends Game {
             this.model.addScore(this.dotScore);
 
             this.sound.play('dot');
-            // Win!!!
-            if (!(--this.totalItems)) {
-                this._pauseFrames = 120;
 
-                this._win = true;
+            this.totalItems--;
 
-                this.hideGhosts();
-                this.map.hideItems();
-                this.pacman.pauseAnimation();
+            if (this.totalItems === 0) {
+                this.win();
             }
         });
 
@@ -409,12 +412,6 @@ class JsPacman extends Game {
     }
 
     mainLoop() {
-        if (this._win) {
-            if (!this._mazeBlinkPauseFrames) {
-                this.el.classList.toggle('blink');
-                this._mazeBlinkPauseFrames = 8;
-            } else this._mazeBlinkPauseFrames--;
-        }
         // Global mode.
         this.model.updateMode();
 
@@ -442,7 +439,6 @@ class JsPacman extends Game {
             }
 
             if (this._win) {
-                this.el.classList.remove('blink');
                 this.startLevel();
                 return;
             }
@@ -529,6 +525,27 @@ class JsPacman extends Game {
         this.model.resume();
 
         hide(this.elements.paused);
+    }
+
+    win() {
+        this._pauseFrames = 120;
+        this._win = true;
+
+        let times = 14;
+        this.addCallback(() => {
+            if (times) {
+                times--;
+                this.el.classList.toggle('blink');
+                return false; // Keep running.
+            } else {
+                this.el.classList.remove('blink');
+                return true; // Remove callback.
+            }
+        }, this.refreshRate * 8);
+
+        this.hideGhosts();
+        this.map.hideItems();
+        this.pacman.pauseAnimation();
     }
 
     hideGhosts() {
@@ -642,7 +659,7 @@ class JsPacman extends Game {
     }
     // Cange lives. Check game over.
     _onChangeLives(model, lives) {
-        if (!lives) {
+        if (lives === 0) {
             // Game over.
             this._gameOver = true;
             show(this.elements.gameOver);
