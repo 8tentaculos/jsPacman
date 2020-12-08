@@ -221,21 +221,21 @@ class Game extends View {
     /**
     * Starts the game.
     */
-    startGame(callback) {
+    start(callback) {
         if (typeof callback === 'function') this._onReadyCallback = callback;
         this.preload();
     }
     /**
      * TODO
      */
-    pauseGame() {
+    pause() {
         this.state = STATE_PAUSED;
         this.scenegraph.style.visibility = 'hidden';
     }
     /**
      * Resume the game if it was paused and call the callback passed in argument once the newly added ressources are loaded.
      */
-    resumeGame(callback) {
+    resume(callback) {
         if (this.state === STATE_PAUSED){
             if (typeof callback === 'function') this._onReadyCallback = callback;
             this.preload();
