@@ -219,7 +219,7 @@ class Ghost extends Character {
 
     _onGameGlobalMode(mode) {
         if (typeof mode === 'string') mode = this.modes[mode];
-        this.globalMode = mode;
+        if (mode) this.globalMode = mode;
     }
 
     move() {

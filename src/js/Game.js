@@ -9,7 +9,6 @@ import makeBonus from './factory/makeBonus';
 import Pacman from './Pacman';
 import Lives from './Lives';
 import Bonuses from './Bonuses';
-import ts from './helper/ts';
 
 import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard';
 import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch';
@@ -136,7 +135,7 @@ class JsPacman extends Game {
     }
 
     reset() {
-        this.model.modeTime = null;
+        this.model.mode = null;
 
         this.pinky.destroy();
         this.blinky.destroy();
@@ -250,7 +249,7 @@ class JsPacman extends Game {
 
             this._inputDirection = null;
             this._lastSwipe = null;
-            this.model.modeTime = null;
+            this.model.mode = null;
 
             this.pacman.reset();
 

@@ -89,7 +89,7 @@ class GameModel extends Model {
     }
 
     updateMode() {
-        if (!this.modeTime) this.modeTime = ts();
+        if (!this.mode) this.modeTime = ts();
 
         const { times } = this.getSettings('game');
 
