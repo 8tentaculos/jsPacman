@@ -25,13 +25,7 @@ const defaults = {
 
     dotScore : 10,
     pillScore : 50,
-
-    defaultPauseFrames : 40,
-
     defaultLives : 3,
-    // Remember last input direction when arriving to intersection.
-    stickyTurn : false,
-
     soundEnabled : true,
 
     events : {
@@ -274,7 +268,7 @@ class JsPacman extends Game {
             if (this.model.lives) {
                 show(this.elements.startReady);
                 this._start = 1;
-                this._pauseFrames = this.defaultPauseFrames;
+                this._pauseFrames = 40;
             } else {
                 this._pauseFrames = 120;
             }
@@ -424,20 +418,8 @@ class JsPacman extends Game {
         // Global mode.
         this.model.updateMode();
 
-        if (!this._start) {
-            if (!this._isGhostFrightened()) {
-                // this.sound.sounds.frightened.stop();
-            } else if (this._isGhostDead()) {
-                // this.sound.sounds.frightened.audio.volume = 0;
-            } else {
-                // this.sound.sounds.frightened.audio.volume = 1;
-            }
-        }
-
         // Input
-        this._inputDirection = this.stickyTurn ?
-            (this._getInputDirection() || this._inputDirection) :
-            this._getInputDirection();
+        this._inputDirection = this._getInputDirection();
 
         // Move.
         if (!this._pauseFrames) {
@@ -476,9 +458,7 @@ class JsPacman extends Game {
                 this._showPacman = false;
             }
 
-            if (!this._pauseFramesPacman) {
-                this.pacman.move(this._inputDirection);
-            } else this._pauseFramesPacman--;
+            this.pacman.move(this._inputDirection);
 
             if (this._pacmanEaten) {
                 this.hideGhosts();
@@ -689,7 +669,7 @@ class JsPacman extends Game {
     }
     // Ghost eats Pacman.
     _onGhostEat() {
-        this._pauseFrames = this.defaultPauseFrames;
+        this._pauseFrames = 40;
         this._pacmanEaten = true;
     }
 
