@@ -29,7 +29,7 @@ const defaults = {
     soundEnabled : true,
 
     events : {
-        'click .start' : 'start'
+        'click .start' : 'startLevel'
     }
 };
 
@@ -100,13 +100,13 @@ class JsPacman extends Game {
 
         this.makeLevel();
 
-        this.startGame(() => {
+        this.start(() => {
             hide(this.elements.load);
             show(this.elements.start);
         });
     }
 
-    start() {
+    startLevel() {
         if (this._win) {
             this.model.level++;
             this.reset();
@@ -443,7 +443,7 @@ class JsPacman extends Game {
 
             if (this._win) {
                 this.el.classList.remove('blink');
-                this.start();
+                this.startLevel();
                 return;
             }
 
@@ -502,6 +502,8 @@ class JsPacman extends Game {
     }
 
     pause() {
+        super.pause();
+
         this.pinky.pause();
         this.blinky.pause();
         this.inky.pause();
@@ -509,22 +511,20 @@ class JsPacman extends Game {
 
         this.muteSound(true);
 
-        this.pauseGame();
-
         this.model.pause();
 
         this.elements.paused.style.display = '';
     }
 
     resume() {
+        super.resume();
+
         this.pinky.resume();
         this.blinky.resume();
         this.inky.resume();
         this.sue.resume();
 
         this.muteSound(this._muted);
-
-        this.resumeGame();
 
         this.model.resume();
 
