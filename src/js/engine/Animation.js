@@ -28,13 +28,9 @@ class Animation {
         });
     }
 
-    load(callback) {
+    load() {
         this.img = new Image();
         this.img.src = this.imageURL;
-
-        if (typeof callback === 'function') {
-            this.img.addEventListener('load', callback);
-        }
 
         return new Promise((resolve, reject) => {
             this.img.addEventListener('load', resolve);

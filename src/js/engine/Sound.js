@@ -1,58 +1,57 @@
+// Single AudioContext for all sounds.
+let audioCtx;
+let gainNode;
+
+// Polyfill decodeAudioData Promise-based syntax on safari.
+const decodeAudioData = (arrayBuffer) => new Promise((resolve, reject) => {
+    audioCtx.decodeAudioData(arrayBuffer, resolve, reject);
+});
+
 class Sound {
-    constructor(url, options = {}) {
-        this.pool = [];
-
-        const loop = !!options.loop;
-        const size = options.size || 1;
-
-        function makeAudio() {
-            const audio = new Audio(url);
-            audio.loop = loop;
-            return audio;
+    constructor(url) {
+        if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+            gainNode = audioCtx.createGain();
+            gainNode.connect(audioCtx.destination);
         }
 
-        for (let i = 0; i < size; i++) {
-            this.pool.push(makeAudio());
-        }
+        this.url = url;
     }
 
-    load(callback) {
-        this.pool[0].load();
-
-        if (typeof callback === 'function') {
-            this.pool[0].addEventListener('canplaythrough', callback);
-        }
-
-        return new Promise((resolve, reject) => {
-            this.pool[0].addEventListener('canplaythrough', resolve);
-        });
+    load() {
+        fetch(this.url)
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => decodeAudioData(arrayBuffer))
+            .then(audioBuffer => {
+                this.audioBuffer = audioBuffer
+                return Promise.resolve(audioBuffer);
+            });
     }
 
     play() {
-        const audio = this.pool.shift();
-        audio.play();
-        this.pool.push(audio);
-    }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
 
-    pause() {
-        this.pool[0].pause();
-    }
-
-    stop() {
-        this.pool[0].pause();
-        this.pool[0].currentTime = 0;
+        const trackSource = audioCtx.createBufferSource();
+        trackSource.buffer = this.audioBuffer;
+        trackSource.connect(gainNode);
+        trackSource.start();
     }
 
     mute(muted) {
-        this.pool.forEach(audio => { audio.muted = muted !== false; });
-    }
+        this.muted = muted !== false;
 
-    isPlaying() {
-        return this.pool[0].currentTime !== 0 || !this.pool[0].ended;
+        if (this.muted) {
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        } else {
+            gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+        }
     }
 
     isReady() {
-        return this.pool[0].readyState == this.pool[0].HAVE_ENOUGH_DATA;
+        return !!this.audioBuffer;
     }
 }
 
