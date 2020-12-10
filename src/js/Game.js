@@ -520,7 +520,7 @@ class JsPacman extends Game {
         this.inky.resume();
         this.sue.resume();
 
-        this.muteSound(this._muted);
+        this.muteSound(!!this._muted);
 
         this.model.resume();
 
@@ -643,7 +643,7 @@ class JsPacman extends Game {
             this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
         }
         // Pause Game.
-        if (event.keyCode === 80) {
+        else if (event.keyCode === 80) {
             this._paused = !this._paused;
             if (this._paused) this.pause();
             else this.resume();
