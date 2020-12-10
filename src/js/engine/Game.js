@@ -136,11 +136,11 @@ class Game extends View {
     /**
      * Add a sprite.
      */
-    addSprite(sprite, callback) {
+    addSprite(sprite) {
         this.scenegraph.appendChild(this.addChild(sprite).el);
 
         return this.state === STATE_RUNNING ?
-            sprite.load(callback).then(() => {
+            sprite.load().then(() => {
                 this.loadedSpritesIndex++;
                 return Promise.resolve();
             }) :
@@ -149,10 +149,10 @@ class Game extends View {
     /**
      * Add a sound.
      */
-    addSound(sound, callback) {
+    addSound(sound) {
         this.sounds.push(sound);
         return this.state === STATE_RUNNING ?
-            sound.load(callback).then(() => {
+            sound.load().then(() => {
                 this.loadedSoundsIndex++;
                 return Promise.resolve();
             }) :
