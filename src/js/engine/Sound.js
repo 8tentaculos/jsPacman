@@ -41,6 +41,7 @@ class Sound {
     }
 
     mute(muted) {
+        // Muted my default unless muted === false.
         this.muted = muted !== false;
 
         if (this.muted) {
