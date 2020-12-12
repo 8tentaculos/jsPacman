@@ -20,7 +20,7 @@ const times = [
 ];
 
 // This info was parsed from
-// https://home.comcast.net/~jpittman2/pacman/pacmandossier.html#LvlSpecs
+// https://pacman.holenet.info/#LvlSpecs
 var data = [
     [times, 0, "100", "80", "71", "75", "40", "20", "80", "10", "85", "90", "79", "50", "6", "5", map1, "maze-1"],
     [times, 1, "200", "90", "79", "85", "45", "30", "90", "15", "95", "95", "83", "55", "5", "5", map1, "maze-1"],
