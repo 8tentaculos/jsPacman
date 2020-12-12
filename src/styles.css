@@ -26,6 +26,7 @@ body {
     display: none;
     cursor: default;
     user-select: none;
+    touch-action: none;
 }
 
 .js-pacman-playground.with-border {
