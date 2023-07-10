@@ -24,12 +24,11 @@
   "devDependencies": {
     "@babel/core": "^7.22.5",
     "@babel/preset-env": "^7.22.7",
-    "@babel/register": "^7.6.2",
+    "@babel/register": "^7.22.5",
     "babel-loader": "^9.1.2",
     "chai": "^4.3.7",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
-    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.3",
     "jsdom": "^22.1.0",
     "jsdom-global": "3.0.2",
