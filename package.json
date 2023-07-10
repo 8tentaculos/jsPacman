@@ -8,7 +8,7 @@
     "build": "npm run clean && cross-env NODE_ENV=production webpack",
     "clean": "rimraf ./dist",
     "test": "mocha --require @babel/register --require jsdom-global/register --reporter nyan test/*.js",
-    "demo:publish": "npm run test && npm run build && cp CNAME ./dist/ && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -m 'Update demo' && git push https://github.com/8tentaculos/jsPacman.git gh-pages --force"
+    "demo:publish": "npm run test && npm run build && cp CNAME ./dist/ && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
   },
   "repository": "github:8tentaculos/jsPacman",
   "homepage": "https://pacman.js.org",
