@@ -1,18 +1,17 @@
-import path from 'path';
-import webpack from 'webpack';
-
-import HtmlWebpackPlugin from 'html-webpack-plugin';
+require('webpack');
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { NODE_ENV, PORT } = process.env;
 
-export default {
+module.exports = {
     entry : [
         './src/index'
     ],
 
     output : {
         path : path.resolve(__dirname, 'dist'),
-        filename : 'bundle.js',
+        filename : 'bundle.js'
     },
 
     ...(NODE_ENV === 'production' ? {
@@ -20,12 +19,9 @@ export default {
     } : {
         mode : 'development',
         devtool : 'inline-source-map',
-        devServer: {
+        devServer : {
             host : '0.0.0.0',
-            port : PORT || 8080,
-            watchOptions : {
-                poll : true
-            }
+            port : PORT || 8080
         }
     }),
 
@@ -40,29 +36,29 @@ export default {
             },
             {
                 test : /\.css$/,
-                use : [ 'style-loader', 'css-loader' ]
+                use : ['style-loader', 'css-loader']
             },
             {
-                test : /\.(png|svg|jpg|gif)$/,
-                loader : 'file-loader' ,
-                options : {
-                    name : './img/[name].[ext]'
+                test: /\.(png|jpe?g|gif|svg)$/i,
+                type: "asset/resource",
+                generator: {
+                    filename: './img/[name][ext]'
                 }
             },
             {
-                test : /\.mp3$/,
-                loader : 'file-loader',
-                options : {
-                    name : './audio/[name].[ext]'
+                test: /\.(mp3)$/i,
+                type: "asset/resource",
+                generator: {
+                    filename: './audio/[name][ext]'
                 }
             },
             {
-                test : /\.(woff|woff2)$/,
-                loader : 'file-loader',
-                options : {
-                    name : './fonts/[name].[ext]'
+                test: /\.(woff|woff2)$/i,
+                type: "asset/resource",
+                generator: {
+                    filename: './fonts/[name][ext]'
                 }
-            }
+            },
         ]
     },
 
