@@ -40,6 +40,6 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "rasti": "1.1.3"
+    "rasti": "1.1.4"
   }
 }
