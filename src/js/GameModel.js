@@ -2,6 +2,8 @@ import Model from './engine/Model';
 
 import ts from './helper/ts';
 
+import { MODE_SCATTER, MODE_CHASE } from './Ghost';
+
 import map1 from './maps/map-1';
 import map2 from './maps/map-2';
 import map3 from './maps/map-3';
@@ -9,14 +11,14 @@ import map4 from './maps/map-4';
 
 // TODO: Add times data for each level.
 const times = [
-    { mode : 'scatter', time : 7 },
-    { mode : 'chase', time : 20 },
-    { mode : 'scatter', time : 7 },
-    { mode : 'chase', time : 20 },
-    { mode : 'scatter', time : 5 },
-    { mode : 'chase', time : 20 },
-    { mode : 'scatter', time : 5 },
-    { mode : 'chase', time : 1000000 }
+    { mode : MODE_SCATTER, time : 7 },
+    { mode : MODE_CHASE, time : 20 },
+    { mode : MODE_SCATTER, time : 7 },
+    { mode : MODE_CHASE, time : 20 },
+    { mode : MODE_SCATTER, time : 5 },
+    { mode : MODE_CHASE, time : 20 },
+    { mode : MODE_SCATTER, time : 5 },
+    { mode : MODE_CHASE, time : 1000000 }
 ];
 
 // This info was parsed from
