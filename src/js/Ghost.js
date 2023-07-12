@@ -1,7 +1,7 @@
 import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation';
+import Timer from './engine/Timer';
 import Character from './Character';
 import getDistance from './helper/getDistance';
-import ts from './helper/ts';
 import rnd from './helper/rnd';
 
 export const MODE_SCATTER = 'scatter';
@@ -183,12 +183,13 @@ class Ghost extends Character {
     }
 
     pause() {
-        this._pauseTime = ts();
+        if (this.houseTimer) this.houseTimer.pause();
+        if (this.frightenedTimer) this.frightenedTimer.pause();
     }
 
     resume() {
-        if (this.mode === MODE_FRIGHTENED) this.frightenedStartTime += ts() - this._pauseTime;
-        if (this.mode === MODE_HOUSE && !this.hosePrepareExit) this.houseStartTime += ts() - this._pauseTime;
+        if (this.mode === MODE_FRIGHTENED) this.frightenedTimer.resume();
+        if (this.mode === MODE_HOUSE && !this.housePrepareExit) houseTimer.resume();
     }
 
     setMode(mode) {
@@ -213,8 +214,8 @@ class Ghost extends Character {
 
     shouldExitMode() {
         if (this.mode === MODE_DEAD) return this.getTile() === this.deadEnd;
-
-        else if (this.mode === MODE_FRIGHTENED) return !(this.frightenedTime > ts() - this.frightenedStartTime);
+        
+        else if (this.mode === MODE_FRIGHTENED) return this.frightenedTimer.isElapsed();
 
         else if (this.mode === MODE_HOUSE) return this.getTile() === this.houseExitTile.getU();
 
@@ -231,7 +232,7 @@ class Ghost extends Character {
                 this.update();
                 break;
             case MODE_FRIGHTENED:
-                this.frightenedStartTime = ts();
+                this.frightenedTimer = new Timer(this.frightenedTime);
                 this.emit('item:modefrightened:enter');
                 break;
             case MODE_HOUSE:
@@ -253,7 +254,7 @@ class Ghost extends Character {
                 this.emit('item:modefrightened:exit');
                 break;
             case MODE_HOUSE:
-                this.houseStartTime = null;
+                this.houseTimer = null;
 
                 this._dir = 'l';
                 this._nextDir = 'l';
@@ -314,16 +315,16 @@ class Ghost extends Character {
                     super.move(this._dir);
                 }
             } else if (this.mode === MODE_HOUSE) {
-                if (!this.houseStartTime) this.houseStartTime = ts();
+                if (!this.houseTimer) this.houseTimer = new Timer(this.waitTime);
 
                 const tile = this.getTile();
 
-                if (!this.housePrepareExit && ts() - this.houseStartTime > this.waitTime && !tile.isWall()) {
+                if (!this.housePrepareExit && this.houseTimer.isElapsed() && !tile.isWall()) {
                     this.housePrepareExit = true;
                     this.y = tile.y;
                 }
 
-                if (this.frightened && !(this.frightenedTime > ts() - this.frightenedStartTime)) {
+                if (this.frightened && this.frightenedTimer.isElapsed()) {
                     this.frightened = null;
                 }
 
@@ -364,7 +365,7 @@ class Ghost extends Character {
                 this._eatEvent = true;
                 if (this.mode === MODE_FRIGHTENED) {
                     // Ghost eaten by Pacman!
-                    this.setMode('dead');
+                    this.setMode(MODE_DEAD);
                     this.emit('item:eaten');
                 } else if (this.mode !== MODE_DEAD) {
                     // Eat Pacman!
@@ -454,7 +455,7 @@ class Ghost extends Character {
             }
         } else if (this.mode === MODE_FRIGHTENED ||
             (this.mode === MODE_HOUSE && this.frightened)) {
-            if (this.frightenedTime - this.frightenedTime * 0.2 > ts() - this.frightenedStartTime) {
+            if (this.frightenedTime - this.frightenedTime * 0.2 > this.frightenedTimer.getElapsed()) {
                 this._nextAnimation = this.animations.frightened;
             } else {
                 this._nextAnimation = this.animations.frightenedBlink;

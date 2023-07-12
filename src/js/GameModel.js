@@ -1,6 +1,6 @@
 import Model from './engine/Model';
 
-import ts from './helper/ts';
+import { ts } from './engine/Timer';
 
 import { MODE_SCATTER, MODE_CHASE } from './Ghost';
 
