@@ -208,7 +208,7 @@ class Ghost extends Character {
             this.mode = mode;
         }
 
-        this.onEnterMode();
+        this.onEnterMode(mode);
     }
 
     shouldExitMode() {
@@ -223,8 +223,8 @@ class Ghost extends Character {
         return false;
     }
 
-    onEnterMode() {
-        switch (this.mode) {
+    onEnterMode(mode) {
+        switch (mode) {
             case MODE_DEAD:
                 this.deadPrepareEnter = false;
                 this._nextAnimation = this.animations[`score${this.score}`];
