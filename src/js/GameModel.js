@@ -1,6 +1,6 @@
 import Model from './engine/Model';
 
-import { ts } from './engine/Timer';
+import Timer from './engine/Timer';
 
 import { MODE_SCATTER, MODE_CHASE } from './Ghost';
 
@@ -91,17 +91,16 @@ class GameModel extends Model {
     }
 
     updateMode() {
-        if (!this.mode) this.modeTime = ts();
+        if (!this.mode) this.modeTimer = new Timer();
 
         const { times } = this.getSettings('game');
 
-        let now = ts(),
-            total = 0,
+        let total = 0,
             i = 0;
 
         while(times[i]) {
             total += times[i].time;
-            if (total + this.modeTime > now || i === times.length - 1) {
+            if (!this.modeTimer.isElapsed(total) || i === times.length - 1) {
                 this.mode = times[i].mode;
                 break;
             }
@@ -110,11 +109,11 @@ class GameModel extends Model {
     }
 
     pause() {
-        this.pauseTime = ts();
+        if (this.modeTimer) this.modeTimer.pause();
     }
 
     resume() {
-         this.modeTime = ts() - this.pauseTime;
+        if (this.modeTimer) this.modeTimer.resume();
     }
 
     getSettings(key) {

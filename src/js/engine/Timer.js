@@ -19,8 +19,8 @@ class Timer {
         return ts() - this.start;
     }
 
-    isElapsed() {
-        return this.getElapsed() > this.time;
+    isElapsed(time = this.time) {
+        return this.getElapsed() > time;
     }
 }
 
