@@ -1,6 +1,7 @@
 require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const { NODE_ENV, PORT } = process.env;
 
@@ -65,7 +66,15 @@ module.exports = {
     plugins : [
         new HtmlWebpackPlugin({
             template : './src/index.html',
-            favicon : './src/img/favicon.png'
+            headTags : process.env.JSPACMAN_HEAD_TAGS
+        }),
+        new CopyWebpackPlugin({
+            patterns : [
+                {
+                    from : path.resolve(__dirname, 'public'),
+                    to : path.resolve(__dirname, 'dist')
+                }
+            ]
         })
     ]
 };

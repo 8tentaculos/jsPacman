@@ -34,7 +34,7 @@ class Character extends Item {
         this.pauseAnimation();
 
         this.on('item:tile', (tile) => {
-            this._setNextAnimation();
+            this.setNextAnimation();
         });
 
         this._moving = false;
@@ -68,7 +68,6 @@ class Character extends Item {
             this._defaults[key] = this[key];
         });
     }
-
 
     reset() {
         Object.assign(this, this._defaults);
@@ -131,7 +130,7 @@ class Character extends Item {
 
         var tile = this.getTile(), step, _step = this.getStep();
         // Could go that direction.
-        if ((dir != this.dir || this._preturn) && this._canGo(dir)) {
+        if ((dir != this.dir || this._preturn) && this.canGo(dir)) {
 
             if (((dir !== this.dir && dir !== this._getOpDirection()) || this._preturn) && !this._isCentered()) {
                 // Not in the center of the tile. Befor turn, set step so on next frame we get into the center.
@@ -164,13 +163,13 @@ class Character extends Item {
             // No step. Means change direction.
             if (!step) {
                 this.dir = dir;
-                this._setNextAnimation();
+                this.setNextAnimation();
             }
         }
 
         if (!step) {
             // Keep straight.
-            if (this._canGo(this.dir)) {
+            if (this.canGo(this.dir)) {
                 step = _step;
             } else {
                 // Wall.
@@ -213,7 +212,7 @@ class Character extends Item {
         return this.step * (this._speed / 100);
     }
     // Set animation according model conditions. Override on subclasses.
-    _setNextAnimation() {
+    setNextAnimation() {
         this._nextAnimation = this.animations[animationLabelsByDirections[this.dir]];
     }
     // Helper methods:
@@ -221,7 +220,7 @@ class Character extends Item {
         return oppositeDirections[dir || this.dir];
     }
     // Tile on passed direction is available for walking.
-    _canGo(dir) {
+    canGo(dir) {
         const tile = this.getTile();
 
         const nextTile = tile.get(dir);

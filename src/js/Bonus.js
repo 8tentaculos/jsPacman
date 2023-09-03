@@ -147,7 +147,7 @@ class Bonus extends Character {
         return this.map.tunnels[0];
     }
 
-    _setNextAnimation() {}
+    setNextAnimation() {}
 }
 
 Object.assign(Bonus.prototype, defaults);
