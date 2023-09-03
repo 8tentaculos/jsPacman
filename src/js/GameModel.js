@@ -1,6 +1,8 @@
 import Model from './engine/Model';
 
-import ts from './helper/ts';
+import Timer from './engine/Timer';
+
+import { MODE_SCATTER, MODE_CHASE } from './Ghost';
 
 import map1 from './maps/map-1';
 import map2 from './maps/map-2';
@@ -9,14 +11,14 @@ import map4 from './maps/map-4';
 
 // TODO: Add times data for each level.
 const times = [
-    { mode : 'scatter', time : 7 },
-    { mode : 'chase', time : 20 },
-    { mode : 'scatter', time : 7 },
-    { mode : 'chase', time : 20 },
-    { mode : 'scatter', time : 5 },
-    { mode : 'chase', time : 20 },
-    { mode : 'scatter', time : 5 },
-    { mode : 'chase', time : 1000000 }
+    { mode : MODE_SCATTER, time : 7 },
+    { mode : MODE_CHASE, time : 20 },
+    { mode : MODE_SCATTER, time : 7 },
+    { mode : MODE_CHASE, time : 20 },
+    { mode : MODE_SCATTER, time : 5 },
+    { mode : MODE_CHASE, time : 20 },
+    { mode : MODE_SCATTER, time : 5 },
+    { mode : MODE_CHASE, time : 1000000 }
 ];
 
 // This info was parsed from
@@ -89,17 +91,16 @@ class GameModel extends Model {
     }
 
     updateMode() {
-        if (!this.mode) this.modeTime = ts();
+        if (!this.mode) this.modeTimer = new Timer();
 
         const { times } = this.getSettings('game');
 
-        let now = ts(),
-            total = 0,
+        let total = 0,
             i = 0;
 
         while(times[i]) {
             total += times[i].time;
-            if (total + this.modeTime > now || i === times.length - 1) {
+            if (!this.modeTimer.isElapsed(total) || i === times.length - 1) {
                 this.mode = times[i].mode;
                 break;
             }
@@ -108,11 +109,11 @@ class GameModel extends Model {
     }
 
     pause() {
-        this.pauseTime = ts();
+        if (this.modeTimer) this.modeTimer.pause();
     }
 
     resume() {
-         this.modeTime = ts() - this.pauseTime;
+        if (this.modeTimer) this.modeTimer.resume();
     }
 
     getSettings(key) {
