@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://pacman.js.org/sitemap.xml
