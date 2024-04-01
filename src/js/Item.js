@@ -17,7 +17,7 @@ class Item extends Sprite {
     }
 
     destroy() {
-        super.destroy({ remove : true });
+        super.destroy().removeElement();
     }
 
     hide() {
