@@ -227,6 +227,7 @@ class Ghost extends Character {
     onEnterMode(mode) {
         switch (mode) {
             case MODE_DEAD:
+                this.emit('item:modefrightened:exit');
                 this.deadPrepareEnter = false;
                 this._nextAnimation = this.animations[`score${this.score}`];
                 this.update();
@@ -250,7 +251,7 @@ class Ghost extends Character {
                 this.reset();
                 break;
             case MODE_FRIGHTENED:
-                if (!this.frightened) this.setMode();
+                this.setMode();
                 this.emit('item:modefrightened:exit');
                 break;
             case MODE_HOUSE:
