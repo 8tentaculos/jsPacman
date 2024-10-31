@@ -55,11 +55,11 @@ class Pacman extends Character {
             addGameGhostModeFrightenedExit
         } = options;
 
-        this._ghostFrightened = 0;
+        this._ghostFrightened = [];
 
         // Change tile. Set direction.
         this.on('item:tile', (tile) => {
-            if (this._ghostFrightened) this._speed = this.frightenedSpeed;
+            if (this._ghostFrightened.length) this._speed = this.frightenedSpeed;
             else this._speed = this.speed;
 
             if (tile.item) {
@@ -68,7 +68,7 @@ class Pacman extends Character {
                 }
                 else if (tile.hasDot()) { // Dot!
                     this.emit('item:eatdot', tile);
-                    if (this._ghostFrightened) this._speed = this.frightenedDotSpeed;
+                    if (this._ghostFrightened.length) this._speed = this.frightenedDotSpeed;
                     else this._speed = this.dotSpeed;
                 }
                 tile.item.destroy();
@@ -83,12 +83,12 @@ class Pacman extends Character {
             this.pauseAnimation();
         });
 
-        addGameGhostModeFrightenedEnter(() => {
-            this._ghostFrightened++;
+        addGameGhostModeFrightenedEnter(ghost => {
+            this._ghostFrightened = this._ghostFrightened.filter(f => f !== ghost).concat([ghost]);
         });
 
-        addGameGhostModeFrightenedExit(() => {
-            this._ghostFrightened--;
+        addGameGhostModeFrightenedExit(ghost => {
+            this._ghostFrightened = this._ghostFrightened.filter(f => f !== ghost);
         });
     }
 
