@@ -1,6 +1,6 @@
 {
   "name": "jsPacman",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A DOM-based JavaScript remake of Ms. Pac-Man.",
   "main": "dist/index.html",
   "scripts": {
