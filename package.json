@@ -1,7 +1,7 @@
 {
   "name": "jsPacman",
   "version": "0.2.3",
-  "description": "JavaScript DOM based remake of the classic Ms. Pac-Man game",
+  "description": "A DOM-based JavaScript remake of Ms. Pac-Man.",
   "main": "dist/index.html",
   "scripts": {
     "start": "webpack serve --open",
@@ -16,7 +16,8 @@
   "keywords": [
     "game",
     "javascript",
-    "html5",
+    "dom",
+    "css",
     "pacman"
   ],
   "author": "Alberto Masuelli <alberto.masuelli@gmail.com> (https://github.com/8tentaculos)",
