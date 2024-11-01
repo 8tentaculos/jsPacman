@@ -413,7 +413,7 @@ class JsPacman extends Game {
 
     mainLoop() {
         // Global mode.
-        this.model.updateMode();
+        if (!this._start) this.model.updateMode();
 
         // Input
         this._inputDirection = this._getInputDirection();
