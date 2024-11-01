@@ -456,7 +456,7 @@ class Ghost extends Character {
             }
         } else if (this.mode === MODE_FRIGHTENED ||
             (this.mode === MODE_HOUSE && this.frightened)) {
-            if (this.frightenedTime - this.frightenedTime * 0.2 > this.frightenedTimer.getElapsed()) {
+            if (!this.frightenedTimer.isElapsed(this.frightenedTime * 0.75)) {
                 this._nextAnimation = this.animations.frightened;
             } else {
                 this._nextAnimation = this.animations.frightenedBlink;
