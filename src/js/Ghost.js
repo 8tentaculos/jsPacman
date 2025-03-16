@@ -189,7 +189,7 @@ class Ghost extends Character {
 
     resume() {
         if (this.mode === MODE_FRIGHTENED) this.frightenedTimer.resume();
-        if (this.mode === MODE_HOUSE && !this.housePrepareExit) houseTimer.resume();
+        if (this.mode === MODE_HOUSE && !this.housePrepareExit) this.houseTimer.resume();
     }
 
     setMode(mode) {
