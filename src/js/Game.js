@@ -509,7 +509,7 @@ class JsPacman extends Game {
 
         this.model.pause();
 
-        this.elements.paused.style.display = '';
+        show(this.elements.paused);
     }
 
     resume() {
