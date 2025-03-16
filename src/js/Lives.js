@@ -1,4 +1,4 @@
-import Pacman from './Pacman';
+import Pacman from './Pacman.js';
 
 class Lives  {
     constructor(options) {

@@ -1,4 +1,4 @@
-import makeBonus from './factory/makeBonus';
+import makeBonus from './factory/makeBonus.js';
 
 class Bonuses {
     constructor(options) {

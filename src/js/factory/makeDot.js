@@ -1,5 +1,5 @@
-import Animation from '../engine/Animation';
-import Item from '../Item';
+import Animation from '../engine/Animation.js';
+import Item from '../Item.js';
 
 export const animationBase = {
     imageURL : 'img/pills.png',

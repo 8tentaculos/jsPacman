@@ -1,5 +1,5 @@
-import Animation from '../engine/Animation';
-import Bonus, { animations, animationBase } from '../Bonus';
+import Animation from '../engine/Animation.js';
+import Bonus, { animations, animationBase } from '../Bonus.js';
 
 export default (index, options) => new Bonus({
     animations : {

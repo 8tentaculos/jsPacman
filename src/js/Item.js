@@ -1,4 +1,4 @@
-import Sprite from './engine/Sprite';
+import Sprite from './engine/Sprite.js';
 
 class Item extends Sprite {
     constructor(options = {}) {

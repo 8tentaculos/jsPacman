@@ -4,14 +4,14 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
         
-        <meta name="description" content="A DOM-based JavaScript remake of Ms. Pac-Man. Play Online Ms. Pac-Man.">
+        <meta name="description" content="A JavaScript DOM-based remake of the classic Ms. Pac-Man game. Play Ms. Pac-Man.">
 
         <meta name="apple-mobile-web-app-title" content="jsPacman">
         <meta name="application-name" content="jsPacman">
         <meta name="msapplication-TileColor" content="#222222">
         <meta name="theme-color" content="#222222">
 
-        <title>jsPacman - A DOM-based JavaScript remake of Ms. Pac-Man.</title>
+        <title>jsPacman - Ms. Pac-Man Remake</title>
 
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -22,8 +22,9 @@
         <%= htmlWebpackPlugin.options.headTags %>
     </head>
     <body>
-        <h1 style="position: absolute; left: -1000px;">jsPacman</h1>
-        <h2 style="position: absolute; left: -1000px;">A DOM-based JavaScript remake of Ms. Pac-Man. Play Online Ms. Pac-Man.</h2>
+        <h1 style="visibility: hidden;">jsPacman</h1>
+        <h2 style="visibility: hidden;">A JavaScript DOM-based remake of the classic Ms. Pac-Man game.</h2>
+        <h3 style="visibility: hidden;">Play Ms. Pac-Man.</h3>
         <div class="js-pacman-playground with-border"></div>
     </body>
 </html>

@@ -1,6 +1,6 @@
-import Animation from '../engine/Animation';
-import Ghost, { animations, animationBase } from '../Ghost';
-import getDistance from '../helper/getDistance';
+import Animation from '../engine/Animation.js';
+import Ghost, { animations, animationBase } from '../Ghost.js';
+import getDistance from '../helper/getDistance.js';
 
 export const SPRITE_PINKY = 'SPRITE_PINKY';
 export const SPRITE_BLINKY = 'SPRITE_BLINKY';

@@ -1,8 +1,8 @@
-import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation';
-import Timer from './engine/Timer';
-import Character from './Character';
-import getDistance from './helper/getDistance';
-import rnd from './helper/rnd';
+import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation.js';
+import Timer from './engine/Timer.js';
+import Character from './Character.js';
+import getDistance from './helper/getDistance.js';
+import rnd from './helper/rnd.js';
 
 export const MODE_SCATTER = 'scatter';
 export const MODE_CHASE = 'chase';
@@ -189,7 +189,7 @@ class Ghost extends Character {
 
     resume() {
         if (this.mode === MODE_FRIGHTENED) this.frightenedTimer.resume();
-        if (this.mode === MODE_HOUSE && !this.housePrepareExit) houseTimer.resume();
+        if (this.mode === MODE_HOUSE && !this.housePrepareExit) this.houseTimer.resume();
     }
 
     setMode(mode) {
@@ -456,7 +456,7 @@ class Ghost extends Character {
             }
         } else if (this.mode === MODE_FRIGHTENED ||
             (this.mode === MODE_HOUSE && this.frightened)) {
-            if (this.frightenedTime - this.frightenedTime * 0.2 > this.frightenedTimer.getElapsed()) {
+            if (!this.frightenedTimer.isElapsed(this.frightenedTime * 0.75)) {
                 this._nextAnimation = this.animations.frightened;
             } else {
                 this._nextAnimation = this.animations.frightenedBlink;

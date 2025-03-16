@@ -1,5 +1,5 @@
-import Animation, { ANIMATION_VERTICAL } from '../engine/Animation';
-import Item from '../Item';
+import Animation, { ANIMATION_VERTICAL } from '../engine/Animation.js';
+import Item from '../Item.js';
 
 const animationBase = {
     imageURL : 'img/pills.png',

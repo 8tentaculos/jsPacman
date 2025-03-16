@@ -1,4 +1,4 @@
-import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation';
+import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation.js';
 import Character from './Character.js';
 
 const animationBase = {
