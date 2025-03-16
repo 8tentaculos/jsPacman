@@ -1,5 +1,5 @@
 // Return time stamp in seconds.
-export const ts = () => new Date().getTime() / 1000;
+export const ts = () => new Date().getTime();
 
 class Timer {
     constructor(time) {
@@ -20,7 +20,7 @@ class Timer {
     }
 
     isElapsed(time = this.time) {
-        return this.getElapsed() > time;
+        return this.getElapsed() > time * 1000;
     }
 }
 

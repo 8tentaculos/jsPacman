@@ -1,4 +1,4 @@
-import Sound from './engine/Sound';
+import Sound from './engine/Sound.js';
 
 class SoundManager {
     constructor(options) {

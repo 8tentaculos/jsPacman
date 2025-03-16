@@ -1,8 +1,8 @@
 import { View } from 'rasti';
 
-import Keyboard from './Keyboard';
-import Touch from './Touch';
-import Scaling from './Scaling';
+import Keyboard from './Keyboard.js';
+import Touch from './Touch.js';
+import Scaling from './Scaling.js';
 
 // Game states
 export const STATE_NEW = 0;

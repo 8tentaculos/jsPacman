@@ -6,7 +6,7 @@ import {
     ANIMATION_ONCE,
     ANIMATION_CALLBACK,
     ANIMATION_PINGPONG
-} from './Animation';
+} from './Animation.js';
 
 const defaults = {
     width : 32,
