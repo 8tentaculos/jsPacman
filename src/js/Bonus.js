@@ -1,6 +1,6 @@
-import Animation from './engine/Animation';
-import Character from './Character';
-import getDistance from './helper/getDistance';
+import Animation from './engine/Animation.js';
+import Character from './Character.js';
+import getDistance from './helper/getDistance.js';
 
 export const animationBase = {
     imageURL : 'img/misc.png',

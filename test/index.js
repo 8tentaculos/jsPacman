@@ -1,10 +1,9 @@
 import chai from 'chai';
-import Animation from '../src/js/engine/Animation';
-import Map from '../src/js/Map';
-import map1 from '../src/js/maps/map-1';
-import Game from '../src/js/Game';
-import Item from '../src/js/Item';
-import makeMsPacman from '../src/js/factory/makeMsPacman';
+import Animation from '../src/js/engine/Animation.js';
+import Map from '../src/js/Map.js';
+import map1 from '../src/js/maps/map-1.js';
+import Item from '../src/js/Item.js';
+import makeMsPacman from '../src/js/factory/makeMsPacman.js';
 
 const should = chai.should();
 

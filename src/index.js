@@ -15,7 +15,7 @@ import './audio/life.mp3';
 // CSS
 import './styles.css';
 
-import Game from './js/Game';
+import Game from './js/Game.js';
 
 window.addEventListener('load', (event) => {
     const container = document.querySelector('.js-pacman-container');

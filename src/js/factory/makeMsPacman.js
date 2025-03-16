@@ -1,4 +1,4 @@
-import Pacman from '../Pacman';
+import Pacman from '../Pacman.js';
 
 export const SPRITE_MS_PACMAN = 'SPRITE_MS_PACMAN';
 

@@ -1,17 +1,17 @@
-import Game from './engine/Game';
-import SoundManager from './SoundManager';
-import Map from './Map';
-import GameModel from './GameModel';
-import makeGhost from './factory/makeGhost';
-import makeDot from './factory/makeDot';
-import makePill from './factory/makePill';
-import makeBonus from './factory/makeBonus';
-import Pacman from './Pacman';
-import Lives from './Lives';
-import Bonuses from './Bonuses';
+import Game from './engine/Game.js';
+import SoundManager from './SoundManager.js';
+import Map from './Map.js';
+import GameModel from './GameModel.js';
+import makeGhost from './factory/makeGhost.js';
+import makeDot from './factory/makeDot.js';
+import makePill from './factory/makePill.js';
+import makeBonus from './factory/makeBonus.js';
+import Pacman from './Pacman.js';
+import Lives from './Lives.js';
+import Bonuses from './Bonuses.js';
 
-import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard';
-import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch';
+import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard.js';
+import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch.js';
 
 const show = el => { el.style.display = ''; }
 const hide = el => { el.style.display = 'none'; }
