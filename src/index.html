@@ -19,12 +19,23 @@
         <link rel="manifest" href="/site.webmanifest">
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#222222">
 
-        <%= htmlWebpackPlugin.options.headTags %>
+        <link rel="stylesheet" href="./styles.css">
+
+        <script type="importmap">
+        {
+            "imports": {
+                "rasti": "https://esm.run/rasti@3.0.0"
+            }
+        }
+        </script>
+
+        <!-- HEAD_TAGS -->
     </head>
     <body>
         <h1 style="visibility: hidden;">jsPacman</h1>
         <h2 style="visibility: hidden;">A JavaScript DOM-based remake of the classic Ms. Pac-Man game.</h2>
         <h3 style="visibility: hidden;">Play Ms. Pac-Man.</h3>
         <div class="js-pacman-playground with-border"></div>
+        <script type="module" src="./index.js"></script>
     </body>
 </html>
