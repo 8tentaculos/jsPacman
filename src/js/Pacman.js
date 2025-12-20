@@ -77,7 +77,7 @@ class Pacman extends Character {
 
         });
 
-        addGameGhostEatEventListener(ghost => {
+        addGameGhostEatEventListener(() => {
             this._eatenTurns = 9;
             this.dir = 'r';
             this.pauseAnimation();

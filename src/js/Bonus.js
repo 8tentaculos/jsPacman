@@ -6,7 +6,7 @@ export const animationBase = {
     imageURL : 'img/misc.png',
     offsetY : 0,
     offsetX : 0
-}
+};
 
 export const animations = {
     'default' : new Animation({
@@ -60,12 +60,12 @@ class Bonus extends Character {
 
         Object.keys(defaults).forEach(key => {
             if (key in options) this[key] = options[key];
-        })
+        });
 
         const { addPacmanPositionEventListener } = options;
 
         // Change tile.
-        this.on('item:tile', (tile) => {
+        this.on('item:tile', () => {
             this._dir = this._nextDir;
             this._nextDir = this.getNextDirection();
             this._eatEvent = false;

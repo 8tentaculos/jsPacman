@@ -1,8 +1,6 @@
 import Game from './js/Game.js';
 
-window.addEventListener('load', (event) => {
-    const container = document.querySelector('.js-pacman-container');
-
+window.addEventListener('load', () => {
     const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
@@ -16,10 +14,9 @@ window.addEventListener('load', (event) => {
         }
     }
 
-    const game = new GameWithPosition({
+    new GameWithPosition({
         el : document.querySelector('.js-pacman-playground'),
         width : vw * 0.9,
         height : vh * 0.9
     });
-
 });

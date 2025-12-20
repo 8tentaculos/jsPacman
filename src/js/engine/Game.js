@@ -172,10 +172,10 @@ class Game extends View {
      */
     refresh() {
         if (this.state === STATE_RUNNING) {
-            this.sprites.forEach(sprite => { sprite.refresh() });
+            this.sprites.forEach(sprite => { sprite.refresh(); });
 
-            var deadCallbacks = [];
-            for (var i = this.callbacks.length - 1; i >= 0; i--) {
+            const deadCallbacks = [];
+            for (let i = this.callbacks.length - 1; i >= 0; i--) {
                 if (this.callbacks[i].idleCounter === this.callbacks[i].refreshRate - 1) {
                     const value = this.callbacks[i].fn();
                     if (typeof value === 'boolean'){
@@ -192,7 +192,7 @@ class Game extends View {
                 this.callbacks[i].idleCounter = (this.callbacks[i].idleCounter + 1) % this.callbacks[i].refreshRate;
             }
 
-            for (var i = deadCallbacks.length - 1; i >= 0; i--){
+            for (let i = deadCallbacks.length - 1; i >= 0; i--){
                 this.callbacks.splice(deadCallbacks[i], 1);
             }
         }
@@ -214,7 +214,7 @@ class Game extends View {
     * Mute (or unmute) all the sounds.
     */
     muteSound(muted) {
-        for (var i = this.sounds.length - 1 ; i >= 0; i --) {
+        for (let i = this.sounds.length - 1 ; i >= 0; i --) {
             this.sounds[i].mute(muted);
         }
     }

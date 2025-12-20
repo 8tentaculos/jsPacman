@@ -214,7 +214,7 @@ class Ghost extends Character {
 
     shouldExitMode() {
         if (this.mode === MODE_DEAD) return this.getTile() === this.deadEnd;
-        
+
         else if (this.mode === MODE_FRIGHTENED) return this.frightenedTimer.isElapsed();
 
         else if (this.mode === MODE_HOUSE) return this.getTile() === this.houseExitTile.getU();
@@ -409,7 +409,7 @@ class Ghost extends Character {
         // Target Tile
         const targetTile = this.mode === MODE_CHASE ? this.getChaseTarget() :
             this.mode === MODE_SCATTER ? this.scatterTarget :
-            this.deadTarget;
+                this.deadTarget;
 
         const _dir = this._dir || this.dir;
         // Next tile.
@@ -419,14 +419,14 @@ class Ghost extends Character {
 
         let nextDirection, lastDistance;
 
-        for (var i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             let dir = directions[i];
             // Cant't go back.
             if (dir === this._getOpDirection(_dir)) continue;
 
             if (this.canGo(dir, nextTile)) {
-                let testTile = nextTile.get(dir);
-                let distance = getDistance(testTile, targetTile);
+                const testTile = nextTile.get(dir);
+                const distance = getDistance(testTile, targetTile);
 
                 if (typeof lastDistance === 'undefined' || lastDistance > distance) {
                     nextDirection = dir;

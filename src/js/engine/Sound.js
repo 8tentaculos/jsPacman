@@ -24,7 +24,7 @@ class Sound {
             .then(response => response.arrayBuffer())
             .then(arrayBuffer => decodeAudioData(arrayBuffer))
             .then(audioBuffer => {
-                this.audioBuffer = audioBuffer
+                this.audioBuffer = audioBuffer;
                 return Promise.resolve(audioBuffer);
             });
     }

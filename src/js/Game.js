@@ -13,8 +13,8 @@ import Bonuses from './Bonuses.js';
 import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard.js';
 import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch.js';
 
-const show = el => { el.style.display = ''; }
-const hide = el => { el.style.display = 'none'; }
+const show = el => { el.style.display = ''; };
+const hide = el => { el.style.display = 'none'; };
 
 const defaults = {
     // Options.
@@ -224,7 +224,7 @@ class JsPacman extends Game {
             addGameGhostModeFrightenedExit : listener => this.on('game:ghost:modefrightened:exit', listener)
         });
 
-        this.pacman.on('item:eatpill', t => {
+        this.pacman.on('item:eatpill', () => {
             this._pauseFrames = 2;
 
             this.model.addScore(this.pillScore);
@@ -241,7 +241,7 @@ class JsPacman extends Game {
         // Ghost eats Pacman.
         this.on('game:ghost:eat', this._onGhostEat);
         // Pacman make die turn arround.
-        this.pacman.on('item:die', (ghost) => {
+        this.pacman.on('item:die', () => {
             this.sound.play('eaten');
         });
         // Pacman lose.
@@ -281,7 +281,7 @@ class JsPacman extends Game {
             }
         });
         // Pacman eats dot.
-        this.pacman.on('item:eatdot', (t) => {
+        this.pacman.on('item:eatdot', () => {
             this.model.addScore(this.dotScore);
 
             this.sound.play('dot');
@@ -300,7 +300,7 @@ class JsPacman extends Game {
             this.bonus.destroy();
         }
 
-        var bonusTile = this.map.tunnels[this.map.tunnels.length - 1];
+        const bonusTile = this.map.tunnels[this.map.tunnels.length - 1];
 
         this.bonus = makeBonus(this.bonusIndex, {
             map : this.map,
@@ -315,7 +315,7 @@ class JsPacman extends Game {
 
         // Bonus reaches target and disappears.
         this.bonus.on('item:destroy', (bonus) => {
-            this.bonus.destroy();
+            bonus.destroy();
             this.bonus = null;
         });
 
@@ -620,7 +620,7 @@ class JsPacman extends Game {
         this.elements.load.querySelector('.inner').style.width = `${percent}%`;
     }
 
-    _onSwipe(type, ev) {
+    _onSwipe(type) {
         this._lastSwipe = type;
     }
 
@@ -669,7 +669,7 @@ class JsPacman extends Game {
         }
     }
     // Extra life.
-    _onChangeExtraLives(model, lives) {
+    _onChangeExtraLives() {
         this.sound.play('life');
     }
     // Change global mode.

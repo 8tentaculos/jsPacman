@@ -33,7 +33,7 @@ class Character extends Item {
 
         this.pauseAnimation();
 
-        this.on('item:tile', (tile) => {
+        this.on('item:tile', () => {
             this.setNextAnimation();
         });
 
@@ -46,7 +46,7 @@ class Character extends Item {
         this._nextDirection = null;
         this._moving = false;
 
-        this._saveDefaults()
+        this._saveDefaults();
     }
 
     _saveDefaults() {
@@ -99,7 +99,7 @@ class Character extends Item {
                 this._moving = true;
             }
 
-            this.emit('item:position', this._getPositionData())
+            this.emit('item:position', this._getPositionData());
         } else {
             // Not moving.
             if (this._moving) {

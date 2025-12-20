@@ -32,7 +32,7 @@ class Animation {
         this.img = new Image();
         this.img.src = this.imageURL;
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.img.addEventListener('load', resolve);
         });
     }

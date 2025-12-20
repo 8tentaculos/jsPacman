@@ -168,10 +168,9 @@ export default (label, options) => {
                     offsetY : 188,
                     offsetX : 64 * 6 - 2
                 })
-           }
-
-       }, options);
+            }
+        }, options);
     }
 
     return new Ghost(options);
-}
+};

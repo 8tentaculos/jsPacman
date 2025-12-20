@@ -20,7 +20,7 @@ const defaults = {
     currentFrame : 0,
     frameIncrement : 1,
     angle : 0,
-    factor :  1,
+    factor : 1,
     playing : true,
     factorH : 1,
     factorV : 1,
