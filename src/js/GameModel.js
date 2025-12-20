@@ -21,7 +21,7 @@ const times = [
     { mode : MODE_CHASE, time : 1000000 }
 ];
 
-// This info was parsed from
+// This info was parsed from:
 // https://pacman.holenet.info/#LvlSpecs
 var data = [
     [times, 0, 100, 80, 71, 75, 40, 20, 80, 10, 85, 90, 79, 50, 6, 5, map1, 'maze-1'],
@@ -70,20 +70,23 @@ var keys = [
 
 class GameModel extends Model {
     constructor(attrs) {
-        super({
+        super(attrs);
+
+        this.url = 'jsPacman';
+
+        this.on('change:score', this.onChangeScore.bind(this));
+    }
+
+    preinitialize() {
+        this.defaults = {
             level : 1,
             score : 0,
             highScore : 0,
             lives : 3,
             extraLives : 1,
             extraLifeScore : 10000,
-            mode : null,
-            ...attrs
-        });
-
-        this.url = 'jsPacman';
-
-        this.on('change:score', this.onChangeScore.bind(this));
+            mode : null
+        };
     }
 
     addScore(score) {
