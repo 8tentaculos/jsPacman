@@ -2,7 +2,9 @@ import http from 'http';
 import sirv from 'sirv';
 
 const PORT = process.env.PORT || 3000;
-const isDev = process.env.NODE_ENV !== 'production';
+
+const args = process.argv.slice(2);
+const isDev = !args.includes('--prod') && process.env.NODE_ENV !== 'production';
 
 const notFound = (req, res) => {
     res.statusCode = 404;
@@ -24,6 +26,8 @@ const server = http.createServer(handler);
 
 server.listen(PORT, () => {
     const mode = isDev ? 'development' : 'production';
-    console.log(`\n🎮 jsPacman Server ${isDev ? '👻' : '🟡'} running at http://localhost:${PORT} (${mode})\n`);
+    const url = `http://localhost:${PORT}`;
+    // ANSI escape code for clickable link (OSC 8)
+    const link = `\u001b]8;;${url}\u0007${url}\u001b]8;;\u0007`;
+    console.log(`\n🎮 jsPacman Server running at ${link} (${mode})\n`);
 });
-

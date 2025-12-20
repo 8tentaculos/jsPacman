@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node scripts/server.js",
     "build": "npm run clean && dotenv node scripts/build.js",
-    "preview": "cross-env NODE_ENV=production node scripts/server.js",
-    "clean": "rimraf ./dist",
+    "preview": "node scripts/server.js --prod",
+    "clean": "node -e \"import('fs').then(fs => fs.rmSync('dist', {recursive: true, force: true}))\"",
     "test": "mocha --require jsdom-global/register --reporter nyan test/*.js",
     "demo:publish": "npm run test && npm run build && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
   },
@@ -26,12 +26,11 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.5.0",
-    "cross-env": "^7.0.3",
     "dotenv-cli": "^7.4.2",
     "jsdom": "^25.0.1",
     "jsdom-global": "3.0.2",
     "mocha": "^10.7.3",
-    "rimraf": "^6.0.1",
+    "rasti": "^3.0.1",
     "sirv": "^2.0.3",
     "terser": "^5.36.0"
   }
