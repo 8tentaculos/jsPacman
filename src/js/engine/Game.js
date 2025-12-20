@@ -2,6 +2,7 @@ import { View } from 'rasti';
 
 import Keyboard from './Keyboard.js';
 import Touch from './Touch.js';
+import Gamepad from './Gamepad.js';
 import Scaling from './Scaling.js';
 
 /**
@@ -65,6 +66,7 @@ class Game extends View {
 
         this.keyboard = new Keyboard();
         this.touch = new Touch();
+        this.gamepad = new Gamepad();
 
         this.scaling = new Scaling(this.originalWidth, this.originalHeight);
         this.scaling.resize(this.width, this.height);
@@ -100,11 +102,12 @@ class Game extends View {
 
     /**
      * Cleanup method called when the game is destroyed.
-     * Removes keyboard and touch event listeners.
+     * Removes keyboard, touch, and gamepad event listeners.
      */
     onDestroy() {
         this.keyboard.destroy();
         this.touch.destroy();
+        this.gamepad.destroy();
     }
 
     /**
@@ -213,6 +216,7 @@ class Game extends View {
      * Called periodically to refresh the state of the game.
      */
     refresh() {
+        this.gamepad.refresh();
         if (this.state === STATE_RUNNING) {
             this.sprites.forEach(sprite => { sprite.refresh(); });
 

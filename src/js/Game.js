@@ -12,6 +12,7 @@ import Bonuses from './Bonuses.js';
 
 import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard.js';
 import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch.js';
+import { EVENT_GAMEPAD_START } from './engine/Gamepad.js';
 
 /**
  * Shows an element by setting its display style to empty string.
@@ -95,6 +96,8 @@ class JsPacman extends Game {
 
         this.touch.on(EVENT_SWIPE, this._onSwipe.bind(this));
 
+        this.gamepad.on(EVENT_GAMEPAD_START, this._onGamepadStart.bind(this));
+
         this.sound = new SoundManager({
             soundEnabled : this.soundEnabled,
             addSound : this.addSound.bind(this)
@@ -126,6 +129,7 @@ class JsPacman extends Game {
         this.model.on('change:lives', this._onChangeLives.bind(this));
         this.model.on('change:extraLives', this._onChangeExtraLives.bind(this));
         this.model.on('change:mode', this._onChangeMode.bind(this));
+        this.model.on('change:paused', this._onChangePaused.bind(this));
 
         this.makeLevel();
 
@@ -151,11 +155,19 @@ class JsPacman extends Game {
             this.reset();
             this._gameOver = false;
             hide(this.elements.splash);
+            this.model.set({
+                splash : false,
+                play : true
+            });
             this.sound.play('intro');
             return;
         }
 
         hide(this.elements.splash);
+        this.model.set({
+            splash : false,
+            play : true
+        });
         this.sound.play('intro');
         this.addCallback(this.mainLoop.bind(this));
     }
@@ -491,6 +503,10 @@ class JsPacman extends Game {
             if (this._gameOver) {
                 hide(this.elements.gameOver);
                 show(this.elements.splash);
+                this.model.set({
+                    splash : true,
+                    play : false
+                });
                 return;
             }
 
@@ -642,13 +658,13 @@ class JsPacman extends Game {
      */
     _isGhostDead() {
         return this.blinky.isDead() ||
-                this.inky.isDead()  ||
-                this.pinky.isDead() ||
-                this.sue.isDead();
+            this.inky.isDead()  ||
+            this.pinky.isDead() ||
+            this.sue.isDead();
     }
 
     /**
-     * Gets the input direction from keyboard or touch swipe.
+     * Gets the input direction from keyboard, gamepad, or touch swipe.
      * @returns {string|null} The direction ('u', 'r', 'd', 'l') or null.
      * @private
      */
@@ -656,6 +672,7 @@ class JsPacman extends Game {
         const keys = this.keyboard.keys;
         let direction = null;
 
+        // Check keyboard input first
         if (keys[KEY_UP]) {
             direction = 'u';
         }
@@ -669,20 +686,27 @@ class JsPacman extends Game {
             direction = 'l';
         }
 
+        // If no keyboard input, check gamepad
+        if (!direction) {
+            direction = this.gamepad.getDirection();
+        }
+
         if (direction) {
             this._lastSwipe = null;
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_UP) {
-            direction = 'u';
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_RIGHT) {
-            direction = 'r';
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_DOWN) {
-            direction = 'd';
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_LEFT) {
-            direction = 'l';
+        } else {
+            // If no keyboard or gamepad input, check touch swipe
+            if (this._lastSwipe === EVENT_SWIPE_UP) {
+                direction = 'u';
+            }
+            else if (this._lastSwipe === EVENT_SWIPE_RIGHT) {
+                direction = 'r';
+            }
+            else if (this._lastSwipe === EVENT_SWIPE_DOWN) {
+                direction = 'd';
+            }
+            else if (this._lastSwipe === EVENT_SWIPE_LEFT) {
+                direction = 'l';
+            }
         }
 
         return direction;
@@ -706,13 +730,25 @@ class JsPacman extends Game {
     }
 
     /**
+     * Handles gamepad start button press.
+     * @private
+     */
+    _onGamepadStart() {
+        if (this.model.splash) {
+            this.startLevel();
+        } else if (this.model.play) {
+            this.model.paused = !this.model.paused;
+        }
+    }
+
+    /**
      * Handles keyboard input events (sound toggle, pause).
      * @param {KeyboardEvent} event - The keyboard event.
      * @private
      */
     _onKeyDown(event) {
         // Sound on/off.
-        if (event.keyCode === 83) {
+        if (event.key === 's' || event.key === 'S') {
             if (!this.soundEnabled) return;
             // Mute Sound.
             this._muted = !this._muted;
@@ -729,11 +765,14 @@ class JsPacman extends Game {
             this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
         }
         // Pause Game.
-        else if (event.keyCode === 80) {
-            this._paused = !this._paused;
-            if (this._paused) this.pause();
-            else this.resume();
+        else if (event.key === 'p' || event.key === 'P') {
+            this.model.paused = !this.model.paused;
         }
+    }
+
+    _onChangePaused(model, paused) {
+        if (paused) this.pause();
+        else this.resume();
     }
 
     /**

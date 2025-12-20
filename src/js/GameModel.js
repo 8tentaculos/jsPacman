@@ -102,6 +102,9 @@ class GameModel extends Model {
      */
     preinitialize() {
         this.defaults = {
+            splash : true,
+            play : false,
+            paused : false,
             level : 1,
             score : 0,
             highScore : 0,
