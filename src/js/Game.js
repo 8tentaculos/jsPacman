@@ -38,7 +38,7 @@ class JsPacman extends Game {
         super(options);
 
         Object.keys(defaults).forEach(key => {
-            if (key in options) this[key] = options[key];
+            this[key] = key in options ? options[key] : defaults[key];
         });
 
         this.model = new GameModel({
@@ -713,7 +713,5 @@ class JsPacman extends Game {
         `;
     }
 }
-
-Object.assign(JsPacman.prototype, defaults);
 
 export default JsPacman;
