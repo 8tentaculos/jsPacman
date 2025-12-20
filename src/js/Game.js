@@ -13,9 +13,21 @@ import Bonuses from './Bonuses.js';
 import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard.js';
 import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch.js';
 
+/**
+ * Shows an element by setting its display style to empty string.
+ * @param {HTMLElement} el - The element to show.
+ */
 const show = el => { el.style.display = ''; };
+/**
+ * Hides an element by setting its display style to 'none'.
+ * @param {HTMLElement} el - The element to hide.
+ */
 const hide = el => { el.style.display = 'none'; };
 
+/**
+ * Default properties for JsPacman instances.
+ * @type {Object}
+ */
 const defaults = {
     // Options.
     width : 896 / 2,
@@ -33,7 +45,24 @@ const defaults = {
     }
 };
 
+/**
+ * Main game class for JS Pacman. Extends the Game engine.
+ * @class JsPacman
+ * @extends {Game}
+ */
 class JsPacman extends Game {
+    /**
+     * Creates an instance of JsPacman.
+     * @param {Object} [options={}] - Configuration options for the game.
+     * @param {number} [options.width=448] - Width of the game canvas in pixels.
+     * @param {number} [options.height=576] - Height of the game canvas in pixels.
+     * @param {number} [options.originalWidth=896] - Original width for scaling.
+     * @param {number} [options.originalHeight=1152] - Original height for scaling.
+     * @param {number} [options.dotScore=10] - Score awarded for eating a dot.
+     * @param {number} [options.pillScore=50] - Score awarded for eating a power pill.
+     * @param {number} [options.defaultLives=3] - Default number of lives.
+     * @param {boolean} [options.soundEnabled=true] - Whether sound is enabled.
+     */
     constructor(options = {}) {
         super(options);
 
@@ -106,6 +135,9 @@ class JsPacman extends Game {
         });
     }
 
+    /**
+     * Starts a new level or handles game over/win states.
+     */
     startLevel() {
         if (this._win) {
             this.model.level++;
@@ -128,6 +160,9 @@ class JsPacman extends Game {
         this.addCallback(this.mainLoop.bind(this));
     }
 
+    /**
+     * Resets the game state, destroying all characters and items.
+     */
     reset() {
         this.model.mode = null;
 
@@ -155,6 +190,9 @@ class JsPacman extends Game {
         this.makeLevel();
     }
 
+    /**
+     * Creates and initializes a new level with map, dots, pills, pacman, ghosts, and bonus.
+     */
     makeLevel() {
         Object.assign(this, this.model.getSettings('game'));
 
@@ -404,13 +442,20 @@ class JsPacman extends Game {
         }
     }
 
+    /**
+     * Adds event listeners to a ghost for eat, eaten, and mode change events.
+     * @param {Ghost} ghost - The ghost instance to add listeners to.
+     */
     addEventListenersToGhost(ghost) {
         ghost.on('item:eat', () => this.emit('game:ghost:eat', ghost));
         ghost.on('item:eaten', () => this.emit('game:ghost:eaten', ghost));
         ghost.on('item:modefrightened:enter', () => this.emit('game:ghost:modefrightened:enter', ghost));
-        ghost.on('item:modefrightened:exit', () => this.emit('game:ghost:modefrightened:exit', ghost));
+        ghost.on('item:modefrightened:exit', () =>         this.emit('game:ghost:modefrightened:exit', ghost));
     }
 
+    /**
+     * Main game loop callback that handles game state, input, movement, and collisions.
+     */
     mainLoop() {
         // Global mode.
         if (!this._start) this.model.updateMode();
@@ -497,6 +542,9 @@ class JsPacman extends Game {
         }
     }
 
+    /**
+     * Pauses the game, pausing all ghosts and muting sound.
+     */
     pause() {
         super.pause();
 
@@ -512,6 +560,9 @@ class JsPacman extends Game {
         show(this.elements.paused);
     }
 
+    /**
+     * Resumes the game, resuming all ghosts and restoring sound state.
+     */
     resume() {
         super.resume();
 
@@ -527,6 +578,9 @@ class JsPacman extends Game {
         hide(this.elements.paused);
     }
 
+    /**
+     * Handles the win state when all items are collected.
+     */
     win() {
         this._pauseFrames = 120;
         this._win = true;
@@ -548,6 +602,9 @@ class JsPacman extends Game {
         this.pacman.pauseAnimation();
     }
 
+    /**
+     * Hides all ghosts and bonus from the screen.
+     */
     hideGhosts() {
         this.pinky.hide();
         this.blinky.hide();
@@ -566,6 +623,11 @@ class JsPacman extends Game {
         if (this.bonus && !this._showBonus) this.bonus.show();
     }
 
+    /**
+     * Checks if any ghost is in frightened mode.
+     * @returns {boolean} True if any ghost is frightened, false otherwise.
+     * @private
+     */
     _isGhostFrightened() {
         return this.blinky.isFrightened() ||
                 this.inky.isFrightened()  ||
@@ -573,6 +635,11 @@ class JsPacman extends Game {
                 this.sue.isFrightened();
     }
 
+    /**
+     * Checks if any ghost is in dead mode.
+     * @returns {boolean} True if any ghost is dead, false otherwise.
+     * @private
+     */
     _isGhostDead() {
         return this.blinky.isDead() ||
                 this.inky.isDead()  ||
@@ -580,6 +647,11 @@ class JsPacman extends Game {
                 this.sue.isDead();
     }
 
+    /**
+     * Gets the input direction from keyboard or touch swipe.
+     * @returns {string|null} The direction ('u', 'r', 'd', 'l') or null.
+     * @private
+     */
     _getInputDirection() {
         const keys = this.keyboard.keys;
         let direction = null;
@@ -616,14 +688,28 @@ class JsPacman extends Game {
         return direction;
     }
 
+    /**
+     * Updates the loading progress bar.
+     * @param {number} percent - The loading progress percentage (0-100).
+     */
     onLoadProgress(percent) {
         this.elements.load.querySelector('.inner').style.width = `${percent}%`;
     }
 
+    /**
+     * Handles swipe gesture input.
+     * @param {string} type - The swipe direction event type.
+     * @private
+     */
     _onSwipe(type) {
         this._lastSwipe = type;
     }
 
+    /**
+     * Handles keyboard input events (sound toggle, pause).
+     * @param {KeyboardEvent} event - The keyboard event.
+     * @private
+     */
     _onKeyDown(event) {
         // Sound on/off.
         if (event.keyCode === 83) {
@@ -650,14 +736,32 @@ class JsPacman extends Game {
         }
     }
 
+    /**
+     * Updates the score display when the model score changes.
+     * @param {GameModel} model - The game model.
+     * @param {number} score - The new score value.
+     * @private
+     */
     _onChangeScore(model, score) {
         this.elements.score.innerText = score || '00';
     }
 
+    /**
+     * Updates the high score display when the model high score changes.
+     * @param {GameModel} model - The game model.
+     * @param {number} highScore - The new high score value.
+     * @private
+     */
     _onChangeHighScore(model, highScore) {
         this.elements.highScore.innerText = highScore || '00';
     }
-    // Cange lives. Check game over.
+
+    /**
+     * Handles lives change, checking for game over condition.
+     * @param {GameModel} model - The game model.
+     * @param {number} lives - The new lives value.
+     * @private
+     */
     _onChangeLives(model, lives) {
         if (lives === 0) {
             // Game over.
@@ -668,15 +772,30 @@ class JsPacman extends Game {
             this.model.save();
         }
     }
-    // Extra life.
+
+    /**
+     * Handles extra life event, plays life sound.
+     * @private
+     */
     _onChangeExtraLives() {
         this.sound.play('life');
     }
-    // Change global mode.
+
+    /**
+     * Handles global mode change, emits game mode event.
+     * @param {GameModel} model - The game model.
+     * @param {string} mode - The new mode.
+     * @private
+     */
     _onChangeMode(model, mode) {
         this.emit('game:globalmode', mode);
     }
-    // Pacman eats ghost.
+
+    /**
+     * Handles when Pacman eats a ghost.
+     * @param {Ghost} ghost - The ghost that was eaten.
+     * @private
+     */
     _onGhostEaten(ghost) {
         this.pacman.hide();
         this._pauseFrames = 15;
@@ -684,12 +803,21 @@ class JsPacman extends Game {
         this.model.addScore(parseInt(ghost.score));
         this.sound.play('eat');
     }
-    // Ghost eats Pacman.
+
+    /**
+     * Handles when a ghost eats Pacman.
+     * @private
+     */
     _onGhostEat() {
         this._pauseFrames = 40;
         this._pacmanEaten = true;
     }
 
+    /**
+     * Returns the HTML template for the game UI.
+     * @param {GameModel} model - The game model.
+     * @returns {string} The HTML template string.
+     */
     template(model) {
         return `
             <div class="score">

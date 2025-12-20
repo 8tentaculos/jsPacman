@@ -2,11 +2,33 @@ import Animation from '../engine/Animation.js';
 import Ghost, { animations, animationBase } from '../Ghost.js';
 import getDistance from '../helper/getDistance.js';
 
+/**
+ * Sprite type constant for Pinky ghost.
+ * @constant {string}
+ */
 export const SPRITE_PINKY = 'SPRITE_PINKY';
+/**
+ * Sprite type constant for Blinky ghost.
+ * @constant {string}
+ */
 export const SPRITE_BLINKY = 'SPRITE_BLINKY';
+/**
+ * Sprite type constant for Inky ghost.
+ * @constant {string}
+ */
 export const SPRITE_INKY = 'SPRITE_INKY';
+/**
+ * Sprite type constant for Sue ghost.
+ * @constant {string}
+ */
 export const SPRITE_SUE = 'SPRITE_SUE';
 
+/**
+ * Factory function to create a ghost with specific AI behavior based on label.
+ * @param {string} label - Ghost type ('pinky', 'blinky', 'inky', 'sue').
+ * @param {Object} options - Configuration options passed to Ghost constructor.
+ * @returns {Ghost} A new Ghost instance with type-specific configuration.
+ */
 export default (label, options) => {
     // Pink Ghost
     if (label === 'pinky') {

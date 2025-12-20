@@ -9,7 +9,10 @@ import map2 from './maps/map-2.js';
 import map3 from './maps/map-3.js';
 import map4 from './maps/map-4.js';
 
-// TODO: Add times data for each level.
+/**
+ * Timing data for ghost mode switching (scatter/chase cycles).
+ * @type {Array<Object>}
+ */
 const times = [
     { mode : MODE_SCATTER, time : 7 },
     { mode : MODE_CHASE, time : 20 },
@@ -21,8 +24,11 @@ const times = [
     { mode : MODE_CHASE, time : 1000000 }
 ];
 
-// This info was parsed from:
-// https://pacman.holenet.info/#LvlSpecs
+/**
+ * Level data array containing game settings for each level.
+ * This info was parsed from: https://pacman.holenet.info/#LvlSpecs
+ * @type {Array<Array>}
+ */
 var data = [
     [times, 0, 100, 80, 71, 75, 40, 20, 80, 10, 85, 90, 79, 50, 6, 5, map1, 'maze-1'],
     [times, 1, 200, 90, 79, 85, 45, 30, 90, 15, 95, 95, 83, 55, 5, 5, map1, 'maze-1'],
@@ -47,6 +53,10 @@ var data = [
     [times, 7, 5000, 90, 79, 95, 50, 120, 100, 60, 105, 0, 0, 0, 0, 0, map4, 'maze-4']
 ];
 
+/**
+ * Keys array mapping data indices to setting paths.
+ * @type {Array<string>}
+ */
 var keys = [
     'game.times',
     'game.bonusIndex',
@@ -68,7 +78,17 @@ var keys = [
     'game.maze'
 ];
 
+/**
+ * Game model class that manages game state, scores, levels, and settings.
+ * Extends Model for localStorage persistence.
+ * @class GameModel
+ * @extends {Model}
+ */
 class GameModel extends Model {
+    /**
+     * Creates an instance of GameModel.
+     * @param {Object} attrs - Initial attributes for the model.
+     */
     constructor(attrs) {
         super(attrs);
 
@@ -77,6 +97,9 @@ class GameModel extends Model {
         this.on('change:score', this.onChangeScore.bind(this));
     }
 
+    /**
+     * Initializes default model values.
+     */
     preinitialize() {
         this.defaults = {
             level : 1,
@@ -89,10 +112,17 @@ class GameModel extends Model {
         };
     }
 
+    /**
+     * Adds points to the current score.
+     * @param {number} score - The points to add.
+     */
     addScore(score) {
         this.score = this.score + score;
     }
 
+    /**
+     * Updates the global game mode (scatter/chase) based on elapsed time.
+     */
     updateMode() {
         if (!this.mode) this.modeTimer = new Timer();
 
@@ -111,14 +141,25 @@ class GameModel extends Model {
         }
     }
 
+    /**
+     * Pauses the mode timer.
+     */
     pause() {
         if (this.modeTimer) this.modeTimer.pause();
     }
 
+    /**
+     * Resumes the mode timer.
+     */
     resume() {
         if (this.modeTimer) this.modeTimer.resume();
     }
 
+    /**
+     * Gets settings for a specific category (game, pacman, ghost) for the current level.
+     * @param {string} key - The settings category key ('game', 'pacman', 'ghost').
+     * @returns {Object} Object containing the settings for the specified category.
+     */
     getSettings(key) {
         const obj = {};
 
@@ -134,6 +175,9 @@ class GameModel extends Model {
         return obj;
     }
 
+    /**
+     * Handles score changes, checking for extra lives and updating high score.
+     */
     onChangeScore() {
         if (this.extraLives && this.score >= this.extraLifeScore) {
             this.extraLives--;
@@ -145,6 +189,10 @@ class GameModel extends Model {
         }
     }
 
+    /**
+     * Returns a JSON representation of the model for persistence.
+     * @returns {Object} Object containing only the high score.
+     */
     toJSON() {
         return { highScore : this.highScore };
     }

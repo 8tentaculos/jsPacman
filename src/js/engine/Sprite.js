@@ -8,6 +8,10 @@ import {
     ANIMATION_PINGPONG
 } from './Animation.js';
 
+/**
+ * Default properties for Sprite instances.
+ * @type {Object}
+ */
 const defaults = {
     width : 32,
     height : 32,
@@ -30,7 +34,32 @@ const defaults = {
     type : null
 };
 
+/**
+ * Sprite class for rendering animated sprites on the canvas.
+ * Extends View from rasti framework.
+ * @class Sprite
+ * @extends {View}
+ */
 class Sprite extends View {
+    /**
+     * Creates an instance of Sprite.
+     * @param {Object} options - Configuration options for the sprite.
+     * @param {number} [options.width=32] - Width of the sprite in pixels.
+     * @param {number} [options.height=32] - Height of the sprite in pixels.
+     * @param {number} [options.x=0] - X coordinate position.
+     * @param {number} [options.y=0] - Y coordinate position.
+     * @param {number} [options.z=0] - Z-index for layering.
+     * @param {number} [options.offsetX=0] - X offset for positioning.
+     * @param {number} [options.offsetY=0] - Y offset for positioning.
+     * @param {number} [options.angle=0] - Rotation angle in degrees.
+     * @param {number} [options.factor=1] - Scale factor.
+     * @param {number} [options.factorH=1] - Horizontal flip factor.
+     * @param {number} [options.factorV=1] - Vertical flip factor.
+     * @param {Object} [options.animations={}] - Object containing animation definitions.
+     * @param {string} [options.defaultAnimation='default'] - Name of the default animation.
+     * @param {Function} [options.normalizeRefrashRate] - Function to normalize refresh rate.
+     * @param {string} [options.type] - Type identifier for the sprite.
+     */
     constructor(options) {
         super(options);
 
@@ -39,6 +68,10 @@ class Sprite extends View {
         });
     }
 
+    /**
+     * Loads all animations associated with this sprite.
+     * @returns {Promise} Promise that resolves when all animations are loaded.
+     */
     load() {
         return Promise.all(
             Object.keys(this.animations)
@@ -46,11 +79,18 @@ class Sprite extends View {
         );
     }
 
+    /**
+     * Checks if at least one animation is ready to be displayed.
+     * @returns {boolean} True if at least one animation is ready, false otherwise.
+     */
     isReady() {
         return Object.keys(this.animations)
             .some(label => !!this.animations[label].isReady());
     }
 
+    /**
+     * Renders the sprite element and sets up initial styling and animation.
+     */
     render() {
         Object.assign(this.el.style, {
             position : 'absolute',
@@ -65,6 +105,10 @@ class Sprite extends View {
         this.transform();
     }
 
+    /**
+     * Refreshes the sprite animation frame based on the current animation state.
+     * Handles frame progression, callbacks, and background position updates.
+     */
     refresh() {
         if (!this.animation) return;
 
@@ -134,6 +178,9 @@ class Sprite extends View {
     }
     /**
      * Changes the animation associated with a sprite.
+     * @param {Animation} animation - The animation object to set.
+     * @param {number} [index] - Optional frame index (currently unused).
+     * @param {Function} [callback] - Optional callback function to execute when animation completes.
      */
     setAnimation(animation, index, callback) {
         this.animation = animation;
@@ -224,6 +271,14 @@ class Sprite extends View {
         this.transform();
     }
 
+    /**
+     * Sets the X, Y, and/or Z coordinates of the sprite.
+     * @param {Object} options - Object containing x, y, and/or z coordinates.
+     * @param {number} [options.x] - X coordinate.
+     * @param {number} [options.y] - Y coordinate.
+     * @param {number} [options.z] - Z coordinate (z-index).
+     * @param {boolean} [relative=false] - If true, adds to current position; if false, sets absolute position.
+     */
     setXYZ(options, relative) {
         let transform = false;
 
@@ -258,6 +313,13 @@ class Sprite extends View {
         if (transform) this.transform();
     }
 
+    /**
+     * Sets the width and/or height of the sprite.
+     * @param {Object} options - Object containing w (width) and/or h (height) values.
+     * @param {number} [options.w] - Width in pixels.
+     * @param {number} [options.h] - Height in pixels.
+     * @param {boolean} [relative=false] - If true, adds to current dimensions; if false, sets absolute dimensions.
+     */
     setWH(options, relative) {
         Object.keys(options).forEach(coordinate => {
             switch (coordinate) {

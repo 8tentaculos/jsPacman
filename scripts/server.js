@@ -27,7 +27,7 @@ const server = http.createServer(handler);
 server.listen(PORT, () => {
     const mode = isDev ? 'development' : 'production';
     const url = `http://localhost:${PORT}`;
-    // ANSI escape code for clickable link (OSC 8)
+    // ANSI escape code for clickable link (OSC 8).
     const link = `\u001b]8;;${url}\u0007${url}\u001b]8;;\u0007`;
     console.log(`\n🎮 jsPacman Server running at ${link} (${mode})\n`);
 });

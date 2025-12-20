@@ -4,12 +4,36 @@ import Character from './Character.js';
 import getDistance from './helper/getDistance.js';
 import rnd from './helper/rnd.js';
 
+/**
+ * Ghost mode: Scatter mode.
+ * @constant {string}
+ */
 export const MODE_SCATTER = 'scatter';
+/**
+ * Ghost mode: Chase mode.
+ * @constant {string}
+ */
 export const MODE_CHASE = 'chase';
+/**
+ * Ghost mode: Frightened mode.
+ * @constant {string}
+ */
 export const MODE_FRIGHTENED = 'frightened';
+/**
+ * Ghost mode: House mode (in ghost house).
+ * @constant {string}
+ */
 export const MODE_HOUSE = 'house';
+/**
+ * Ghost mode: Dead mode (returning to house).
+ * @constant {string}
+ */
 export const MODE_DEAD = 'dead';
 
+/**
+ * Base animation configuration for ghosts.
+ * @type {Object}
+ */
 export const animationBase = {
     imageURL : 'img/characters.png',
     numberOfFrame : 2,
@@ -18,6 +42,10 @@ export const animationBase = {
     type : ANIMATION_HORIZONTAL
 };
 
+/**
+ * Animation definitions for ghosts in different states.
+ * @type {Object}
+ */
 export const animations = {
     'frightened' : new Animation({
         ...animationBase,
@@ -93,6 +121,10 @@ export const animations = {
     })
 };
 
+/**
+ * Default properties for Ghost instances.
+ * @type {Object}
+ */
 const defaults = {
     animations,
     width : 64,
@@ -112,7 +144,29 @@ const defaults = {
     frightenedFlashes : null
 };
 
+/**
+ * Ghost character class. Extends Character with ghost-specific AI and behavior.
+ * @class Ghost
+ * @extends {Character}
+ */
 class Ghost extends Character {
+    /**
+     * Creates an instance of Ghost.
+     * @param {Object} options - Configuration options.
+     * @param {string} [options.mode=MODE_HOUSE] - Initial ghost mode.
+     * @param {number} [options.speed=75] - Ghost speed.
+     * @param {number} [options.frightenedTime=5] - Time in seconds ghosts stay frightened.
+     * @param {number} [options.waitTime=4] - Time in seconds to wait in house.
+     * @param {number} [options.scatterTarget=0] - Tile index for scatter target.
+     * @param {string} [options.score='200'] - Score value when eaten.
+     * @param {Object} [options.scores] - Score progression when multiple ghosts eaten.
+     * @param {Function} [options.getChaseTarget] - Function to get chase target tile.
+     * @param {Ghost} [options.blinky] - Reference to Blinky ghost (for Inky).
+     * @param {Function} options.addGameGlobalModeEventListener - Function to add global mode listener.
+     * @param {Function} options.addGameGhostEatenEventListener - Function to add ghost eaten listener.
+     * @param {Function} options.addPacmanEatPillEventListener - Function to add pill eat listener.
+     * @param {Function} options.addPacmanPositionEventListener - Function to add Pacman position listener.
+     */
     constructor(options) {
         super(options);
 
@@ -177,21 +231,34 @@ class Ghost extends Character {
         });
     }
 
+    /**
+     * Resets ghost to initial state.
+     */
     reset() {
         super.reset();
         this.setMode(this.mode);
     }
 
+    /**
+     * Pauses ghost timers.
+     */
     pause() {
         if (this.houseTimer) this.houseTimer.pause();
         if (this.frightenedTimer) this.frightenedTimer.pause();
     }
 
+    /**
+     * Resumes ghost timers.
+     */
     resume() {
         if (this.mode === MODE_FRIGHTENED) this.frightenedTimer.resume();
         if (this.mode === MODE_HOUSE && !this.housePrepareExit) this.houseTimer.resume();
     }
 
+    /**
+     * Sets the ghost's current mode.
+     * @param {string} [mode] - The mode to set. If not provided, uses global mode.
+     */
     setMode(mode) {
         if (!mode) {
             if (this.frightened) {
@@ -212,6 +279,10 @@ class Ghost extends Character {
         this.onEnterMode(mode);
     }
 
+    /**
+     * Checks if the ghost should exit its current mode.
+     * @returns {boolean} True if the ghost should exit the current mode.
+     */
     shouldExitMode() {
         if (this.mode === MODE_DEAD) return this.getTile() === this.deadEnd;
 
@@ -224,6 +295,10 @@ class Ghost extends Character {
         return false;
     }
 
+    /**
+     * Handles actions when entering a new mode.
+     * @param {string} mode - The mode being entered.
+     */
     onEnterMode(mode) {
         switch (mode) {
             case MODE_DEAD:
@@ -243,6 +318,9 @@ class Ghost extends Character {
         }
     }
 
+    /**
+     * Handles actions when exiting the current mode.
+     */
     onExitMode() {
         const tile = this.getTile();
 
@@ -272,18 +350,33 @@ class Ghost extends Character {
         }
     }
 
+    /**
+     * Checks if the ghost is in frightened mode.
+     * @returns {boolean} True if the ghost is frightened.
+     */
     isFrightened() {
         return this.frightened || this.mode === MODE_FRIGHTENED;
     }
 
+    /**
+     * Checks if the ghost is in dead mode.
+     * @returns {boolean} True if the ghost is dead.
+     */
     isDead() {
         return this.mode === MODE_DEAD;
     }
 
+    /**
+     * Handles global game mode changes.
+     * @param {string} mode - The new global mode.
+     */
     onGameGlobalMode(mode) {
         if (mode) this.globalMode = mode;
     }
 
+    /**
+     * Moves the ghost based on its current mode and AI logic.
+     */
     move() {
         if (this.shouldExitMode()) {
             this.onExitMode();
@@ -376,6 +469,12 @@ class Ghost extends Character {
         }
     }
 
+    /**
+     * Checks if the ghost can move in a given direction.
+     * @param {string} dir - The direction to check.
+     * @param {Tile} [tile] - The tile to check from. Defaults to current tile.
+     * @returns {boolean} True if the ghost can move in that direction.
+     */
     canGo(dir, tile) {
         if (!tile) tile = this.getTile();
 
@@ -389,6 +488,10 @@ class Ghost extends Character {
 
     }
 
+    /**
+     * Calculates the next direction for the ghost based on AI logic.
+     * @returns {string} The next direction ('u', 'r', 'd', 'l').
+     */
     getNextDirection() {
         if (this.mode === MODE_FRIGHTENED) {
             // Next tile.
@@ -438,6 +541,9 @@ class Ghost extends Character {
         return nextDirection;
     }
 
+    /**
+     * Sets the next animation based on the ghost's current mode and direction.
+     */
     setNextAnimation() {
         if (this.mode === MODE_DEAD) {
             switch (this.dir) {

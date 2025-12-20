@@ -1,19 +1,57 @@
 import { View } from 'rasti';
 
+/**
+ * Event name for swipe gestures.
+ * @constant {string}
+ */
 export const EVENT_SWIPE = 'swipe';
 
+/**
+ * Event name for upward swipe gestures.
+ * @constant {string}
+ */
 export const EVENT_SWIPE_UP = 'swipe:up';
+/**
+ * Event name for rightward swipe gestures.
+ * @constant {string}
+ */
 export const EVENT_SWIPE_RIGHT = 'swipe:right';
+/**
+ * Event name for downward swipe gestures.
+ * @constant {string}
+ */
 export const EVENT_SWIPE_DOWN = 'swipe:down';
+/**
+ * Event name for leftward swipe gestures.
+ * @constant {string}
+ */
 export const EVENT_SWIPE_LEFT = 'swipe:left';
 
+/**
+ * Default properties for Touch instances.
+ * @type {Object}
+ */
 const defaults = {
     threshold : 100, // required min distance traveled to be considered swipe
     restraint : 150, // maximum distance allowed at the same time in perpendicular direction
     allowedTime : 400 // maximum time allowed to travel that distance
 };
 
+/**
+ * Touch event handler class for detecting swipe gestures on touch devices.
+ * Extends View from rasti framework.
+ * @class Touch
+ * @extends {View}
+ */
 class Touch extends View {
+    /**
+     * Creates an instance of Touch.
+     * @param {Object} [options={}] - Configuration options.
+     * @param {HTMLElement} [options.el] - Element to attach touch listeners to. Defaults to document.body.
+     * @param {number} [options.threshold=100] - Required minimum distance traveled to be considered a swipe (in pixels).
+     * @param {number} [options.restraint=150] - Maximum distance allowed at the same time in perpendicular direction (in pixels).
+     * @param {number} [options.allowedTime=400] - Maximum time allowed to travel that distance (in milliseconds).
+     */
     constructor(options = {}) {
         super({
             ...options,
@@ -31,11 +69,19 @@ class Touch extends View {
         this.el.addEventListener('touchend', this.onTouchEnd, false);
     }
 
+    /**
+     * Cleanup method called when the Touch instance is destroyed.
+     * Removes touch event listeners.
+     */
     onDestroy() {
         this.el.removeEventListener('touchstart', this.onTouchStart);
         this.el.removeEventListener('touchend', this.onTouchEnd);
     }
 
+    /**
+     * Handles touch start events to record the initial touch position and time.
+     * @param {TouchEvent} event - The touch event.
+     */
     onTouchStart(event) {
         const touch = event.changedTouches[0];
 
@@ -44,6 +90,10 @@ class Touch extends View {
         this.startTime = new Date(); // record time when finger first makes contact with surface
     }
 
+    /**
+     * Handles touch end events to detect swipe gestures and emit appropriate events.
+     * @param {TouchEvent} event - The touch event.
+     */
     onTouchEnd(event) {
         let type = null;
 
