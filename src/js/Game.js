@@ -850,16 +850,11 @@ class JsPacman extends Game {
         this._pacmanEaten = true;
     }
 
-    /**
-     * Returns the HTML template for the game UI.
-     * @param {GameModel} model - The game model.
-     * @returns {string} The HTML template string.
-     */
-    template(model) {
-        return `
+    render() {
+        this.el.innerHTML = `
             <div class="score">
                 <div class="p1-score">1UP<br /><span>00</span></div>
-                <div class="high-score">HIGH SCORE<br /><span>${model.highScore || '00'}</span></div>
+                <div class="high-score">HIGH SCORE<br /><span>${Game.sanitize(this.model.highScore) || '00'}</span></div>
                 <div class="p2-score">2UP<br /><span>00</span></div>
             </div>
             <div class="start-p1" style="display: none">PLAYER ONE</div>
@@ -876,6 +871,10 @@ class JsPacman extends Game {
                 <div class="credits">&#169; 2014-${new Date().getFullYear()} <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman">SOURCE+INFO</a></div>
             </div>
         `;
+
+        super.render();
+
+        return this;
     }
 }
 

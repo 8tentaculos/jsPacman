@@ -79,8 +79,6 @@ class Game extends View {
      * @returns {Game} Returns this instance for method chaining.
      */
     render() {
-        super.render();
-
         // We initialize the display of the div
         Object.assign(this.el.style, {
             position : this.position,
