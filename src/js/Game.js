@@ -733,6 +733,8 @@ class JsPacman extends Game {
             this.startLevel();
         } else if (this.model.status === STATUS_PLAY) {
             this.model.status = STATUS_PAUSED;
+        } else if (this.model.status === STATUS_PAUSED) {
+            this.model.status = STATUS_PLAY;
         }
     }
 
@@ -761,12 +763,13 @@ class JsPacman extends Game {
         }
         // Pause Game.
         else if (event.key === 'p' || event.key === 'P') {
-            this.model.status = STATUS_PAUSED;
+            if (this.model.status === STATUS_PLAY) this.model.status = STATUS_PAUSED;
+            else if (this.model.status === STATUS_PAUSED) this.model.status = STATUS_PLAY;
         }
     }
 
     _onChangeStatus(model, status) {
-        if (model.previous.status === 'STATUS_PLAY' && status === STATUS_PAUSED) this.pause();
+        if (model.previous.status === STATUS_PLAY && status === STATUS_PAUSED) this.pause();
         else if (model.previous.status === STATUS_PAUSED && status === STATUS_PLAY) this.resume();
     }
 
