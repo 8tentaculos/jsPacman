@@ -143,6 +143,7 @@ class JsPacman extends Game {
      * Starts a new level or handles game over/win states.
      */
     startLevel() {
+        // New level.
         if (this.model.status === STATUS_WIN) {
             this.model.level++;
             this.reset();
@@ -150,16 +151,17 @@ class JsPacman extends Game {
             return;
         }
 
-        if (this._gameOver) {
+        // Game over.
+        if (this.model.status === STATUS_SPLASH && this.model.previous.status === STATUS_GAME_OVER) {
             this.model.level = 1;
             this.reset();
-            this._gameOver = false;
             hide(this.elements.splash);
             this.model.status = STATUS_INTRO;
             this.sound.play('intro');
             return;
         }
 
+        // Intro.
         hide(this.elements.splash);
         this.model.status = STATUS_INTRO;
         this.sound.play('intro');
@@ -316,7 +318,7 @@ class JsPacman extends Game {
 
             this._pacmanEaten = false;
 
-            if (this.model.lives) {
+            if (this.model.lives > 0) {
                 show(this.elements.startReady);
                 this.model.status = STATUS_INTRO_OUT;
                 this._pauseFrames = 40;
@@ -468,6 +470,11 @@ class JsPacman extends Game {
 
         // Move.
         if (!this._pauseFrames) {
+            // Splash.
+            if (this.model.status === STATUS_SPLASH) {
+                return;
+            }
+            // Intro.
             if (this.model.status === STATUS_INTRO) {
                 hide(this.elements.startP1);
                 this.showGhosts();
@@ -491,7 +498,7 @@ class JsPacman extends Game {
                 return;
             }
 
-            if (this._gameOver) {
+            if (this.model.status === STATUS_GAME_OVER) {
                 hide(this.elements.gameOver);
                 show(this.elements.splash);
                 this.model.status = STATUS_SPLASH;
@@ -792,7 +799,7 @@ class JsPacman extends Game {
     _onChangeLives(model, lives) {
         if (lives === 0) {
             // Game over.
-            this._gameOver = true;
+            this.model.status = STATUS_GAME_OVER;
             show(this.elements.gameOver);
             this.hideGhosts();
             this.pacman.hide();
