@@ -27,7 +27,7 @@ class Bonuses {
                 y : options.y,
                 factor : options.factor,
                 addPacmanPositionEventListener : () => {},
-                normalizeRefrashRate : () => 1
+                normalizeRefreshRate : () => 1
             });
 
             options.addSprite(bonus);

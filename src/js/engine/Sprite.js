@@ -30,7 +30,7 @@ const defaults = {
     factorV : 1,
     animations : {},
     defaultAnimation : 'default',
-    normalizeRefrashRate : null,
+    normalizeRefreshRate : null,
     type : null
 };
 
@@ -57,7 +57,7 @@ class Sprite extends View {
      * @param {number} [options.factorV=1] - Vertical flip factor.
      * @param {Object} [options.animations={}] - Object containing animation definitions.
      * @param {string} [options.defaultAnimation='default'] - Name of the default animation.
-     * @param {Function} [options.normalizeRefrashRate] - Function to normalize refresh rate.
+     * @param {Function} [options.normalizeRefreshRate] - Function to normalize refresh rate.
      * @param {string} [options.type] - Type identifier for the sprite.
      */
     constructor(options) {
@@ -112,7 +112,7 @@ class Sprite extends View {
     refresh() {
         if (!this.animation) return;
 
-        if ((this.idleCounter === this.normalizeRefrashRate(this.animation.refreshRate) - 1) && this.playing) {
+        if ((this.idleCounter === this.normalizeRefreshRate(this.animation.refreshRate) - 1) && this.playing) {
             // Does 'this' loops?
             if (this.animation.type & ANIMATION_ONCE) {
                 if (this.currentFrame < this.animation.numberOfFrame - 1) {
@@ -161,7 +161,7 @@ class Sprite extends View {
                 this.el.style.backgroundPosition = `${x}px ${y}px`;
             }
         }
-        this.idleCounter = (this.idleCounter + 1) % this.normalizeRefrashRate(this.animation.refreshRate);
+        this.idleCounter = (this.idleCounter + 1) % this.normalizeRefreshRate(this.animation.refreshRate);
     }
     /**
      * Stop the animation at the current frame.

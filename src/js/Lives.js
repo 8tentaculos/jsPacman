@@ -28,7 +28,7 @@ class Lives  {
                 addGameGhostEatEventListener : () => {},
                 addGameGhostModeFrightenedEnter : () => {},
                 addGameGhostModeFrightenedExit : () => {},
-                normalizeRefrashRate : () => 1
+                normalizeRefreshRate : () => 1
             });
 
             options.addSprite(pacman);

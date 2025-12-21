@@ -210,7 +210,7 @@ class Game extends View {
      * @param {number} [refreshRate=this.refreshRate] - The rate in ms at which the callback should be called (should be a multiple of the game refresh rate or will be rounded).
      */
     addCallback(callback, refreshRate = this.refreshRate) {
-        this.callbacks.push({ fn : callback, refreshRate : this.normalizeRefrashRate(refreshRate), idleCounter : 0 });
+        this.callbacks.push({ fn : callback, refreshRate : this.normalizeRefreshRate(refreshRate), idleCounter : 0 });
     }
     /**
      * Called periodically to refresh the state of the game.
@@ -231,7 +231,7 @@ class Game extends View {
                         }
                     } else if (typeof value === 'number') {
                         // If we have a number it re-defines the time to the next call
-                        this.callbacks[i].refreshRate = this.normalizeRefrashRate(value);
+                        this.callbacks[i].refreshRate = this.normalizeRefreshRate(value);
                         this.callbacks[i].idleCounter = 0;
                     }
                 }
@@ -297,7 +297,7 @@ class Game extends View {
      * @param {number} rate - The refresh rate in milliseconds to normalize.
      * @returns {number} The normalized refresh rate (rounded to nearest multiple of game refresh rate).
      */
-    normalizeRefrashRate(rate) {
+    normalizeRefreshRate(rate) {
         return Math.round(rate / this.refreshRate) || 1;
     }
 }
