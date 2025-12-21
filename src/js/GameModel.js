@@ -78,6 +78,14 @@ var keys = [
     'game.maze'
 ];
 
+export const STATUS_SPLASH = 'splash';
+export const STATUS_INTRO = 'intro';
+export const STATUS_INTRO_OUT = 'introOut';
+export const STATUS_PLAY = 'play';
+export const STATUS_PAUSED = 'paused';
+export const STATUS_GAME_OVER = 'gameOver';
+export const STATUS_WIN = 'win';
+
 /**
  * Game model class that manages game state, scores, levels, and settings.
  * Extends Model for localStorage persistence.
@@ -102,9 +110,7 @@ class GameModel extends Model {
      */
     preinitialize() {
         this.defaults = {
-            splash : true,
-            play : false,
-            paused : false,
+            status : STATUS_SPLASH,
             level : 1,
             score : 0,
             highScore : 0,

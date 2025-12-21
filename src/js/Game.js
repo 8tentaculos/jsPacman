@@ -1,7 +1,7 @@
 import Game from './engine/Game.js';
 import SoundManager from './SoundManager.js';
 import Map from './Map.js';
-import GameModel from './GameModel.js';
+import GameModel, { STATUS_SPLASH, STATUS_INTRO, STATUS_INTRO_OUT, STATUS_PLAY, STATUS_PAUSED, STATUS_GAME_OVER, STATUS_WIN } from './GameModel.js';
 import makeGhost from './factory/makeGhost.js';
 import makeDot from './factory/makeDot.js';
 import makePill from './factory/makePill.js';
@@ -129,7 +129,7 @@ class JsPacman extends Game {
         this.model.on('change:lives', this._onChangeLives.bind(this));
         this.model.on('change:extraLives', this._onChangeExtraLives.bind(this));
         this.model.on('change:mode', this._onChangeMode.bind(this));
-        this.model.on('change:paused', this._onChangePaused.bind(this));
+        this.model.on('change:status', this._onChangeStatus.bind(this));
 
         this.makeLevel();
 
@@ -143,10 +143,10 @@ class JsPacman extends Game {
      * Starts a new level or handles game over/win states.
      */
     startLevel() {
-        if (this._win) {
+        if (this.model.status === STATUS_WIN) {
             this.model.level++;
             this.reset();
-            this._win = false;
+            this.model.status = STATUS_INTRO_OUT;
             return;
         }
 
@@ -155,19 +155,13 @@ class JsPacman extends Game {
             this.reset();
             this._gameOver = false;
             hide(this.elements.splash);
-            this.model.set({
-                splash : false,
-                play : true
-            });
+            this.model.status = STATUS_INTRO;
             this.sound.play('intro');
             return;
         }
 
         hide(this.elements.splash);
-        this.model.set({
-            splash : false,
-            play : true
-        });
+        this.model.status = STATUS_INTRO;
         this.sound.play('intro');
         this.addCallback(this.mainLoop.bind(this));
     }
@@ -189,7 +183,7 @@ class JsPacman extends Game {
         this.off('game:ghost:eaten', this._onGhostEaten);
         this.off('game:ghost:eat', this._onGhostEat);
 
-        if (!this._win) {
+        if (this.model.status !== STATUS_WIN) {
             this.model.lives = this.defaultLives + 1;
             this.model.score = 0;
         }
@@ -234,7 +228,7 @@ class JsPacman extends Game {
                     defaultAnimation : dotAnimationLabel,
                     map : this.map,
                     factor : this.scaling.getFactor(),
-                    normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+                    normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
                     x : tile.x,
                     y : tile.y
                 });
@@ -248,7 +242,7 @@ class JsPacman extends Game {
                     defaultAnimation : dotAnimationLabel,
                     map : this.map,
                     factor : this.scaling.getFactor(),
-                    normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+                    normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
                     x : tile.x,
                     y : tile.y
                 });
@@ -268,7 +262,7 @@ class JsPacman extends Game {
             ...this.model.getSettings('pacman'),
             map : this.map,
             factor : this.scaling.getFactor(),
-            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+            normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
             addGameGhostEatEventListener : listener => this.on('game:ghost:eat', listener),
             addGameGhostModeFrightenedEnter : listener => this.on('game:ghost:modefrightened:enter', listener),
             addGameGhostModeFrightenedExit : listener => this.on('game:ghost:modefrightened:exit', listener)
@@ -324,7 +318,7 @@ class JsPacman extends Game {
 
             if (this.model.lives) {
                 show(this.elements.startReady);
-                this._start = 1;
+                this.model.status = STATUS_INTRO_OUT;
                 this._pauseFrames = 40;
             } else {
                 this._pauseFrames = 120;
@@ -359,7 +353,7 @@ class JsPacman extends Game {
             x : bonusTile.x,
             y : bonusTile.y,
             factor : this.scaling.getFactor(),
-            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+            normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
             addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener)
         });
 
@@ -384,7 +378,7 @@ class JsPacman extends Game {
         const ghostAttrs = {
             ...this.model.getSettings('ghost'),
             map : this.map,
-            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+            normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
             factor : this.scaling.getFactor(),
             addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener),
             addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener),
@@ -440,17 +434,14 @@ class JsPacman extends Game {
 
         show(this.elements.startReady);
 
-        if (!this._win) {
-            show(this.elements.startP1);
-
-            this.hideGhosts();
-
-            this.pacman.hide();
-
-            this._start = 2;
-        } else {
+        if (this.model.status === STATUS_WIN) {
             this.bonus.hide();
-            this._start = 1;
+            this.model.status = STATUS_INTRO_OUT;
+        } else {
+            show(this.elements.startP1);
+            this.hideGhosts();
+            this.pacman.hide();
+            this.model.status = STATUS_INTRO;
         }
     }
 
@@ -470,14 +461,14 @@ class JsPacman extends Game {
      */
     mainLoop() {
         // Global mode.
-        if (!this._start) this.model.updateMode();
+        if (this.model.status === STATUS_PLAY) this.model.updateMode();
 
         // Input
         this._inputDirection = this._getInputDirection();
 
         // Move.
         if (!this._pauseFrames) {
-            if (this._start === 2) {
+            if (this.model.status === STATUS_INTRO) {
                 hide(this.elements.startP1);
                 this.showGhosts();
                 this.pacman.show();
@@ -485,17 +476,17 @@ class JsPacman extends Game {
                 this.model.lives = this.defaultLives;
 
                 this._pauseFrames = 60;
-                this._start--;
+                this.model.status = STATUS_INTRO_OUT;
                 return;
             }
 
-            if (this._start === 1) {
+            if (this.model.status === STATUS_INTRO_OUT) {
                 hide(this.elements.startReady);
-                this._start--;
+                this.model.status = STATUS_PLAY;
                 return;
             }
 
-            if (this._win) {
+            if (this.model.status === STATUS_WIN) {
                 this.startLevel();
                 return;
             }
@@ -503,10 +494,7 @@ class JsPacman extends Game {
             if (this._gameOver) {
                 hide(this.elements.gameOver);
                 show(this.elements.splash);
-                this.model.set({
-                    splash : true,
-                    play : false
-                });
+                this.model.status = STATUS_SPLASH;
                 return;
             }
 
@@ -598,8 +586,8 @@ class JsPacman extends Game {
      * Handles the win state when all items are collected.
      */
     win() {
+        this.model.status = STATUS_WIN;
         this._pauseFrames = 120;
-        this._win = true;
 
         let times = 14;
         this.addCallback(() => {
@@ -734,10 +722,10 @@ class JsPacman extends Game {
      * @private
      */
     _onGamepadStart() {
-        if (this.model.splash) {
+        if (this.model.status === STATUS_SPLASH) {
             this.startLevel();
-        } else if (this.model.play) {
-            this.model.paused = !this.model.paused;
+        } else if (this.model.status === STATUS_PLAY) {
+            this.model.status = STATUS_PAUSED;
         }
     }
 
@@ -766,13 +754,13 @@ class JsPacman extends Game {
         }
         // Pause Game.
         else if (event.key === 'p' || event.key === 'P') {
-            this.model.paused = !this.model.paused;
+            this.model.status = STATUS_PAUSED;
         }
     }
 
-    _onChangePaused(model, paused) {
-        if (paused) this.pause();
-        else this.resume();
+    _onChangeStatus(model, status) {
+        if (model.previous.status === 'STATUS_PLAY' && status === STATUS_PAUSED) this.pause();
+        else if (model.previous.status === STATUS_PAUSED && status === STATUS_PLAY) this.resume();
     }
 
     /**
