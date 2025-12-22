@@ -9,6 +9,7 @@ import makeBonus from './factory/makeBonus.js';
 import Pacman from './Pacman.js';
 import Lives from './Lives.js';
 import Bonuses from './Bonuses.js';
+import MainMenuDialog from './MainMenuDialog.js';
 
 import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard.js';
 import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch.js';
@@ -42,7 +43,8 @@ const defaults = {
     soundEnabled : true,
 
     events : {
-        'click .start' : 'startLevel'
+        'click a.start' : '_onClickStartButton',
+        'click a.menu' : '_onClickMenuButton'
     }
 };
 
@@ -82,13 +84,12 @@ class JsPacman extends Game {
         this.elements = {
             splash : this.$('.splash'),
             start : this.$('.start'),
+            menu : this.$('.menu'),
             startP1 : this.$('.start-p1'),
             startReady : this.$('.start-ready'),
             highScore : this.$('.high-score span'),
             score : this.$('.p1-score span'),
             gameOver : this.$('.game-over'),
-            soundStatus : this.$('.sound-status'),
-            paused : this.$('.paused'),
             load : this.$('.loadbar')
         };
 
@@ -121,6 +122,21 @@ class JsPacman extends Game {
             addSprite : this.addSprite.bind(this)
         });
 
+        // Create main menu dialog
+        this.mainMenu = new MainMenuDialog({
+            model : this.model,
+            factor : this.scaling.getFactor(),
+            scaling : this.scaling,
+            originalWidth : this.originalWidth,
+            originalHeight : this.originalHeight,
+            onResume : () => {
+                this._onMainMenuResume();
+            }
+        });
+        this.mainMenu.render();
+        this.el.appendChild(this.mainMenu.el);
+        this.mainMenu.hide(); // Hide by default
+
         this._onGhostEaten = this._onGhostEaten.bind(this);
         this._onGhostEat = this._onGhostEat.bind(this);
 
@@ -130,12 +146,16 @@ class JsPacman extends Game {
         this.model.on('change:extraLives', this._onChangeExtraLives.bind(this));
         this.model.on('change:mode', this._onChangeMode.bind(this));
         this.model.on('change:status', this._onChangeStatus.bind(this));
+        this.model.on('change:mainMenuOpen', this._onChangeMainMenuOpen.bind(this));
+        this.model.on('change:soundEnabled', this._onChangeSoundEnabled.bind(this));
+        this.model.on('change:overlayEnabled', this._onChangeOverlayEnabled.bind(this));
 
         this.makeLevel();
 
         this.start(() => {
             hide(this.elements.load);
             show(this.elements.start);
+            show(this.elements.menu);
         });
     }
 
@@ -443,7 +463,6 @@ class JsPacman extends Game {
             show(this.elements.startP1);
             this.hideGhosts();
             this.pacman.hide();
-            this.model.status = STATUS_INTRO;
         }
     }
 
@@ -559,16 +578,16 @@ class JsPacman extends Game {
     pause() {
         super.pause();
 
+        this.model.mainMenuOpen = true;
+
         this.pinky.pause();
         this.blinky.pause();
         this.inky.pause();
         this.sue.pause();
 
-        this.muteSound(true);
+        if (this.soundEnabled) this.muteSound(true);
 
         this.model.pause();
-
-        show(this.elements.paused);
     }
 
     /**
@@ -577,16 +596,16 @@ class JsPacman extends Game {
     resume() {
         super.resume();
 
+        this.model.mainMenuOpen = false;
+
         this.pinky.resume();
         this.blinky.resume();
         this.inky.resume();
         this.sue.resume();
 
-        this.muteSound(!!this._muted);
+        if (this.soundEnabled) this.muteSound(!this.model.soundEnabled);
 
         this.model.resume();
-
-        hide(this.elements.paused);
     }
 
     /**
@@ -744,33 +763,56 @@ class JsPacman extends Game {
      * @private
      */
     _onKeyDown(event) {
-        // Sound on/off.
-        if (event.key === 's' || event.key === 'S') {
-            if (!this.soundEnabled) return;
-            // Mute Sound.
-            this._muted = !this._muted;
-            this.muteSound(this._muted);
-
-            var el = this.elements.soundStatus;
-
-            if (this._muted) el.classList.remove('on');
-            else el.classList.add('on');
-
-            show(el);
-
-            if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
-            this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
+        // Pause Game / Open Menu (ESC key).
+        if (event.key === 'Escape') { // ESC key
+            if (this.model.status === STATUS_PLAY) {
+                this.model.status = STATUS_PAUSED;
+            } else if (this.model.status === STATUS_PAUSED) {
+                this.model.status = STATUS_PLAY;
+            } else if (this.model.status === STATUS_SPLASH) {
+                // Open menu from splash
+                this.model.mainMenuOpen = !this.model.mainMenuOpen;
+            }
         }
-        // Pause Game.
-        else if (event.key === 'p' || event.key === 'P') {
-            if (this.model.status === STATUS_PLAY) this.model.status = STATUS_PAUSED;
-            else if (this.model.status === STATUS_PAUSED) this.model.status = STATUS_PLAY;
+    }
+
+    /**
+     * Handles start button click.
+     * @private
+     */
+    _onClickStartButton(event) {
+        this.startLevel();
+    }
+
+    /**
+     * Opens the main menu.
+     */
+    _onClickMenuButton(event) {
+        if (this.model.status === STATUS_SPLASH || this.model.status === STATUS_PAUSED) {
+            this.model.mainMenuOpen = true;
+        }
+    }
+
+    /**
+     * Handles main menu resume/exit button click.
+     * @private
+     */
+    _onMainMenuResume() {
+        if (this.model.status === STATUS_PAUSED) {
+            // Resume game from pause
+            this.model.status = STATUS_PLAY;
+        } else if (this.model.status === STATUS_SPLASH) {
+            // Exit menu from splash (could start game or just hide menu)
+            this.model.mainMenuOpen = false;
         }
     }
 
     _onChangeStatus(model, status) {
-        if (model.previous.status === STATUS_PLAY && status === STATUS_PAUSED) this.pause();
-        else if (model.previous.status === STATUS_PAUSED && status === STATUS_PLAY) this.resume();
+        if (model.previous.status === STATUS_PLAY && status === STATUS_PAUSED) {
+            this.pause();
+        } else if (model.previous.status === STATUS_PAUSED && status === STATUS_PLAY) {
+            this.resume();
+        }
     }
 
     /**
@@ -828,6 +870,26 @@ class JsPacman extends Game {
         this.emit('game:globalmode', mode);
     }
 
+    _onChangeMainMenuOpen(model, open) {
+        if (open) {
+            // Open menu
+            this.mainMenu.show();
+        } else {
+            // Close menu
+            this.mainMenu.hide();
+        }
+    }
+
+    _onChangeSoundEnabled(model, enabled) {
+        if (!this.soundEnabled) return;
+        // Mute Sound.
+        this.muteSound(!enabled);
+    }
+
+    _onChangeOverlayEnabled(model, enabled) {
+        console.log('onChangeOverlayEnabled', enabled);
+    }
+
     /**
      * Handles when Pacman eats a ghost.
      * @param {Ghost} ghost - The ghost that was eaten.
@@ -860,15 +922,13 @@ class JsPacman extends Game {
             <div class="start-p1" style="display: none">PLAYER ONE</div>
             <div class="start-ready" style="display: none">READY!</div>
             <div class="game-over" style="display: none">GAME OVER</div>
-            <div class="sound-status on" style="display: none"><span class="wrap">SOUND: <span class="on">ON</span><span class="off">OFF</span></span></div>
-            <div class="paused" style="display: none"><span class="wrap">PAUSED</span></div>
             <div class="splash">
                 <span class="title">"JS PAC-MAN"</span>
                 <p class="nerd">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
-                <a class="start" style="display: none">START</a>
+                <a class="start" style="display: none" href="#">START</a>
+                <a class="menu" style="display: none" href="#">MENU</a>
                 <div class="loadbar"><div class="inner"></div></div>
-                <p class="keys"><span>&larr;&uarr;&darr;&rarr;</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
-                <div class="credits">&#169; 2014-${new Date().getFullYear()} <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman">SOURCE+INFO</a></div>
+                <div class="credits">&#169; 2014-${new Date().getFullYear()} <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman" target="_blank">SOURCE+INFO</a></div>
             </div>
         `;
 

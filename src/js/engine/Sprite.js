@@ -90,6 +90,7 @@ class Sprite extends View {
 
     /**
      * Renders the sprite element and sets up initial styling and animation.
+     * @returns {Sprite} Returns this instance for method chaining.
      */
     render() {
         Object.assign(this.el.style, {
@@ -103,6 +104,8 @@ class Sprite extends View {
         if (this.animations[this.defaultAnimation]) this.setAnimation(this.animations[this.defaultAnimation]);
 
         this.transform();
+
+        return this;
     }
 
     /**

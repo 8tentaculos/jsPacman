@@ -117,7 +117,10 @@ class GameModel extends Model {
             lives : 3,
             extraLives : 1,
             extraLifeScore : 10000,
-            mode : null
+            mode : null,
+            mainMenuOpen : false,
+            soundEnabled : true,
+            overlayEnabled : false
         };
     }
 
