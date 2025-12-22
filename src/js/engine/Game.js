@@ -1,4 +1,4 @@
-import { View } from 'rasti';
+import View from 'rasti/View.js';
 
 import Keyboard from './Keyboard.js';
 import Touch from './Touch.js';

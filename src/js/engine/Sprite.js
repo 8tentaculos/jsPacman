@@ -1,4 +1,4 @@
-import { View } from 'rasti';
+import View from 'rasti/View.js';
 
 import {
     ANIMATION_HORIZONTAL,
@@ -100,7 +100,7 @@ class Sprite extends View {
             zIndex : this.z
         });
 
-        this.setAnimation(this.animations[this.defaultAnimation]);
+        if (this.animations[this.defaultAnimation]) this.setAnimation(this.animations[this.defaultAnimation]);
 
         this.transform();
     }

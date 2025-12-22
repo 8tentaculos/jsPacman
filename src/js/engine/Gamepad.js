@@ -1,4 +1,4 @@
-import { View } from 'rasti';
+import View from 'rasti/View.js';
 
 /**
  * Event name for gamepad connected events.

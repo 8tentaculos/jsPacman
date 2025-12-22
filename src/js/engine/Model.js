@@ -1,4 +1,4 @@
-import { Model } from 'rasti';
+import Model from 'rasti/Model.js';
 
 /**
  * Model class that extends rasti Model to use localStorage for persistence.

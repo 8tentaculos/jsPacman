@@ -1,4 +1,4 @@
-import { View } from 'rasti';
+import View from 'rasti/View.js';
 
 /**
  * Key code constant for the Up arrow key.
