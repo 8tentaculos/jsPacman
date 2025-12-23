@@ -12,7 +12,7 @@ import Bonuses from './Bonuses.js';
 import MainMenuDialog from './MainMenuDialog.js';
 
 import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard.js';
-import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch.js';
+import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT, EVENT_DOUBLE_TAP } from './engine/Touch.js';
 import { EVENT_GAMEPAD_START } from './engine/Gamepad.js';
 
 /**
@@ -96,6 +96,7 @@ class JsPacman extends Game {
         this.keyboard.on(EVENT_KEY_DOWN, this._onKeyDown.bind(this));
 
         this.touch.on(EVENT_SWIPE, this._onSwipe.bind(this));
+        this.touch.on(EVENT_DOUBLE_TAP, this._onDoubleTap.bind(this));
 
         this.gamepad.on(EVENT_GAMEPAD_START, this._onGamepadStart.bind(this));
 
@@ -744,6 +745,18 @@ class JsPacman extends Game {
     }
 
     /**
+     * Handles double-tap gesture to pause the game.
+     * @param {TouchEvent} event - The touch event.
+     * @private
+     */
+    _onDoubleTap() {
+        // Only pause if game is in play status (same as ESC key behavior)
+        if (this.model.status === STATUS_PLAY) {
+            this.model.status = STATUS_PAUSED;
+        }
+    }
+
+    /**
      * Handles gamepad start button press.
      * @private
      */
@@ -780,14 +793,14 @@ class JsPacman extends Game {
      * Handles start button click.
      * @private
      */
-    _onClickStartButton(event) {
+    _onClickStartButton() {
         this.startLevel();
     }
 
     /**
      * Opens the main menu.
      */
-    _onClickMenuButton(event) {
+    _onClickMenuButton() {
         if (this.model.status === STATUS_SPLASH || this.model.status === STATUS_PAUSED) {
             this.model.mainMenuOpen = true;
         }
@@ -887,7 +900,7 @@ class JsPacman extends Game {
     }
 
     _onChangeOverlayEnabled(model, enabled) {
-        console.log('onChangeOverlayEnabled', enabled);
+        console.log('onChangeOverlayEnabled', enabled); // eslint-disable-line no-console
     }
 
     /**
@@ -924,7 +937,7 @@ class JsPacman extends Game {
             <div class="game-over" style="display: none">GAME OVER</div>
             <div class="splash">
                 <span class="title">"JS PAC-MAN"</span>
-                <p class="nerd">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
+                <p class="message">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
                 <a class="start" style="display: none" href="#">START</a>
                 <a class="menu" style="display: none" href="#">MENU</a>
                 <div class="loadbar"><div class="inner"></div></div>

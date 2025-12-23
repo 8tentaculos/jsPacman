@@ -7,6 +7,12 @@ import View from 'rasti/View.js';
 export const EVENT_SWIPE = 'swipe';
 
 /**
+ * Event name for double-tap gestures.
+ * @constant {string}
+ */
+export const EVENT_DOUBLE_TAP = 'doubletap';
+
+/**
  * Event name for upward swipe gestures.
  * @constant {string}
  */
@@ -34,7 +40,9 @@ export const EVENT_SWIPE_LEFT = 'swipe:left';
 const defaults = {
     threshold : 100, // required min distance traveled to be considered swipe
     restraint : 150, // maximum distance allowed at the same time in perpendicular direction
-    allowedTime : 400 // maximum time allowed to travel that distance
+    allowedTime : 400, // maximum time allowed to travel that distance
+    doubleTapDelay : 300, // maximum time between taps to be considered double-tap (milliseconds)
+    doubleTapThreshold : 50 // maximum distance between taps to be considered double-tap (pixels)
 };
 
 /**
@@ -65,6 +73,11 @@ class Touch extends View {
         this.onTouchStart = this.onTouchStart.bind(this);
         this.onTouchEnd = this.onTouchEnd.bind(this);
 
+        // Double-tap detection state
+        this._lastTapTime = 0;
+        this._lastTapX = 0;
+        this._lastTapY = 0;
+
         this.el.addEventListener('touchstart', this.onTouchStart, false);
         this.el.addEventListener('touchend', this.onTouchEnd, false);
     }
@@ -80,6 +93,7 @@ class Touch extends View {
 
     /**
      * Handles touch start events to record the initial touch position and time.
+     * Also detects double-tap gestures.
      * @param {TouchEvent} event - The touch event.
      */
     onTouchStart(event) {
@@ -88,6 +102,29 @@ class Touch extends View {
         this.startX = touch.pageX;
         this.startY = touch.pageY;
         this.startTime = new Date(); // record time when finger first makes contact with surface
+
+        // Double-tap detection
+        const currentTime = Date.now();
+        const timeDiff = currentTime - this._lastTapTime;
+        const x = touch.pageX;
+        const y = touch.pageY;
+        const xDiff = Math.abs(x - this._lastTapX);
+        const yDiff = Math.abs(y - this._lastTapY);
+
+        // Check if this is a double-tap (within time and distance thresholds)
+        if (timeDiff < this.doubleTapDelay &&
+            xDiff < this.doubleTapThreshold &&
+            yDiff < this.doubleTapThreshold) {
+            // Double-tap detected
+            this.emit(EVENT_DOUBLE_TAP, event);
+            // Reset to prevent triple-tap
+            this._lastTapTime = 0;
+        } else {
+            // Store tap info for potential double-tap
+            this._lastTapTime = currentTime;
+            this._lastTapX = x;
+            this._lastTapY = y;
+        }
     }
 
     /**
