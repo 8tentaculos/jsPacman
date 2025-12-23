@@ -100,6 +100,13 @@ body {
     z-index: 1;
 }
 
+/* Focus styles for all links and buttons in playground */
+.js-pacman-playground a:focus,
+.js-pacman-playground button:focus {
+    outline: 2px solid var(--color-accent-yellow);
+    outline-offset: 2px;
+}
+
 .js-pacman-playground .splash a {
     color: var(--color-text-link);
     cursor: pointer;
@@ -116,6 +123,8 @@ body {
     text-transform: uppercase;
     font-size: 1.6em;
     display: block;
+    width: 40%;
+    margin: 0 auto;
     text-decoration: none;
 }
 
@@ -125,12 +134,9 @@ body {
     text-transform: uppercase;
     font-size: 1.2em;
     display: block;
-    color : var(--color-accent-yellow);
+    width: 40%;
+    margin: 0 auto;
     text-decoration: none;
-}
-
-.js-pacman-playground .splash a.menu:hover {
-    color: var(--color-accent-yellow-light);
 }
 
 .js-pacman-playground .splash .title {
@@ -142,7 +148,7 @@ body {
     color: var(--color-accent-orange);
 }
 
-.js-pacman-playground .splash p.nerd {
+.js-pacman-playground .splash p.message {
     position: absolute;
     top: 33.15%;
     left: 35.26%;
@@ -170,7 +176,7 @@ body {
     left: 0;
     right: 0;
     color: var(--color-text-white);
-    padding: 0.15em 0.1em;
+    height: 1.5em;
     font-size: 0.7em;
 }
 
@@ -281,18 +287,18 @@ body {
     text-align: center;
     color: var(--color-accent-orange);
     font-size: 1.2em;
-    margin: 0 0 0.8em 0;
+    margin: 0 0 0.9em 0;
     padding: 0;
 }
 
 .js-pacman-playground .main-menu .menu-section {
-    margin-bottom: 1.2em;
+    margin-bottom: 2em;
 }
 
 .js-pacman-playground .main-menu .menu-section-title {
     color: var(--color-accent-yellow);
     font-size: 0.9em;
-    margin: 0 0 0.6em 0;
+    margin: 0 0 1em 0;
     padding: 0;
     text-align: left;
 }
@@ -324,7 +330,7 @@ body {
 }
 
 .js-pacman-playground .main-menu .option-item {
-    margin-bottom: 0.6em;
+    margin-bottom: 1.2em;
     margin-left: 0.5em;
 }
 
@@ -333,7 +339,7 @@ body {
     align-items: center;
     cursor: pointer;
     color: var(--color-text-white);
-    font-size: 0.85em;
+    font-size: 1.1em;
     user-select: none;
 }
 
@@ -343,8 +349,8 @@ body {
 
 .js-pacman-playground .main-menu .menu-checkbox {
     margin-right: 0.5em;
-    width: 1em;
-    height: 1em;
+    width: 1.2em;
+    height: 1.2em;
     cursor: pointer;
     accent-color: var(--color-accent-yellow);
 }
