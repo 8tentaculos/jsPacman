@@ -147,14 +147,14 @@ class Gamepad extends View {
         // Standard mapping: buttons 12-15 for D-pad
         // But some gamepads use different mappings
         // Check multiple possible button indices
-        const dpadUp = gamepad.buttons[12]?.pressed || 
-                       gamepad.buttons[0]?.pressed || false;
-        const dpadDown = gamepad.buttons[13]?.pressed || 
-                         gamepad.buttons[1]?.pressed || false;
-        const dpadLeft = gamepad.buttons[14]?.pressed || 
-                         gamepad.buttons[2]?.pressed || false;
-        const dpadRight = gamepad.buttons[15]?.pressed || 
-                          gamepad.buttons[3]?.pressed || false;
+        const dpadUp = gamepad.buttons[12] && gamepad.buttons[12].pressed ||
+                       gamepad.buttons[0] && gamepad.buttons[0].pressed || false;
+        const dpadDown = gamepad.buttons[13] && gamepad.buttons[13].pressed ||
+                         gamepad.buttons[1] && gamepad.buttons[1].pressed || false;
+        const dpadLeft = gamepad.buttons[14] && gamepad.buttons[14].pressed ||
+                         gamepad.buttons[2] && gamepad.buttons[2].pressed || false;
+        const dpadRight = gamepad.buttons[15] && gamepad.buttons[15].pressed ||
+                          gamepad.buttons[3] && gamepad.buttons[3].pressed || false;
 
         // Read all available axes to find the correct mapping
         // Standard: axes[0] = horizontal, axes[1] = vertical
@@ -162,11 +162,11 @@ class Gamepad extends View {
         const axis0 = gamepad.axes[0] || 0;
         const axis1 = gamepad.axes[1] || 0;
         const axis2 = gamepad.axes[2] || 0;
-        const axis3 = gamepad.axes[3] || 0;
+        // const axis3 = gamepad.axes[3] || 0;
 
         // We know axis1 works for horizontal (left/right)
         const leftStickX = axis1; // Horizontal from axis 1
-        
+
         // Try axis2 as vertical since axis1 is horizontal
         // Some gamepads have non-standard axis mappings
         // Since axis1 works for horizontal, try axis2 for vertical
@@ -220,10 +220,10 @@ class Gamepad extends View {
         this.directions[DIRECTION_LEFT] = direction === DIRECTION_LEFT;
 
         // Check for Start button (typically button 9, but some gamepads use different indices)
-        const startButton = gamepad.buttons[9]?.pressed || 
-                           gamepad.buttons[8]?.pressed || 
-                           gamepad.buttons[7]?.pressed || false;
-        
+        const startButton = gamepad.buttons[9] && gamepad.buttons[9].pressed ||
+                           gamepad.buttons[8] && gamepad.buttons[8].pressed ||
+                           gamepad.buttons[7] && gamepad.buttons[7].pressed || false;
+
         // Emit event only on button press (not while held)
         if (startButton && !this._lastStartButtonState) {
             this.emit(EVENT_GAMEPAD_START);
