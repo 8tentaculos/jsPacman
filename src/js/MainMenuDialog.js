@@ -31,8 +31,8 @@ class MainMenuDialog extends Dialog {
             onResume,
             originalWidth,
             originalHeight,
-            width = 700,
-            height = 810,
+            width = 697,
+            height = 920,
         } = options;
 
         if (!model) {
@@ -51,8 +51,8 @@ class MainMenuDialog extends Dialog {
             y : dialogY,
             factor,
             scaling,
-            dotColor: 'white',
-            content: ''
+            dotColor : 'white',
+            content : ''
         });
 
         // Store references after super()
@@ -63,11 +63,20 @@ class MainMenuDialog extends Dialog {
         this.model.on('change:status', this._onModelStatusChange.bind(this));
     }
 
+    events() {
+        return {
+            ...(typeof super.events === 'function' ? super.events.call(this) : super.events),
+            'change #sound-checkbox' : '_onSoundCheckboxChange',
+            'change #overlay-checkbox' : '_onOverlayCheckboxChange',
+            'click #resume-button' : 'onResumeButtonClick'
+        };
+    }
+
     /**
      * Handles resume button click event.
      * @param {Event} event - The click event.
      */
-    onResumeButtonClick(event) {
+    onResumeButtonClick() {
         if (this._onResume) {
             this._onResume();
         }
@@ -77,10 +86,10 @@ class MainMenuDialog extends Dialog {
         const isPause = this.model.status === STATUS_PAUSED;
         const title = isPause ? 'PAUSED' : 'MAIN MENU';
         const exitButtonText = isPause ? 'RESUME' : 'EXIT MENU';
-    
+
         const content = `
             <div class="main-menu">
-                <h2 class="menu-title">${title}</h2>
+                <h2 class="menu-title">*** ${title} ***</h2>
                 
                 <div class="menu-section">
                     <h3 class="menu-section-title">CONTROLS</h3>
@@ -108,6 +117,8 @@ class MainMenuDialog extends Dialog {
                             <strong>TOUCH:</strong>
                             <div class="control-details">
                                 <span>Swipe</span> Move
+                                <br>
+                                <span>Double Tap</span> Pause/Menu
                             </div>
                         </div>
                     </div>
@@ -169,14 +180,4 @@ class MainMenuDialog extends Dialog {
     }
 }
 
-/**
- * Event delegation map for MainMenuDialog.
- */
-MainMenuDialog.prototype.events = {
-    'change #sound-checkbox': '_onSoundCheckboxChange',
-    'change #overlay-checkbox': '_onOverlayCheckboxChange',
-    'click #resume-button': 'onResumeButtonClick'
-};
-
 export default MainMenuDialog;
-
