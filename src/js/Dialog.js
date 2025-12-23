@@ -38,6 +38,9 @@ class Dialog extends View {
         this.dotSpacing = options.dotSpacing || (this.borderWidth * 2);
         this.content = options.content || '';
         this.scaling = options.scaling;
+
+        // Store the previously focused element to restore on hide
+        this._previousActiveElement = null;
     }
 
     /**
@@ -51,7 +54,7 @@ class Dialog extends View {
         const scaledWidth = this.width * this.factor;
         const scaledHeight = this.height * this.factor;
         const scaledBorderWidth = this.borderWidth * this.factor;
-        
+
         // Set up dialog element styling.
         Object.assign(this.el.style, {
             position : 'absolute',
@@ -61,7 +64,7 @@ class Dialog extends View {
             zIndex : this.z,
             transform : `translate(${this.x * this.factor}px, ${this.y * this.factor}px)`
         });
-        
+
         // Add CSS class to dialog element
         this.el.className = 'dialog';
 
@@ -160,19 +163,19 @@ class Dialog extends View {
     _createDot(x, y) {
         // Create dot using makeDot with the same factor as the dialog.
         const dot = makeDot({
-            x: x,                  // Position in original coordinates
-            y: y,                  // Position in original coordinates
-            factor: this.factor,   // Use dialog's factor for scaling
-            defaultAnimation: this.dotColor
+            x : x,                  // Position in original coordinates
+            y : y,                  // Position in original coordinates
+            factor : this.factor,   // Use dialog's factor for scaling
+            defaultAnimation : this.dotColor
         });
-        
+
         // Render the dot to create its DOM element.
         this.addChild(dot.render());
-        
+
         // Apply transform to position the dot.
         // The transform will use: translate(x * factor - offsetX, y * factor - offsetY)
         dot.transform();
-        
+
         return dot;
     }
 
@@ -193,18 +196,152 @@ class Dialog extends View {
     renderContent() {}
 
     /**
-     * Shows the dialog.
+     * Gets all focusable elements within the dialog.
+     * @returns {Array<HTMLElement>} Array of focusable elements.
+     * @private
      */
-    show() {
-        this.el.style.display = 'block';
+    _getFocusableElements() {
+        // Selector for focusable elements.
+        const focusableSelector = [
+            'button:not([disabled])',
+            '[href]',
+            'input:not([disabled]):not([type="hidden"])',
+            'select:not([disabled])',
+            'textarea:not([disabled])',
+            '[tabindex]:not([tabindex="-1"])'
+        ].join(', ');
+
+        // Get all focusable elements using this.$$
+        // Convert NodeList to Array since NodeList doesn't have filter method
+        const elements = Array.from(this.$$(focusableSelector));
+
+        // Filter out elements that are not visible or have display:none
+        return elements.filter(el => {
+            const style = window.getComputedStyle(el);
+            return style.display !== 'none' &&
+                   style.visibility !== 'hidden' &&
+                   !el.hasAttribute('aria-hidden');
+        });
     }
 
     /**
-     * Hides the dialog.
+     * Handles Tab keydown event to trap focus within the dialog.
+     * @param {Event} event - The keydown event.
+     * @param {View} view - The view instance.
+     * @param {HTMLElement} matched - The matched element.
+     * @private
+     */
+    _onKeyDown(event) {
+        // Only handle if dialog is visible
+        if (this.el.style.display === 'none') {
+            return;
+        }
+
+        // Only handle Tab key.
+        if (event.key !== 'Tab') {
+            return;
+        }
+
+        const focusableElements = this._getFocusableElements();
+
+        // If no focusable elements, prevent default and return.
+        if (focusableElements.length === 0) {
+            event.preventDefault();
+            return;
+        }
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        const currentElement = document.activeElement;
+
+        // Check if current focus is within the dialog.
+        const isCurrentFocusInDialog = this.el.contains(currentElement);
+
+        // If focus is not in dialog, focus first element.
+        if (!isCurrentFocusInDialog) {
+            event.preventDefault();
+            firstElement.focus();
+            return;
+        }
+
+        // Find the index of the current element in the focusable elements list.
+        const currentIndex = focusableElements.indexOf(currentElement);
+
+        // If current element is not in the list (shouldn't happen, but safety check).
+        if (currentIndex === -1) {
+            event.preventDefault();
+            firstElement.focus();
+            return;
+        }
+
+        // Always prevent default Tab behavior and handle navigation manually
+        // This ensures focus never escapes the dialog
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Handle Tab (forward) and Shift+Tab (backward).
+        if (event.shiftKey) {
+            // Shift+Tab: move to previous element, wrap to last if on first.
+            if (currentIndex === 0) {
+                lastElement.focus();
+            } else {
+                focusableElements[currentIndex - 1].focus();
+            }
+        } else {
+            // Tab: move to next element, wrap to first if on last.
+            if (currentIndex === focusableElements.length - 1) {
+                firstElement.focus();
+            } else {
+                focusableElements[currentIndex + 1].focus();
+            }
+        }
+    }
+
+    /**
+     * Shows the dialog and focuses the first focusable element.
+     */
+    show() {
+        // Store the currently focused element before showing dialog.
+        this._previousActiveElement = document.activeElement;
+
+        this.el.style.display = 'block';
+
+        // Focus the first focusable element after a short delay to ensure DOM is ready.
+        // Use double requestAnimationFrame to ensure the dialog is visible and DOM is updated.
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                const focusableElements = this._getFocusableElements();
+                if (focusableElements.length > 0) {
+                    focusableElements[0].focus();
+                }
+            });
+        });
+    }
+
+    /**
+     * Hides the dialog and optionally restores focus to the previously focused element.
      */
     hide() {
         this.el.style.display = 'none';
+
+        // Restore focus to the previously focused element if it still exists.
+        if (this._previousActiveElement &&
+            document.body.contains(this._previousActiveElement)) {
+            requestAnimationFrame(() => {
+                this._previousActiveElement.focus();
+            });
+        }
+        this._previousActiveElement = null;
     }
 }
+
+/**
+ * Event delegation map for Dialog focus trap.
+ * Using '*' selector to capture all keydown events within the dialog.
+ * This ensures we catch keydown events from any element inside the dialog.
+ */
+Dialog.prototype.events = {
+    'keydown' : '_onKeyDown'
+};
 
 export default Dialog;
