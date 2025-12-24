@@ -162,7 +162,8 @@ body {
 
 /* Focus styles for all links and buttons in playground */
 .js-pacman-playground a:focus,
-.js-pacman-playground button:focus {
+.js-pacman-playground button:focus,
+.js-pacman-playground input:focus {
     outline: 2px solid var(--color-accent-yellow);
     outline-offset: 2px;
 }
@@ -425,7 +426,6 @@ body {
     padding: 0.5em 1em;
     cursor: pointer;
     text-transform: uppercase;
-    transition: all 0.2s;
     width: 100%;
     box-sizing: border-box;
 }
