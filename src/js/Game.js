@@ -157,6 +157,10 @@ class JsPacman extends Game {
             hide(this.elements.load);
             show(this.elements.start);
             show(this.elements.menu);
+
+            if (this.soundEnabled && !this.model.soundEnabled) {
+                this.muteSound(true);
+            }
         });
     }
 
@@ -897,11 +901,13 @@ class JsPacman extends Game {
         if (!this.soundEnabled) return;
         // Mute Sound.
         this.muteSound(!enabled);
+        this.model.save();
     }
 
     _onChangeOverlayEnabled(model, enabled) {
         this.el.classList.toggle('with-overlay', enabled);
         this.el.classList.toggle('with-light', enabled);
+        this.model.save();
     }
 
     /**
@@ -947,7 +953,7 @@ class JsPacman extends Game {
         `;
 
         this.el.classList.add('with-border');
-        
+
         if (this.model.overlayEnabled) {
             this.el.classList.add('with-overlay', 'with-light');
         }

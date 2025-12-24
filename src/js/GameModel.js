@@ -170,7 +170,7 @@ class GameModel extends Model {
     /**
      * Gets settings for a specific category (game, pacman, ghost) for the current level.
      * @param {string} key - The settings category key ('game', 'pacman', 'ghost').
-     * @returns {Object} Object containing the settings for the specified category.
+     * @returns {Object} Object containing the settings for the specified category for the current level.
      */
     getSettings(key) {
         const obj = {};
@@ -203,7 +203,7 @@ class GameModel extends Model {
 
     /**
      * Returns a JSON representation of the model for persistence.
-     * @returns {Object} Object containing only the high score.
+     * @returns {Object} Object containing only the high score and sound/overlay settings.
      */
     toJSON() {
         return {
