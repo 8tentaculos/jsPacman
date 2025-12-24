@@ -13,7 +13,7 @@
     "clean": "node -e \"import('fs').then(fs => fs.rmSync('dist', {recursive: true, force: true}))\"",
     "build": "dotenv node scripts/build.js",
     "prepare": "npm run clean && npm run test && npm run build",
-    "demo:publish": "npm run test && npm run build && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
+    "demo:publish": "npm run prepare && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
   },
   "repository": "github:8tentaculos/jsPacman",
   "homepage": "https://pacman.js.org",
