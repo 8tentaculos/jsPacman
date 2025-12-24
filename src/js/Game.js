@@ -475,7 +475,7 @@ class JsPacman extends Game {
         ghost.on('item:eat', () => this.emit('game:ghost:eat', ghost));
         ghost.on('item:eaten', () => this.emit('game:ghost:eaten', ghost));
         ghost.on('item:modefrightened:enter', () => this.emit('game:ghost:modefrightened:enter', ghost));
-        ghost.on('item:modefrightened:exit', () =>         this.emit('game:ghost:modefrightened:exit', ghost));
+        ghost.on('item:modefrightened:exit', () => this.emit('game:ghost:modefrightened:exit', ghost));
     }
 
     /**
