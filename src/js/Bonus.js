@@ -2,12 +2,20 @@ import Animation from './engine/Animation.js';
 import Character from './Character.js';
 import getDistance from './helper/getDistance.js';
 
+/**
+ * Base animation configuration for bonus items.
+ * @type {Object}
+ */
 export const animationBase = {
     imageURL : 'img/misc.png',
     offsetY : 0,
     offsetX : 0
-}
+};
 
+/**
+ * Animation definitions for different bonus score values.
+ * @type {Object}
+ */
 export const animations = {
     'default' : new Animation({
         ...animationBase
@@ -48,24 +56,41 @@ export const animations = {
     })
 };
 
+/**
+ * Default properties for Bonus instances.
+ * @type {Object}
+ */
 const defaults = {
     animations,
     speed : 40,
     score : '100'
 };
 
+/**
+ * Bonus item class that moves through the maze and can be eaten by Pacman.
+ * Extends Character with bonus-specific behavior.
+ * @class Bonus
+ * @extends {Character}
+ */
 class Bonus extends Character {
+    /**
+     * Creates an instance of Bonus.
+     * @param {Object} options - Configuration options.
+     * @param {number} [options.speed=40] - Bonus movement speed.
+     * @param {string} [options.score='100'] - Score value when eaten.
+     * @param {Function} options.getPacmanData - Function to get current Pacman position data.
+     */
     constructor(options) {
         super(options);
 
         Object.keys(defaults).forEach(key => {
             if (key in options) this[key] = options[key];
-        })
+        });
 
-        const { addPacmanPositionEventListener } = options;
+        this.getPacmanData = options.getPacmanData;
 
         // Change tile.
-        this.on('item:tile', (tile) => {
+        this.on('item:tile', () => {
             this._dir = this._nextDir;
             this._nextDir = this.getNextDirection();
             this._eatEvent = false;
@@ -80,19 +105,19 @@ class Bonus extends Character {
 
         });
 
-        addPacmanPositionEventListener(data => {
-            this.pacmanData = data;
-        });
-
         this._targetFound = 2;
     }
 
+    /**
+     * Moves the bonus and checks for collision with Pacman.
+     */
     move() {
         Character.prototype.move.call(this, this._dir);
         // Eat or eaten!
         if (!this._eatEvent) {
-            var pacmanTile = this.pacmanData.tile, tile = this.getTile(), opposite = this._getOpDirection(this._dir);
-            if (pacmanTile === tile || (this.pacmanData.dir === opposite && pacmanTile === tile.get(opposite))) {
+            const pacmanData = this.getPacmanData();
+            const pacmanTile = pacmanData.tile, tile = this.getTile(), opposite = this._getOpDirection(this._dir);
+            if (pacmanTile === tile || (pacmanData.dir === opposite && pacmanTile === tile.get(opposite))) {
                 this._eatEvent = true;
 
                 this._nextAnimation =  this.animations[`score${this.score}`];
@@ -103,6 +128,10 @@ class Bonus extends Character {
         }
     }
 
+    /**
+     * Calculates the next direction for the bonus using pathfinding.
+     * @returns {string} The next direction ('u', 'r', 'd', 'l').
+     */
     getNextDirection() {
         var targetTile = this._getTarget(); // Target Tile
 
@@ -133,6 +162,12 @@ class Bonus extends Character {
         return nextDirection;
     }
 
+    /**
+     * Checks if the bonus can move in a given direction.
+     * @param {string} dir - The direction to check.
+     * @param {Tile} [tile] - The tile to check from. Defaults to current tile.
+     * @returns {boolean} True if the bonus can move in that direction.
+     */
     canGo(dir, tile) {
         if (!tile) tile = this.getTile();
 
@@ -143,10 +178,18 @@ class Bonus extends Character {
         return !nextTile.isWall() && !nextTile.isHouse();
     }
 
+    /**
+     * Gets the target tile for the bonus (first tunnel).
+     * @returns {Tile} The target tile.
+     * @private
+     */
     _getTarget() {
         return this.map.tunnels[0];
     }
 
+    /**
+     * Overrides setNextAnimation to do nothing (bonus doesn't change animation).
+     */
     setNextAnimation() {}
 }
 

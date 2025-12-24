@@ -1,15 +1,19 @@
 {
   "name": "jsPacman",
-  "version": "0.2.5",
-  "description": "A JavaScript DOM-based remake of the classic Ms. Pac-Man game.",
+  "version": "0.3.0",
+  "description": "JavaScript DOM based remake of the classic Ms. Pac-Man game",
   "type": "module",
   "main": "dist/index.html",
   "scripts": {
-    "start": "webpack serve --open",
-    "build": "npm run clean && cross-env NODE_ENV=production webpack",
-    "clean": "rimraf ./dist",
+    "start": "node scripts/server.js",
+    "preview": "node scripts/server.js --prod",
+    "lint": "eslint src test",
     "test": "mocha --require jsdom-global/register --reporter nyan test/*.js",
-    "demo:publish": "npm run test && cross-env JSPACMAN_HEAD_TAGS='<meta name=\"google-site-verification\" content=\"UCroCcyY7Zf5eVbo3EV1Ao9eJcfVK3psojHB1JFo23s\"><script data-goatcounter=\"https://jspacman.goatcounter.com/count\" async src=\"//gc.zgo.at/count.js\"></script>' npm run build && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
+    "posttest": "npm run lint",
+    "clean": "node -e \"import('fs').then(fs => fs.rmSync('dist', {recursive: true, force: true}))\"",
+    "build": "dotenv node scripts/build.js",
+    "prepare": "npm run clean && npm run test && npm run build",
+    "demo:publish": "npm run test && npm run build && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
   },
   "repository": "github:8tentaculos/jsPacman",
   "homepage": "https://pacman.js.org",
@@ -24,21 +28,16 @@
   "author": "Alberto Masuelli <alberto.masuelli@gmail.com> (https://github.com/8tentaculos)",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "chai": "^4.5.0",
-    "copy-webpack-plugin": "^12.0.2",
-    "cross-env": "^7.0.3",
-    "css-loader": "^7.1.2",
-    "html-webpack-plugin": "^5.6.3",
+    "dotenv-cli": "^7.4.2",
+    "eslint": "^9.39.2",
+    "globals": "^16.5.0",
     "jsdom": "^25.0.1",
     "jsdom-global": "3.0.2",
     "mocha": "^10.7.3",
-    "rimraf": "^6.0.1",
-    "style-loader": "^4.0.0",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.1.0"
-  },
-  "dependencies": {
-    "rasti": "^3.0.0"
+    "rasti": "4.0.0-alpha.11",
+    "sirv": "^2.0.3",
+    "terser": "^5.36.0"
   }
 }

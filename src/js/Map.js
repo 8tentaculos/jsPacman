@@ -1,6 +1,15 @@
 import Tile from './Tile.js';
 
+/**
+ * Map class representing the game maze.
+ * @class Map
+ */
 class Map {
+    /**
+     * Creates an instance of Map.
+     * @param {Array<string>} data - Array of strings representing the map layout.
+     * Each string is a row, each character is a tile code.
+     */
     constructor(data) {
         /*
         data = ['----------------------------',
@@ -39,7 +48,13 @@ class Map {
         this.tileHeight = this.tiles[0].height;
     }
 
-    // Return tile object.
+    /**
+     * Gets a tile at the specified coordinates.
+     * @param {number} col - Column index or x coordinate in pixels.
+     * @param {number} row - Row index or y coordinate in pixels.
+     * @param {boolean} [inPixels=false] - If true, coordinates are in pixels and will be converted.
+     * @returns {Tile|null} The tile at the specified position, or null if out of bounds.
+     */
     getTile(col, row, inPixels) {
         if (inPixels) {
             col = parseInt(col / this.tileWidth);
@@ -56,6 +71,9 @@ class Map {
         return this.tiles[idx] || null;
     }
 
+    /**
+     * Destroys all items on all tiles in the map.
+     */
     destroyItems() {
         var i = this.tiles.length;
         while (i--) {
@@ -64,6 +82,9 @@ class Map {
         }
     }
 
+    /**
+     * Hides all items on all tiles in the map.
+     */
     hideItems() {
         var i = this.tiles.length;
         while (i--) {
