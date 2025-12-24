@@ -42,13 +42,6 @@ body {
     height: 100vh;
 }
 
-.hidden {
-    position: absolute;
-    left: -10000px;
-    top: -10000px;
-    visibility: hidden;
-}
-
 .js-pacman-container:has(.with-border) {
     padding: 1em;
     border-radius: 0.5em;
