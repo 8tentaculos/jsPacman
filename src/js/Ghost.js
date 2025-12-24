@@ -137,7 +137,7 @@ const defaults = {
     scores : { '200' : '400', '400' : '800', '800' : '1600' },
     blinky : null,
     getChaseTarget : function() {
-        return this.pacmanData.tile;
+        return this.getPacmanData().tile;
     },
     tunnelSpeed : null,
     frightenedSpeed : null,
@@ -165,7 +165,7 @@ class Ghost extends Character {
      * @param {Function} options.addGameGlobalModeEventListener - Function to add global mode listener.
      * @param {Function} options.addGameGhostEatenEventListener - Function to add ghost eaten listener.
      * @param {Function} options.addPacmanEatPillEventListener - Function to add pill eat listener.
-     * @param {Function} options.addPacmanPositionEventListener - Function to add Pacman position listener.
+     * @param {Function} options.getPacmanData - Function to get current Pacman position data.
      */
     constructor(options) {
         super(options);
@@ -174,11 +174,12 @@ class Ghost extends Character {
             if (key in options) this[key] = options[key];
         });
 
+        this.getPacmanData = options.getPacmanData;
+
         const {
             addGameGlobalModeEventListener,
             addGameGhostEatenEventListener,
-            addPacmanEatPillEventListener,
-            addPacmanPositionEventListener
+            addPacmanEatPillEventListener
         } = options;
 
         this.deadTarget = this.map.house.getR().getU();
@@ -224,10 +225,6 @@ class Ghost extends Character {
 
         addGameGhostEatenEventListener(() => {
             this.score = this.scores[this.score];
-        });
-
-        addPacmanPositionEventListener(data => {
-            this.pacmanData = data;
         });
     }
 
@@ -454,8 +451,9 @@ class Ghost extends Character {
 
         // Eat or eaten!
         if (!this._eatEvent) {
-            var pt = this.pacmanData.tile, t = this.getTile(), op = this._getOpDirection(this.dir);
-            if (pt === t || (this.pacmanData.dir === op && pt === t.get(op))) {
+            const pacmanData = this.getPacmanData();
+            var pt = pacmanData.tile, t = this.getTile(), op = this._getOpDirection(this.dir);
+            if (pt === t || (pacmanData.dir === op && pt === t.get(op))) {
                 this._eatEvent = true;
                 if (this.mode === MODE_FRIGHTENED) {
                     // Ghost eaten by Pacman!

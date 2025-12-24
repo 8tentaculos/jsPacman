@@ -78,7 +78,7 @@ class Bonus extends Character {
      * @param {Object} options - Configuration options.
      * @param {number} [options.speed=40] - Bonus movement speed.
      * @param {string} [options.score='100'] - Score value when eaten.
-     * @param {Function} options.addPacmanPositionEventListener - Function to add Pacman position listener.
+     * @param {Function} options.getPacmanData - Function to get current Pacman position data.
      */
     constructor(options) {
         super(options);
@@ -87,7 +87,7 @@ class Bonus extends Character {
             if (key in options) this[key] = options[key];
         });
 
-        const { addPacmanPositionEventListener } = options;
+        this.getPacmanData = options.getPacmanData;
 
         // Change tile.
         this.on('item:tile', () => {
@@ -105,10 +105,6 @@ class Bonus extends Character {
 
         });
 
-        addPacmanPositionEventListener(data => {
-            this.pacmanData = data;
-        });
-
         this._targetFound = 2;
     }
 
@@ -119,8 +115,9 @@ class Bonus extends Character {
         Character.prototype.move.call(this, this._dir);
         // Eat or eaten!
         if (!this._eatEvent) {
-            var pacmanTile = this.pacmanData.tile, tile = this.getTile(), opposite = this._getOpDirection(this._dir);
-            if (pacmanTile === tile || (this.pacmanData.dir === opposite && pacmanTile === tile.get(opposite))) {
+            const pacmanData = this.getPacmanData();
+            const pacmanTile = pacmanData.tile, tile = this.getTile(), opposite = this._getOpDirection(this._dir);
+            if (pacmanTile === tile || (pacmanData.dir === opposite && pacmanTile === tile.get(opposite))) {
                 this._eatEvent = true;
 
                 this._nextAnimation =  this.animations[`score${this.score}`];

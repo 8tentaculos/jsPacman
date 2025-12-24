@@ -128,8 +128,6 @@ class Character extends Item {
                 this.resumeAnimation();
                 this._moving = true;
             }
-
-            this.emit('item:position', this._getPositionData());
         } else {
             // Not moving.
             if (this._moving) {
@@ -144,8 +142,11 @@ class Character extends Item {
         }
 
     }
-
-    _getPositionData() {
+    /**
+     * Returns the character's position data.
+     * @returns {Object} - Object containing character's position and tile information.
+     */
+    getPositionData() {
         return {
             x : this.x,
             y : this.y,

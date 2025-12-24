@@ -381,7 +381,7 @@ class JsPacman extends Game {
             y : bonusTile.y,
             factor : this.scaling.getFactor(),
             normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
-            addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener)
+            getPacmanData : () => this.pacman.getPositionData()
         });
 
         // Bonus reaches target and disappears.
@@ -409,7 +409,7 @@ class JsPacman extends Game {
             factor : this.scaling.getFactor(),
             addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener),
             addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener),
-            addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener),
+            getPacmanData : () => this.pacman.getPositionData(),
             addPacmanEatPillEventListener : listener => this.pacman.on('item:eatpill', listener)
         };
 

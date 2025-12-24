@@ -26,7 +26,7 @@ class Bonuses {
                 x : options.x - i * 64,
                 y : options.y,
                 factor : options.factor,
-                addPacmanPositionEventListener : () => {},
+                getPacmanData : null,
                 normalizeRefreshRate : () => 1
             });
 
