@@ -1,7 +1,7 @@
 import Game from './engine/Game.js';
 import SoundManager from './SoundManager.js';
 import Map from './Map.js';
-import GameModel from './GameModel.js';
+import GameModel, { STATUS_SPLASH, STATUS_INTRO, STATUS_INTRO_OUT, STATUS_PLAY, STATUS_PAUSED, STATUS_GAME_OVER, STATUS_WIN } from './GameModel.js';
 import makeGhost from './factory/makeGhost.js';
 import makeDot from './factory/makeDot.js';
 import makePill from './factory/makePill.js';
@@ -9,13 +9,27 @@ import makeBonus from './factory/makeBonus.js';
 import Pacman from './Pacman.js';
 import Lives from './Lives.js';
 import Bonuses from './Bonuses.js';
+import MainMenuDialog from './MainMenuDialog.js';
 
 import { EVENT_KEY_DOWN, KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT } from './engine/Keyboard.js';
-import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT } from './engine/Touch.js';
+import { EVENT_SWIPE, EVENT_SWIPE_UP, EVENT_SWIPE_RIGHT, EVENT_SWIPE_DOWN, EVENT_SWIPE_LEFT, EVENT_DOUBLE_TAP } from './engine/Touch.js';
+import { EVENT_GAMEPAD_START } from './engine/Gamepad.js';
 
-const show = el => { el.style.display = ''; }
-const hide = el => { el.style.display = 'none'; }
+/**
+ * Shows an element by setting its display style to empty string.
+ * @param {HTMLElement} el - The element to show.
+ */
+const show = el => { el.style.display = ''; };
+/**
+ * Hides an element by setting its display style to 'none'.
+ * @param {HTMLElement} el - The element to hide.
+ */
+const hide = el => { el.style.display = 'none'; };
 
+/**
+ * Default properties for JsPacman instances.
+ * @type {Object}
+ */
 const defaults = {
     // Options.
     width : 896 / 2,
@@ -29,11 +43,29 @@ const defaults = {
     soundEnabled : true,
 
     events : {
-        'click .start' : 'startLevel'
+        'click a.start' : '_onClickStartButton',
+        'click a.menu' : '_onClickMenuButton'
     }
 };
 
+/**
+ * Main game class for JS Pacman. Extends the Game engine.
+ * @class JsPacman
+ * @extends {Game}
+ */
 class JsPacman extends Game {
+    /**
+     * Creates an instance of JsPacman.
+     * @param {Object} [options={}] - Configuration options for the game.
+     * @param {number} [options.width=448] - Width of the game canvas in pixels.
+     * @param {number} [options.height=576] - Height of the game canvas in pixels.
+     * @param {number} [options.originalWidth=896] - Original width for scaling.
+     * @param {number} [options.originalHeight=1152] - Original height for scaling.
+     * @param {number} [options.dotScore=10] - Score awarded for eating a dot.
+     * @param {number} [options.pillScore=50] - Score awarded for eating a power pill.
+     * @param {number} [options.defaultLives=3] - Default number of lives.
+     * @param {boolean} [options.soundEnabled=true] - Whether sound is enabled.
+     */
     constructor(options = {}) {
         super(options);
 
@@ -52,19 +84,21 @@ class JsPacman extends Game {
         this.elements = {
             splash : this.$('.splash'),
             start : this.$('.start'),
+            menu : this.$('.menu'),
             startP1 : this.$('.start-p1'),
             startReady : this.$('.start-ready'),
             highScore : this.$('.high-score span'),
             score : this.$('.p1-score span'),
             gameOver : this.$('.game-over'),
-            soundStatus : this.$('.sound-status'),
-            paused : this.$('.paused'),
             load : this.$('.loadbar')
         };
 
         this.keyboard.on(EVENT_KEY_DOWN, this._onKeyDown.bind(this));
 
         this.touch.on(EVENT_SWIPE, this._onSwipe.bind(this));
+        this.touch.on(EVENT_DOUBLE_TAP, this._onDoubleTap.bind(this));
+
+        this.gamepad.on(EVENT_GAMEPAD_START, this._onGamepadStart.bind(this));
 
         this.sound = new SoundManager({
             soundEnabled : this.soundEnabled,
@@ -89,6 +123,21 @@ class JsPacman extends Game {
             addSprite : this.addSprite.bind(this)
         });
 
+        // Create main menu dialog
+        this.mainMenu = new MainMenuDialog({
+            model : this.model,
+            factor : this.scaling.getFactor(),
+            scaling : this.scaling,
+            originalWidth : this.originalWidth,
+            originalHeight : this.originalHeight,
+            onResume : () => {
+                this._onMainMenuResume();
+            }
+        });
+        this.mainMenu.render();
+        this.el.appendChild(this.mainMenu.el);
+        this.mainMenu.hide(); // Hide by default
+
         this._onGhostEaten = this._onGhostEaten.bind(this);
         this._onGhostEat = this._onGhostEat.bind(this);
 
@@ -97,37 +146,57 @@ class JsPacman extends Game {
         this.model.on('change:lives', this._onChangeLives.bind(this));
         this.model.on('change:extraLives', this._onChangeExtraLives.bind(this));
         this.model.on('change:mode', this._onChangeMode.bind(this));
+        this.model.on('change:status', this._onChangeStatus.bind(this));
+        this.model.on('change:mainMenuOpen', this._onChangeMainMenuOpen.bind(this));
+        this.model.on('change:soundEnabled', this._onChangeSoundEnabled.bind(this));
+        this.model.on('change:overlayEnabled', this._onChangeOverlayEnabled.bind(this));
 
         this.makeLevel();
 
         this.start(() => {
             hide(this.elements.load);
             show(this.elements.start);
+            show(this.elements.menu);
+
+            if (this.soundEnabled && !this.model.soundEnabled) {
+                this.muteSound(true);
+            }
         });
     }
 
+    /**
+     * Starts a new level or handles game over/win states.
+     */
     startLevel() {
-        if (this._win) {
+        // New level.
+        if (this.model.status === STATUS_WIN) {
             this.model.level++;
             this.reset();
-            this._win = false;
+            this.model.status = STATUS_INTRO_OUT;
             return;
         }
 
-        if (this._gameOver) {
+        // Game over - loop is already running, just reset and continue.
+        if (this.model.status === STATUS_SPLASH && this._gameOver) {
+            this._gameOver = false;
             this.model.level = 1;
             this.reset();
-            this._gameOver = false;
             hide(this.elements.splash);
+            this.model.status = STATUS_INTRO;
             this.sound.play('intro');
             return;
         }
 
+        // Intro.
         hide(this.elements.splash);
+        this.model.status = STATUS_INTRO;
         this.sound.play('intro');
         this.addCallback(this.mainLoop.bind(this));
     }
 
+    /**
+     * Resets the game state, destroying all characters and items.
+     */
     reset() {
         this.model.mode = null;
 
@@ -142,7 +211,7 @@ class JsPacman extends Game {
         this.off('game:ghost:eaten', this._onGhostEaten);
         this.off('game:ghost:eat', this._onGhostEat);
 
-        if (!this._win) {
+        if (this.model.status !== STATUS_WIN) {
             this.model.lives = this.defaultLives + 1;
             this.model.score = 0;
         }
@@ -155,6 +224,9 @@ class JsPacman extends Game {
         this.makeLevel();
     }
 
+    /**
+     * Creates and initializes a new level with map, dots, pills, pacman, ghosts, and bonus.
+     */
     makeLevel() {
         Object.assign(this, this.model.getSettings('game'));
 
@@ -184,7 +256,7 @@ class JsPacman extends Game {
                     defaultAnimation : dotAnimationLabel,
                     map : this.map,
                     factor : this.scaling.getFactor(),
-                    normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+                    normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
                     x : tile.x,
                     y : tile.y
                 });
@@ -198,7 +270,7 @@ class JsPacman extends Game {
                     defaultAnimation : dotAnimationLabel,
                     map : this.map,
                     factor : this.scaling.getFactor(),
-                    normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+                    normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
                     x : tile.x,
                     y : tile.y
                 });
@@ -218,13 +290,13 @@ class JsPacman extends Game {
             ...this.model.getSettings('pacman'),
             map : this.map,
             factor : this.scaling.getFactor(),
-            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+            normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
             addGameGhostEatEventListener : listener => this.on('game:ghost:eat', listener),
             addGameGhostModeFrightenedEnter : listener => this.on('game:ghost:modefrightened:enter', listener),
             addGameGhostModeFrightenedExit : listener => this.on('game:ghost:modefrightened:exit', listener)
         });
 
-        this.pacman.on('item:eatpill', t => {
+        this.pacman.on('item:eatpill', () => {
             this._pauseFrames = 2;
 
             this.model.addScore(this.pillScore);
@@ -241,7 +313,7 @@ class JsPacman extends Game {
         // Ghost eats Pacman.
         this.on('game:ghost:eat', this._onGhostEat);
         // Pacman make die turn arround.
-        this.pacman.on('item:die', (ghost) => {
+        this.pacman.on('item:die', () => {
             this.sound.play('eaten');
         });
         // Pacman lose.
@@ -272,16 +344,16 @@ class JsPacman extends Game {
 
             this._pacmanEaten = false;
 
-            if (this.model.lives) {
+            if (this.model.lives > 0) {
                 show(this.elements.startReady);
-                this._start = 1;
+                this.model.status = STATUS_INTRO_OUT;
                 this._pauseFrames = 40;
             } else {
                 this._pauseFrames = 120;
             }
         });
         // Pacman eats dot.
-        this.pacman.on('item:eatdot', (t) => {
+        this.pacman.on('item:eatdot', () => {
             this.model.addScore(this.dotScore);
 
             this.sound.play('dot');
@@ -300,7 +372,7 @@ class JsPacman extends Game {
             this.bonus.destroy();
         }
 
-        var bonusTile = this.map.tunnels[this.map.tunnels.length - 1];
+        const bonusTile = this.map.tunnels[this.map.tunnels.length - 1];
 
         this.bonus = makeBonus(this.bonusIndex, {
             map : this.map,
@@ -309,13 +381,13 @@ class JsPacman extends Game {
             x : bonusTile.x,
             y : bonusTile.y,
             factor : this.scaling.getFactor(),
-            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
-            addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener)
+            normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
+            getPacmanData : () => this.pacman.getPositionData()
         });
 
         // Bonus reaches target and disappears.
         this.bonus.on('item:destroy', (bonus) => {
-            this.bonus.destroy();
+            bonus.destroy();
             this.bonus = null;
         });
 
@@ -334,11 +406,11 @@ class JsPacman extends Game {
         const ghostAttrs = {
             ...this.model.getSettings('ghost'),
             map : this.map,
-            normalizeRefrashRate : this.normalizeRefrashRate.bind(this),
+            normalizeRefreshRate : this.normalizeRefreshRate.bind(this),
             factor : this.scaling.getFactor(),
             addGameGlobalModeEventListener : listener => this.on('game:globalmode', listener),
             addGameGhostEatenEventListener : listener => this.on('game:ghost:eaten', listener),
-            addPacmanPositionEventListener : listener => this.pacman.on('item:position', listener),
+            getPacmanData : () => this.pacman.getPositionData(),
             addPacmanEatPillEventListener : listener => this.pacman.on('item:eatpill', listener)
         };
 
@@ -390,20 +462,20 @@ class JsPacman extends Game {
 
         show(this.elements.startReady);
 
-        if (!this._win) {
-            show(this.elements.startP1);
-
-            this.hideGhosts();
-
-            this.pacman.hide();
-
-            this._start = 2;
-        } else {
+        if (this.model.status === STATUS_WIN) {
             this.bonus.hide();
-            this._start = 1;
+            this.model.status = STATUS_INTRO_OUT;
+        } else {
+            show(this.elements.startP1);
+            this.hideGhosts();
+            this.pacman.hide();
         }
     }
 
+    /**
+     * Adds event listeners to a ghost for eat, eaten, and mode change events.
+     * @param {Ghost} ghost - The ghost instance to add listeners to.
+     */
     addEventListenersToGhost(ghost) {
         ghost.on('item:eat', () => this.emit('game:ghost:eat', ghost));
         ghost.on('item:eaten', () => this.emit('game:ghost:eaten', ghost));
@@ -411,16 +483,24 @@ class JsPacman extends Game {
         ghost.on('item:modefrightened:exit', () => this.emit('game:ghost:modefrightened:exit', ghost));
     }
 
+    /**
+     * Main game loop callback that handles game state, input, movement, and collisions.
+     */
     mainLoop() {
         // Global mode.
-        if (!this._start) this.model.updateMode();
+        if (this.model.status === STATUS_PLAY) this.model.updateMode();
 
         // Input
         this._inputDirection = this._getInputDirection();
 
         // Move.
         if (!this._pauseFrames) {
-            if (this._start === 2) {
+            // Splash.
+            if (this.model.status === STATUS_SPLASH) {
+                return;
+            }
+            // Intro.
+            if (this.model.status === STATUS_INTRO) {
                 hide(this.elements.startP1);
                 this.showGhosts();
                 this.pacman.show();
@@ -428,24 +508,26 @@ class JsPacman extends Game {
                 this.model.lives = this.defaultLives;
 
                 this._pauseFrames = 60;
-                this._start--;
+                this.model.status = STATUS_INTRO_OUT;
                 return;
             }
 
-            if (this._start === 1) {
+            if (this.model.status === STATUS_INTRO_OUT) {
                 hide(this.elements.startReady);
-                this._start--;
+                this.model.status = STATUS_PLAY;
                 return;
             }
 
-            if (this._win) {
+            if (this.model.status === STATUS_WIN) {
                 this.startLevel();
                 return;
             }
 
-            if (this._gameOver) {
+            if (this.model.status === STATUS_GAME_OVER) {
                 hide(this.elements.gameOver);
                 show(this.elements.splash);
+                this._gameOver = true;
+                this.model.status = STATUS_SPLASH;
                 return;
             }
 
@@ -497,39 +579,48 @@ class JsPacman extends Game {
         }
     }
 
+    /**
+     * Pauses the game, pausing all ghosts and muting sound.
+     */
     pause() {
         super.pause();
+
+        this.model.mainMenuOpen = true;
 
         this.pinky.pause();
         this.blinky.pause();
         this.inky.pause();
         this.sue.pause();
 
-        this.muteSound(true);
+        if (this.soundEnabled) this.muteSound(true);
 
         this.model.pause();
-
-        show(this.elements.paused);
     }
 
+    /**
+     * Resumes the game, resuming all ghosts and restoring sound state.
+     */
     resume() {
         super.resume();
+
+        this.model.mainMenuOpen = false;
 
         this.pinky.resume();
         this.blinky.resume();
         this.inky.resume();
         this.sue.resume();
 
-        this.muteSound(!!this._muted);
+        if (this.soundEnabled) this.muteSound(!this.model.soundEnabled);
 
         this.model.resume();
-
-        hide(this.elements.paused);
     }
 
+    /**
+     * Handles the win state when all items are collected.
+     */
     win() {
+        this.model.status = STATUS_WIN;
         this._pauseFrames = 120;
-        this._win = true;
 
         let times = 14;
         this.addCallback(() => {
@@ -548,6 +639,9 @@ class JsPacman extends Game {
         this.pacman.pauseAnimation();
     }
 
+    /**
+     * Hides all ghosts and bonus from the screen.
+     */
     hideGhosts() {
         this.pinky.hide();
         this.blinky.hide();
@@ -566,6 +660,11 @@ class JsPacman extends Game {
         if (this.bonus && !this._showBonus) this.bonus.show();
     }
 
+    /**
+     * Checks if any ghost is in frightened mode.
+     * @returns {boolean} True if any ghost is frightened, false otherwise.
+     * @private
+     */
     _isGhostFrightened() {
         return this.blinky.isFrightened() ||
                 this.inky.isFrightened()  ||
@@ -573,17 +672,28 @@ class JsPacman extends Game {
                 this.sue.isFrightened();
     }
 
+    /**
+     * Checks if any ghost is in dead mode.
+     * @returns {boolean} True if any ghost is dead, false otherwise.
+     * @private
+     */
     _isGhostDead() {
         return this.blinky.isDead() ||
-                this.inky.isDead()  ||
-                this.pinky.isDead() ||
-                this.sue.isDead();
+            this.inky.isDead()  ||
+            this.pinky.isDead() ||
+            this.sue.isDead();
     }
 
+    /**
+     * Gets the input direction from keyboard, gamepad, or touch swipe.
+     * @returns {string|null} The direction ('u', 'r', 'd', 'l') or null.
+     * @private
+     */
     _getInputDirection() {
         const keys = this.keyboard.keys;
         let direction = null;
 
+        // Check keyboard input first
         if (keys[KEY_UP]) {
             direction = 'u';
         }
@@ -597,86 +707,216 @@ class JsPacman extends Game {
             direction = 'l';
         }
 
+        // If no keyboard input, check gamepad
+        if (!direction) {
+            direction = this.gamepad.getDirection();
+        }
+
         if (direction) {
             this._lastSwipe = null;
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_UP) {
-            direction = 'u';
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_RIGHT) {
-            direction = 'r';
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_DOWN) {
-            direction = 'd';
-        }
-        else if (this._lastSwipe === EVENT_SWIPE_LEFT) {
-            direction = 'l';
+        } else {
+            // If no keyboard or gamepad input, check touch swipe
+            if (this._lastSwipe === EVENT_SWIPE_UP) {
+                direction = 'u';
+            }
+            else if (this._lastSwipe === EVENT_SWIPE_RIGHT) {
+                direction = 'r';
+            }
+            else if (this._lastSwipe === EVENT_SWIPE_DOWN) {
+                direction = 'd';
+            }
+            else if (this._lastSwipe === EVENT_SWIPE_LEFT) {
+                direction = 'l';
+            }
         }
 
         return direction;
     }
 
+    /**
+     * Updates the loading progress bar.
+     * @param {number} percent - The loading progress percentage (0-100).
+     */
     onLoadProgress(percent) {
         this.elements.load.querySelector('.inner').style.width = `${percent}%`;
     }
 
-    _onSwipe(type, ev) {
+    /**
+     * Handles swipe gesture input.
+     * @param {string} type - The swipe direction event type.
+     * @private
+     */
+    _onSwipe(type) {
         this._lastSwipe = type;
     }
 
-    _onKeyDown(event) {
-        // Sound on/off.
-        if (event.keyCode === 83) {
-            if (!this.soundEnabled) return;
-            // Mute Sound.
-            this._muted = !this._muted;
-            this.muteSound(this._muted);
-
-            var el = this.elements.soundStatus;
-
-            if (this._muted) el.classList.remove('on');
-            else el.classList.add('on');
-
-            show(el);
-
-            if (this._hideSoundStatusTimeout) clearTimeout(this._hideSoundStatusTimeout);
-            this._hideSoundStatusTimeout = setTimeout(function() { hide(el); }, 2000);
-        }
-        // Pause Game.
-        else if (event.keyCode === 80) {
-            this._paused = !this._paused;
-            if (this._paused) this.pause();
-            else this.resume();
+    /**
+     * Handles double-tap gesture to pause the game.
+     * @param {TouchEvent} event - The touch event.
+     * @private
+     */
+    _onDoubleTap() {
+        // Only pause if game is in play status (same as ESC key behavior)
+        if (this.model.status === STATUS_PLAY) {
+            this.model.status = STATUS_PAUSED;
         }
     }
 
+    /**
+     * Handles gamepad start button press.
+     * @private
+     */
+    _onGamepadStart() {
+        if (this.model.status === STATUS_SPLASH) {
+            this.startLevel();
+        } else if (this.model.status === STATUS_PLAY) {
+            this.model.status = STATUS_PAUSED;
+        } else if (this.model.status === STATUS_PAUSED) {
+            this.model.status = STATUS_PLAY;
+        }
+    }
+
+    /**
+     * Handles keyboard input events (sound toggle, pause).
+     * @param {KeyboardEvent} event - The keyboard event.
+     * @private
+     */
+    _onKeyDown(event) {
+        // Pause Game / Open Menu (ESC key).
+        if (event.key === 'Escape') { // ESC key
+            if (this.model.status === STATUS_PLAY) {
+                this.model.status = STATUS_PAUSED;
+            } else if (this.model.status === STATUS_PAUSED) {
+                this.model.status = STATUS_PLAY;
+            } else if (this.model.status === STATUS_SPLASH) {
+                // Open menu from splash
+                this.model.mainMenuOpen = !this.model.mainMenuOpen;
+            }
+        }
+    }
+
+    /**
+     * Handles start button click.
+     * @private
+     */
+    _onClickStartButton() {
+        this.startLevel();
+    }
+
+    /**
+     * Opens the main menu.
+     */
+    _onClickMenuButton() {
+        if (this.model.status === STATUS_SPLASH || this.model.status === STATUS_PAUSED) {
+            this.model.mainMenuOpen = true;
+        }
+    }
+
+    /**
+     * Handles main menu resume/exit button click.
+     * @private
+     */
+    _onMainMenuResume() {
+        if (this.model.status === STATUS_PAUSED) {
+            // Resume game from pause
+            this.model.status = STATUS_PLAY;
+        } else if (this.model.status === STATUS_SPLASH) {
+            // Exit menu from splash (could start game or just hide menu)
+            this.model.mainMenuOpen = false;
+        }
+    }
+
+    _onChangeStatus(model, status) {
+        if (model.previous.status === STATUS_PLAY && status === STATUS_PAUSED) {
+            this.pause();
+        } else if (model.previous.status === STATUS_PAUSED && status === STATUS_PLAY) {
+            this.resume();
+        }
+    }
+
+    /**
+     * Updates the score display when the model score changes.
+     * @param {GameModel} model - The game model.
+     * @param {number} score - The new score value.
+     * @private
+     */
     _onChangeScore(model, score) {
         this.elements.score.innerText = score || '00';
     }
 
+    /**
+     * Updates the high score display when the model high score changes.
+     * @param {GameModel} model - The game model.
+     * @param {number} highScore - The new high score value.
+     * @private
+     */
     _onChangeHighScore(model, highScore) {
         this.elements.highScore.innerText = highScore || '00';
     }
-    // Cange lives. Check game over.
+
+    /**
+     * Handles lives change, checking for game over condition.
+     * @param {GameModel} model - The game model.
+     * @param {number} lives - The new lives value.
+     * @private
+     */
     _onChangeLives(model, lives) {
         if (lives === 0) {
             // Game over.
-            this._gameOver = true;
+            this.model.status = STATUS_GAME_OVER;
             show(this.elements.gameOver);
             this.hideGhosts();
             this.pacman.hide();
             this.model.save();
         }
     }
-    // Extra life.
-    _onChangeExtraLives(model, lives) {
+
+    /**
+     * Handles extra life event, plays life sound.
+     * @private
+     */
+    _onChangeExtraLives() {
         this.sound.play('life');
     }
-    // Change global mode.
+
+    /**
+     * Handles global mode change, emits game mode event.
+     * @param {GameModel} model - The game model.
+     * @param {string} mode - The new mode.
+     * @private
+     */
     _onChangeMode(model, mode) {
         this.emit('game:globalmode', mode);
     }
-    // Pacman eats ghost.
+
+    _onChangeMainMenuOpen(model, open) {
+        if (open) {
+            // Open menu
+            this.mainMenu.show();
+        } else {
+            // Close menu
+            this.mainMenu.hide();
+        }
+    }
+
+    _onChangeSoundEnabled(model, enabled) {
+        if (!this.soundEnabled) return;
+        // Mute Sound.
+        this.muteSound(!enabled);
+        this.model.save();
+    }
+
+    _onChangeOverlayEnabled(model, enabled) {
+        this.el.classList.toggle('with-overlay', enabled);
+        this.el.classList.toggle('with-light', enabled);
+        this.model.save();
+    }
+
+    /**
+     * Handles when Pacman eats a ghost.
+     * @param {Ghost} ghost - The ghost that was eaten.
+     * @private
+     */
     _onGhostEaten(ghost) {
         this.pacman.hide();
         this._pauseFrames = 15;
@@ -684,33 +924,45 @@ class JsPacman extends Game {
         this.model.addScore(parseInt(ghost.score));
         this.sound.play('eat');
     }
-    // Ghost eats Pacman.
+
+    /**
+     * Handles when a ghost eats Pacman.
+     * @private
+     */
     _onGhostEat() {
         this._pauseFrames = 40;
         this._pacmanEaten = true;
     }
 
-    template(model) {
-        return `
+    render() {
+        this.el.innerHTML = `
             <div class="score">
                 <div class="p1-score">1UP<br /><span>00</span></div>
-                <div class="high-score">HIGH SCORE<br /><span>${model.highScore || '00'}</span></div>
+                <div class="high-score">HIGH SCORE<br /><span>${Game.sanitize(this.model.highScore) || '00'}</span></div>
                 <div class="p2-score">2UP<br /><span>00</span></div>
             </div>
             <div class="start-p1" style="display: none">PLAYER ONE</div>
             <div class="start-ready" style="display: none">READY!</div>
             <div class="game-over" style="display: none">GAME OVER</div>
-            <div class="sound-status on" style="display: none"><span class="wrap">SOUND: <span class="on">ON</span><span class="off">OFF</span></span></div>
-            <div class="paused" style="display: none"><span class="wrap">PAUSED</span></div>
             <div class="splash">
                 <span class="title">"JS PAC-MAN"</span>
-                <p class="nerd">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
-                <a class="start" style="display: none">START</a>
+                <p class="message">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
+                <a class="start" style="display: none" href="#">START</a>
+                <a class="menu" style="display: none" href="#">MENU</a>
                 <div class="loadbar"><div class="inner"></div></div>
-                <p class="keys"><span>&larr;&uarr;&darr;&rarr;</span>:MOVE <span>S</span>:SOUND <span>P</span>:PAUSE</p>
-                <div class="credits">&#169; 2014-${new Date().getFullYear()} <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman">SOURCE+INFO</a></div>
+                <div class="credits">&#169; 2014-${new Date().getFullYear()} <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman" target="_blank">SOURCE+INFO</a></div>
             </div>
         `;
+
+        this.el.classList.add('with-border');
+
+        if (this.model.overlayEnabled) {
+            this.el.classList.add('with-overlay', 'with-light');
+        }
+
+        super.render();
+
+        return this;
     }
 }
 

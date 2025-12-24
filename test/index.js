@@ -100,8 +100,6 @@ describe('Item', function() {
         item.emit('custom-event');
     });
 
-
-
 });
 
 describe('Pacman', function() {

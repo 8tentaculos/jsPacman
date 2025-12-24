@@ -2,11 +2,33 @@ import Animation from '../engine/Animation.js';
 import Ghost, { animations, animationBase } from '../Ghost.js';
 import getDistance from '../helper/getDistance.js';
 
+/**
+ * Sprite type constant for Pinky ghost.
+ * @constant {string}
+ */
 export const SPRITE_PINKY = 'SPRITE_PINKY';
+/**
+ * Sprite type constant for Blinky ghost.
+ * @constant {string}
+ */
 export const SPRITE_BLINKY = 'SPRITE_BLINKY';
+/**
+ * Sprite type constant for Inky ghost.
+ * @constant {string}
+ */
 export const SPRITE_INKY = 'SPRITE_INKY';
+/**
+ * Sprite type constant for Sue ghost.
+ * @constant {string}
+ */
 export const SPRITE_SUE = 'SPRITE_SUE';
 
+/**
+ * Factory function to create a ghost with specific AI behavior based on label.
+ * @param {string} label - Ghost type ('pinky', 'blinky', 'inky', 'sue').
+ * @param {Object} options - Configuration options passed to Ghost constructor.
+ * @returns {Ghost} A new Ghost instance with type-specific configuration.
+ */
 export default (label, options) => {
     // Pink Ghost
     if (label === 'pinky') {
@@ -15,8 +37,9 @@ export default (label, options) => {
             dir : 'd',
             defaultAnimation : 'down',
             getChaseTarget : function() {
-                var t = this.pacmanData.tile;
-                var dir = this.pacmanData.dir;
+                const pacmanData = this.getPacmanData();
+                const t = pacmanData.tile;
+                const dir = pacmanData.dir;
                 return t.get(dir).get(dir).get(dir).get(dir);
             },
             animations : {
@@ -92,9 +115,10 @@ export default (label, options) => {
             scatterTarget : 979,
             defaultAnimation : 'up',
             getChaseTarget : function() {
-                var pacmanTile = this.pacmanData.tile;
+                const pacmanData = this.getPacmanData();
+                var pacmanTile = pacmanData.tile;
                 var blinkyTile = this.blinky.getTile();
-                var dir = this.pacmanData.dir;
+                var dir = pacmanData.dir;
 
                 pacmanTile = pacmanTile.get(dir).get(dir); // Two tiles in front of pacman
 
@@ -138,7 +162,7 @@ export default (label, options) => {
             scatterTarget : 953,
             defaultAnimation : 'up',
             getChaseTarget : function() {
-                var t = this.pacmanData.tile;
+                var t = this.getPacmanData().tile;
                 var d = getDistance(t, this.getTile());
                 if (d > 16 * t.w) return t;
                 else return this.scatterTarget;
@@ -168,10 +192,9 @@ export default (label, options) => {
                     offsetY : 188,
                     offsetX : 64 * 6 - 2
                 })
-           }
-
-       }, options);
+            }
+        }, options);
     }
 
     return new Ghost(options);
-}
+};

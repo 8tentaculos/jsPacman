@@ -1,6 +1,16 @@
 import Sound from './engine/Sound.js';
 
+/**
+ * SoundManager class that manages all game sounds.
+ * @class SoundManager
+ */
 class SoundManager {
+    /**
+     * Creates an instance of SoundManager.
+     * @param {Object} options - Configuration options.
+     * @param {boolean} [options.soundEnabled=true] - Whether sound is enabled.
+     * @param {Function} options.addSound - Function to add sounds to the game.
+     */
     constructor(options) {
         this.soundEnabled = !!options.soundEnabled;
 
@@ -23,6 +33,10 @@ class SoundManager {
         }
     }
 
+    /**
+     * Plays a sound by label.
+     * @param {string} label - The sound label to play.
+     */
     play(label) {
         if (this.soundEnabled) this.sounds[label].play();
     }

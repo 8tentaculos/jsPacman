@@ -1,5 +1,9 @@
 import Item from './Item.js';
 
+/**
+ * Default properties for Character instances.
+ * @type {Object}
+ */
 const defaults = {
     width : 60,
     height : 60,
@@ -23,7 +27,23 @@ const oppositeDirections = {
     d : 'u'
 };
 
+/**
+ * Base Character class for game entities that can move.
+ * Extends Item with movement and animation capabilities.
+ * @class Character
+ * @extends {Item}
+ */
 class Character extends Item {
+    /**
+     * Creates an instance of Character.
+     * @param {Object} options - Configuration options.
+     * @param {number} [options.width=60] - Character width in pixels.
+     * @param {number} [options.height=60] - Character height in pixels.
+     * @param {number} [options.step=10] - Movement step size.
+     * @param {number} [options.speed=80] - Character speed.
+     * @param {string} [options.dir=null] - Initial direction ('u', 'r', 'd', 'l').
+     * @param {boolean} [options.preturn=false] - Enable preturn for faster cornering.
+     */
     constructor(options) {
         super(options);
 
@@ -33,7 +53,7 @@ class Character extends Item {
 
         this.pauseAnimation();
 
-        this.on('item:tile', (tile) => {
+        this.on('item:tile', () => {
             this.setNextAnimation();
         });
 
@@ -46,9 +66,13 @@ class Character extends Item {
         this._nextDirection = null;
         this._moving = false;
 
-        this._saveDefaults()
+        this._saveDefaults();
     }
 
+    /**
+     * Saves default values for reset functionality.
+     * @private
+     */
     _saveDefaults() {
         this._defaults = {};
 
@@ -69,6 +93,9 @@ class Character extends Item {
         });
     }
 
+    /**
+     * Resets the character to its initial state.
+     */
     reset() {
         Object.assign(this, this._defaults);
         this.transform();
@@ -76,6 +103,9 @@ class Character extends Item {
         this.pauseAnimation();
     }
 
+    /**
+     * Updates character position, animation, and emits position events.
+     */
     update() {
         var tile = this.getTile();
 
@@ -98,8 +128,6 @@ class Character extends Item {
                 this.resumeAnimation();
                 this._moving = true;
             }
-
-            this.emit('item:position', this._getPositionData())
         } else {
             // Not moving.
             if (this._moving) {
@@ -114,8 +142,11 @@ class Character extends Item {
         }
 
     }
-
-    _getPositionData() {
+    /**
+     * Returns the character's position data.
+     * @returns {Object} - Object containing character's position and tile information.
+     */
+    getPositionData() {
         return {
             x : this.x,
             y : this.y,
@@ -123,7 +154,12 @@ class Character extends Item {
             dir : this.dir
         };
     }
-    // Called from Game main loop at every revolution.
+
+    /**
+     * Moves the character in the specified direction.
+     * Called from Game main loop at every revolution.
+     * @param {string} [dir] - Direction to move. If not provided, uses current direction.
+     */
     move(dir) {
         if (!dir) dir = this.dir;
         if (!dir) return;
@@ -208,18 +244,37 @@ class Character extends Item {
         this.update();
     }
 
+    /**
+     * Calculates the movement step size based on current speed.
+     * @returns {number} The step size in pixels.
+     */
     getStep() {
         return this.step * (this._speed / 100);
     }
-    // Set animation according model conditions. Override on subclasses.
+
+    /**
+     * Sets the next animation based on current direction.
+     * Override in subclasses for custom animation logic.
+     */
     setNextAnimation() {
         this._nextAnimation = this.animations[animationLabelsByDirections[this.dir]];
     }
-    // Helper methods:
+
+    /**
+     * Gets the opposite direction.
+     * @param {string} [dir] - Direction to get opposite of. If not provided, uses current direction.
+     * @returns {string} The opposite direction.
+     * @private
+     */
     _getOpDirection(dir) {
         return oppositeDirections[dir || this.dir];
     }
-    // Tile on passed direction is available for walking.
+
+    /**
+     * Checks if the character can move in the specified direction.
+     * @param {string} dir - The direction to check ('u', 'r', 'd', 'l').
+     * @returns {boolean} True if the character can move in that direction.
+     */
     canGo(dir) {
         const tile = this.getTile();
 
@@ -228,14 +283,32 @@ class Character extends Item {
         return nextTile && !nextTile.isHouse() && !nextTile.isWall();
     }
 
+    /**
+     * Checks if direction is vertical (up or down).
+     * @param {string} dir - The direction to check.
+     * @returns {boolean} True if direction is vertical.
+     * @private
+     */
     _isV(dir) {
         return dir === 'u' || dir === 'd';
     }
 
+    /**
+     * Checks if direction is horizontal (left or right).
+     * @param {string} dir - The direction to check.
+     * @returns {boolean} True if direction is horizontal.
+     * @private
+     */
     _isH(dir) {
         return dir === 'l' || dir === 'r';
     }
 
+    /**
+     * Checks if the character is centered on the current tile.
+     * @param {string} [xy] - 'x' or 'y' to check specific axis, or undefined for both.
+     * @returns {boolean} True if centered.
+     * @private
+     */
     _isCentered(xy) {
         var tile = this.getTile();
         var x = tile.x === this.x, y = tile.y === this.y;
@@ -245,6 +318,10 @@ class Character extends Item {
         else return  x && y;
     }
 
+    /**
+     * Gets the minimum value from the provided arguments.
+     * @returns {number} The minimum value.
+     */
     getMin() {
         var min = null;
         for (var i = 0, l = arguments.length; i < l; i++)

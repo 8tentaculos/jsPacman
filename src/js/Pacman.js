@@ -1,6 +1,10 @@
 import Animation, { ANIMATION_HORIZONTAL } from './engine/Animation.js';
 import Character from './Character.js';
 
+/**
+ * Base animation configuration for Pacman.
+ * @type {Object}
+ */
 const animationBase = {
     imageURL : 'img/characters.png',
     numberOfFrame : 4,
@@ -10,6 +14,10 @@ const animationBase = {
     type : ANIMATION_HORIZONTAL
 };
 
+/**
+ * Animation definitions for Pacman in different directions.
+ * @type {Object}
+ */
 const animations = {
     'right' : new Animation({
         ...animationBase
@@ -31,6 +39,10 @@ const animations = {
     })
 };
 
+/**
+ * Default properties for Pacman instances.
+ * @type {Object}
+ */
 const defaults = {
     animations,
     dir : 'l',
@@ -41,7 +53,24 @@ const defaults = {
     dotSpeed : null
 };
 
+/**
+ * Pacman character class. Extends Character with Pacman-specific behavior.
+ * @class Pacman
+ * @extends {Character}
+ */
 class Pacman extends Character {
+    /**
+     * Creates an instance of Pacman.
+     * @param {Object} options - Configuration options.
+     * @param {string} [options.dir='l'] - Initial direction.
+     * @param {boolean} [options.preturn=true] - Enable preturn for faster cornering.
+     * @param {number} [options.frightenedSpeed] - Speed when ghosts are frightened.
+     * @param {number} [options.frightenedDotSpeed] - Speed when eating dots and ghosts are frightened.
+     * @param {number} [options.dotSpeed] - Speed when eating dots.
+     * @param {Function} options.addGameGhostEatEventListener - Function to add ghost eat event listener.
+     * @param {Function} options.addGameGhostModeFrightenedEnter - Function to add frightened enter listener.
+     * @param {Function} options.addGameGhostModeFrightenedExit - Function to add frightened exit listener.
+     */
     constructor(options) {
         super(options);
 
@@ -77,7 +106,7 @@ class Pacman extends Character {
 
         });
 
-        addGameGhostEatEventListener(ghost => {
+        addGameGhostEatEventListener(() => {
             this._eatenTurns = 9;
             this.dir = 'r';
             this.pauseAnimation();
@@ -92,11 +121,18 @@ class Pacman extends Character {
         });
     }
 
+    /**
+     * Resets Pacman to initial state.
+     */
     reset() {
         Character.prototype.reset.apply(this);
         this._lastEatenTurnsTime = null;
     }
 
+    /**
+     * Moves Pacman, handling eaten state animation if applicable.
+     * @param {string} [dir] - Direction to move. If not provided, uses current direction.
+     */
     move() {
         if (!this._eatenTurns) Character.prototype.move.apply(this, arguments);
         else if (!this._eatenTurnsFrames) {
