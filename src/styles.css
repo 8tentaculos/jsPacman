@@ -161,17 +161,21 @@ body {
     outline-offset: 2px;
 }
 
-.js-pacman-playground .splash a {
+.js-pacman-playground .splash button {
+    background: none;
+    border: none;
+    padding: 0;
     color: var(--color-text-link);
     cursor: pointer;
     font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
 }
 
-.js-pacman-playground .splash a:hover {
+.js-pacman-playground .splash button:hover {
     color: var(--color-text-white);
 }
 
-.js-pacman-playground .splash a.start {
+.js-pacman-playground .splash button.start {
     position: relative;
     top: 70%;
     text-transform: uppercase;
@@ -179,10 +183,9 @@ body {
     display: block;
     width: 40%;
     margin: 0 auto;
-    text-decoration: none;
 }
 
-.js-pacman-playground .splash a.menu {
+.js-pacman-playground .splash button.menu {
     position: relative;
     top: 75%;
     text-transform: uppercase;
@@ -190,7 +193,6 @@ body {
     display: block;
     width: 40%;
     margin: 0 auto;
-    text-decoration: none;
 }
 
 .js-pacman-playground .splash .title {

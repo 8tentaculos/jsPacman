@@ -43,8 +43,8 @@ const defaults = {
     soundEnabled : true,
 
     events : {
-        'click a.start' : '_onClickStartButton',
-        'click a.menu' : '_onClickMenuButton'
+        'click button.start' : '_onClickStartButton',
+        'click button.menu' : '_onClickMenuButton'
     }
 };
 
@@ -947,8 +947,8 @@ class JsPacman extends Game {
             <div class="splash">
                 <span class="title">"JS PAC-MAN"</span>
                 <p class="message">HTML - CSS<br><br><span>JAVASCRIPT</span></p>
-                <a class="start" style="display: none" href="#">START</a>
-                <a class="menu" style="display: none" href="#">MENU</a>
+                <button class="start" style="display: none">START</button>
+                <button class="menu" style="display: none">MENU</button>
                 <div class="loadbar"><div class="inner"></div></div>
                 <div class="credits">&#169; 2014-${new Date().getFullYear()} <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman" target="_blank">SOURCE+INFO</a></div>
             </div>
