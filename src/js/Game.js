@@ -176,8 +176,9 @@ class JsPacman extends Game {
             return;
         }
 
-        // Game over.
-        if (this.model.status === STATUS_SPLASH && this.model.previous.status === STATUS_GAME_OVER) {
+        // Game over - loop is already running, just reset and continue.
+        if (this.model.status === STATUS_SPLASH && this._gameOver) {
+            this._gameOver = false;
             this.model.level = 1;
             this.reset();
             hide(this.elements.splash);
@@ -525,6 +526,7 @@ class JsPacman extends Game {
             if (this.model.status === STATUS_GAME_OVER) {
                 hide(this.elements.gameOver);
                 show(this.elements.splash);
+                this._gameOver = true;
                 this.model.status = STATUS_SPLASH;
                 return;
             }
