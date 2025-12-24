@@ -9,7 +9,7 @@
 }
 
 :root {
-    /* Color Palette Variables - Available globally */
+    /* Color Palette */
     --color-bg-primary: #000;
     --color-bg-secondary: #222;
     --color-text-primary: #EFEFEF;
@@ -23,6 +23,12 @@
     --color-accent-red-light: #FF3333;
     --color-border-white: #FFF;
     --color-shadow-light: #EEE;
+    /* z-index */
+    --z-index-overlay: 10000;
+    --z-index-light: 5000;
+    --z-index-dialog: 1000;
+    --z-index-score: 100;
+    --z-index-splash: 1;
 }
 
 body {
@@ -30,10 +36,73 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.hidden {
+    position: absolute;
+    left: -10000px;
+    top: -10000px;
+    visibility: hidden;
+}
+
+.js-pacman-container:has(.with-border) {
+    padding: 1em;
+    border-radius: 0.5em;
+    background-color: var(--color-bg-primary);
+    position: relative;
+}
+
+.js-pacman-container:has(.with-light) {
+    box-shadow: 
+        0 0 2em 0.2em rgba(238, 238, 238, 0.3),
+        0 0 4em 0.4em rgba(238, 238, 238, 0.15),
+        inset 0 0 3em 0 rgba(238, 238, 238, 0.1);
+}
+
+.js-pacman-container:has(.with-light)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: var(--z-index-light);
+    background: radial-gradient(
+        ellipse 100% 50% at 50% 0%,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 20%,
+        rgba(255, 255, 255, 0.04) 40%,
+        rgba(255, 255, 255, 0.02) 60%,
+        transparent 85%
+    );
+    mix-blend-mode: screen;
+}
+
+.js-pacman-container:has(.with-overlay)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: var(--z-index-overlay);
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.1) 0px,
+            rgba(0, 0, 0, 0.1) 1px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0) 4px
+        );
+    background-size: 100% 4px;
+    image-rendering: pixelated;
 }
 
 .js-pacman-playground {
-    position: absolute;
     color: var(--color-text-primary);
     font-family: 'Press Start 2P', cursive;
     font-size: 2em;
@@ -44,15 +113,6 @@ body {
     cursor: default;
     user-select: none;
     touch-action: none;
-}
-
-.js-pacman-playground.with-border {
-    border-radius: 0.5em;
-    border: 1em solid var(--color-bg-primary);
-}
-
-.js-pacman-playground.with-border.with-light {
-    box-shadow: 0 0 1em 0.1em var(--color-shadow-light);
 }
 
 .js-pacman-playground.maze-1 {
@@ -97,7 +157,7 @@ body {
     bottom: 0;
     right: 0;
     left: 0;
-    z-index: 1;
+    z-index: var(--z-index-splash);
 }
 
 /* Focus styles for all links and buttons in playground */
@@ -216,7 +276,7 @@ body {
     right: 0.4464%;
     left: 0.4464%;
     text-align: center;
-    z-index: 2
+    z-index: var(--z-index-score);
 }
 
 .js-pacman-playground .score .p1-score {
@@ -269,6 +329,7 @@ body {
 
 .js-pacman-playground .dialog {
     background-color: var(--color-bg-primary);
+    z-index: var(--z-index-dialog);
 }
 
 .js-pacman-playground .dialog .dialog-content {
@@ -319,7 +380,7 @@ body {
 
 .js-pacman-playground .main-menu .control-details {
     margin-left: 0.8em;
-    color: var(--color-text-white);
+    color: var(--color-text-primary);
     font-size: 0.85em;
     line-height: 1.4;
 }
@@ -338,7 +399,7 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: var(--color-text-white);
+    color: var(--color-text-primary);
     font-size: 1.1em;
     user-select: none;
 }

@@ -900,7 +900,8 @@ class JsPacman extends Game {
     }
 
     _onChangeOverlayEnabled(model, enabled) {
-        console.log('onChangeOverlayEnabled', enabled); // eslint-disable-line no-console
+        this.el.classList.toggle('with-overlay', enabled);
+        this.el.classList.toggle('with-light', enabled);
     }
 
     /**
@@ -944,6 +945,12 @@ class JsPacman extends Game {
                 <div class="credits">&#169; 2014-${new Date().getFullYear()} <span>8</span>TENTACULOS <a href="https://github.com/8tentaculos/jsPacman" target="_blank">SOURCE+INFO</a></div>
             </div>
         `;
+
+        this.el.classList.add('with-border');
+        
+        if (this.model.overlayEnabled) {
+            this.el.classList.add('with-overlay', 'with-light');
+        }
 
         super.render();
 

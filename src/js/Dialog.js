@@ -325,10 +325,9 @@ class Dialog extends View {
         this.el.style.display = 'none';
 
         // Restore focus to the previously focused element if it still exists.
-        if (this._previousActiveElement &&
-            document.body.contains(this._previousActiveElement)) {
+        if (this._previousActiveElement) {
             requestAnimationFrame(() => {
-                this._previousActiveElement.focus();
+                if (document.body.contains(this._previousActiveElement)) this._previousActiveElement.focus();
             });
         }
         this._previousActiveElement = null;

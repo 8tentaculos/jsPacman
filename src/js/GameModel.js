@@ -120,7 +120,7 @@ class GameModel extends Model {
             mode : null,
             mainMenuOpen : false,
             soundEnabled : true,
-            overlayEnabled : false
+            overlayEnabled : true
         };
     }
 
@@ -206,7 +206,11 @@ class GameModel extends Model {
      * @returns {Object} Object containing only the high score.
      */
     toJSON() {
-        return { highScore : this.highScore };
+        return {
+            highScore : this.highScore,
+            soundEnabled : this.soundEnabled,
+            overlayEnabled : this.overlayEnabled
+        };
     }
 }
 

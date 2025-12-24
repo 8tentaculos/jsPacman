@@ -63,6 +63,10 @@ class MainMenuDialog extends Dialog {
         this.model.on('change:status', this._onModelStatusChange.bind(this));
     }
 
+    /**
+     * Returns the event delegation map for the dialog.
+     * @returns {Object} The event delegation map.
+     */
     events() {
         return {
             ...(typeof super.events === 'function' ? super.events.call(this) : super.events),
@@ -82,6 +86,10 @@ class MainMenuDialog extends Dialog {
         }
     }
 
+    /**
+     * Renders the content of the dialog.
+     * @returns {Dialog} Returns this instance for method chaining.
+     */
     renderContent() {
         const isPause = this.model.status === STATUS_PAUSED;
         const title = isPause ? 'PAUSED' : 'MAIN MENU';
@@ -137,7 +145,7 @@ class MainMenuDialog extends Dialog {
                     <div class="option-item">
                         <label class="checkbox-label">
                             <input type="checkbox" class="menu-checkbox" id="overlay-checkbox" ${this.model.overlayEnabled ? 'checked' : ''}>
-                            <span>Overlay</span>
+                            <span>Screen FX ON/OFF</span>
                         </label>
                     </div>
                 </div>
