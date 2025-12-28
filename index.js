@@ -1,0 +1,1 @@
+import Game from"./js/Game.js";(()=>{const e=Math.max(document.documentElement.clientWidth||0,window.innerWidth||0),t=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);new Game({el:document.querySelector(".js-pacman-playground"),width:.9*e,height:.9*t,position:"relative"})})();

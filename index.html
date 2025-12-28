@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
+        
+        <meta name="description" content="A JavaScript DOM-based remake of the classic Ms. Pac-Man game. Play Ms. Pac-Man.">
+
+        <meta name="apple-mobile-web-app-title" content="jsPacman">
+        <meta name="application-name" content="jsPacman">
+        <meta name="msapplication-TileColor" content="#222222">
+        <meta name="theme-color" content="#222222">
+
+        <title>jsPacman - Ms. Pac-Man Remake</title>
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#222222">
+
+        <link rel="stylesheet" href="./styles.css">
+
+        <script type="importmap">
+        {
+            "imports": {
+                "rasti/Model.js": "https://cdn.jsdelivr.net/npm/rasti@v4.0.0/Model.js/+esm",
+                "rasti/View.js": "https://cdn.jsdelivr.net/npm/rasti@v4.0.0/View.js/+esm"
+            }
+        }
+        </script>
+
+        <meta name="google-site-verification" content="UCroCcyY7Zf5eVbo3EV1Ao9eJcfVK3psojHB1JFo23s"><script data-goatcounter="https://jspacman.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    </head>
+    <body>
+        <header style="display: none;">
+            <h1>jsPacman</h1>
+            <h2>A JavaScript DOM-based remake of the classic Ms. Pac-Man game.</h2>
+            <h3>Play Ms. Pac-Man.</h3>
+        </header>
+        <div class="js-pacman-container">
+            <div class="js-pacman-playground"></div>
+        </div>
+        <script type="module" src="./index.js"></script>
+    </body>
+</html>

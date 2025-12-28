@@ -1,0 +1,1 @@
+const rnd=o=>Math.floor(Math.random()*o);export default rnd;
