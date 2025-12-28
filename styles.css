@@ -1,0 +1,438 @@
+/* press-start-2p-regular - latin */
+@font-face {
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('./fonts/press-start-2p-v9-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('./fonts/press-start-2p-v9-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+:root {
+    /* Color Palette */
+    --color-bg-primary: #000;
+    --color-bg-secondary: #222;
+    --color-text-primary: #EFEFEF;
+    --color-text-white: #FFF;
+    --color-text-link: #DDDDDD;
+    --color-accent-yellow: #FFFF00;
+    --color-accent-yellow-light: #FFFF4D;
+    --color-accent-orange: #FCB644;
+    --color-accent-cyan: #5EE;
+    --color-accent-red: #F00;
+    --color-accent-red-light: #FF3333;
+    --color-border-white: #FFF;
+    --color-shadow-light: #EEE;
+    /* z-index */
+    --z-index-overlay: 10000;
+    --z-index-light: 5000;
+    --z-index-dialog: 1000;
+    --z-index-score: 100;
+    --z-index-splash: 1;
+}
+
+body {
+    background-color: var(--color-bg-secondary);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.js-pacman-container:has(.with-border) {
+    padding: 1em;
+    border-radius: 0.5em;
+    background-color: var(--color-bg-primary);
+    position: relative;
+}
+
+.js-pacman-container:has(.with-light) {
+    box-shadow: 
+        0 0 2em 0.2em rgba(238, 238, 238, 0.3),
+        0 0 4em 0.4em rgba(238, 238, 238, 0.15),
+        inset 0 0 3em 0 rgba(238, 238, 238, 0.1);
+}
+
+.js-pacman-container:has(.with-light)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: var(--z-index-light);
+    background: radial-gradient(
+        ellipse 100% 50% at 50% 0%,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 20%,
+        rgba(255, 255, 255, 0.04) 40%,
+        rgba(255, 255, 255, 0.02) 60%,
+        transparent 85%
+    );
+    mix-blend-mode: screen;
+}
+
+.js-pacman-container:has(.with-overlay)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: var(--z-index-overlay);
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.1) 0px,
+            rgba(0, 0, 0, 0.1) 1px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0) 4px
+        );
+    background-size: 100% 4px;
+    image-rendering: pixelated;
+}
+
+.js-pacman-playground {
+    color: var(--color-text-primary);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2em;
+    background-color: var(--color-bg-primary);
+    background-image: url('./img/maze.png');
+    background-size: 400% 200%;
+    display: none;
+    cursor: default;
+    user-select: none;
+    touch-action: none;
+}
+
+.js-pacman-playground.maze-1 {
+    background-position: 0 0;
+}
+
+.js-pacman-playground.maze-2 {
+    background-position: -100% 0;
+}
+
+.js-pacman-playground.maze-3 {
+    background-position: -200% 0;
+}
+
+.js-pacman-playground.maze-4 {
+    background-position: -300% 0;
+}
+
+.js-pacman-playground.maze-1.blink {
+    background-position: 0 -100%;
+}
+
+.js-pacman-playground.maze-2.blink {
+    background-position: -100% -100%;
+}
+
+.js-pacman-playground.maze-3.blink {
+    background-position: -200% -100%;
+}
+
+.js-pacman-playground.maze-4.blink {
+    background-position: -300% -100%;
+}
+
+.js-pacman-playground .splash {
+    background-image: url('./img/start.png');
+    background-size: 100% 100%;
+    background-color: var(--color-bg-primary);
+    text-align: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: var(--z-index-splash);
+}
+
+/* Focus styles for all links and buttons in playground */
+.js-pacman-playground a:focus,
+.js-pacman-playground button:focus,
+.js-pacman-playground input:focus {
+    outline: 2px solid var(--color-accent-yellow);
+    outline-offset: 2px;
+}
+
+.js-pacman-playground .splash button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--color-text-link);
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.js-pacman-playground .splash button:hover {
+    color: var(--color-text-white);
+}
+
+.js-pacman-playground .splash button.start {
+    position: relative;
+    top: 70%;
+    text-transform: uppercase;
+    font-size: 1.6em;
+    display: block;
+    width: 40%;
+    margin: 0 auto;
+}
+
+.js-pacman-playground .splash button.menu {
+    position: relative;
+    top: 75%;
+    text-transform: uppercase;
+    font-size: 1.2em;
+    display: block;
+    width: 40%;
+    margin: 0 auto;
+}
+
+.js-pacman-playground .splash .title {
+    position: absolute;
+    top: 22.04%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--color-accent-orange);
+}
+
+.js-pacman-playground .splash p.message {
+    position: absolute;
+    top: 33.15%;
+    left: 35.26%;
+    text-align: center;
+    color: var(--color-text-white);
+}
+
+.js-pacman-playground .splash p span {
+    color : var(--color-accent-yellow);
+}
+
+.js-pacman-playground .splash .keys {
+    position: absolute;
+    top: 85%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--color-text-white);
+}
+
+.js-pacman-playground .splash .credits {
+    font-family: 'Press Start 2P', cursive;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: var(--color-text-white);
+    height: 1.5em;
+    font-size: 0.7em;
+}
+
+.js-pacman-playground .splash .credits span {
+    color: var(--color-accent-red-light);
+}
+
+.js-pacman-playground .splash .credits a {
+    color: var(--color-accent-yellow);
+}
+
+.js-pacman-playground .splash .credits a:hover {
+    color: var(--color-accent-yellow-light);
+}
+
+.js-pacman-playground .loadbar {
+    position: absolute;
+    top: 70%;
+    left: 22.32%;
+    right: 22.32%;
+    background: var(--color-accent-yellow);
+    height: 3.472%;
+    overflow: visible;
+    border: 2px solid var(--color-border-white);
+}
+
+.js-pacman-playground .loadbar .inner {
+    position: relative;
+    background: var(--color-accent-red);
+    height: 100%;
+    width: 0;
+}
+
+.js-pacman-playground .score {
+    position: absolute;
+    top: 0;
+    right: 0.4464%;
+    left: 0.4464%;
+    text-align: center;
+    z-index: var(--z-index-score);
+}
+
+.js-pacman-playground .score .p1-score {
+    position: absolute;
+    width: 22%;
+    top: 0;
+    left: 0;
+}
+
+.js-pacman-playground .score .high-score {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.js-pacman-playground .score .p2-score {
+    position: absolute;
+    width: 22%;
+    top: 0;
+    right: 0;
+}
+
+.js-pacman-playground .score span {
+    text-align: right;
+    display: block;
+}
+
+.js-pacman-playground .score .high-score span {
+    text-align: center;
+}
+
+.js-pacman-playground .start-p1 {
+    position: absolute;
+    top: 38.71%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--color-accent-cyan);
+}
+
+.js-pacman-playground .game-over,
+.js-pacman-playground .start-ready {
+    position: absolute;
+    top: 55.55%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--color-accent-red);
+}
+
+.js-pacman-playground .dialog {
+    background-color: var(--color-bg-primary);
+    z-index: var(--z-index-dialog);
+}
+
+.js-pacman-playground .dialog .dialog-content {
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+/* Main Menu Styles */
+.js-pacman-playground .main-menu {
+    color: var(--color-text-primary);
+    font-size: 0.75em;
+    line-height: 1.6;
+}
+
+.js-pacman-playground .main-menu .menu-title {
+    text-align: center;
+    color: var(--color-accent-orange);
+    font-size: 1.2em;
+    margin: 0 0 0.9em 0;
+    padding: 0;
+}
+
+.js-pacman-playground .main-menu .menu-section {
+    margin-bottom: 2em;
+}
+
+.js-pacman-playground .main-menu .menu-section-title {
+    color: var(--color-accent-yellow);
+    font-size: 0.9em;
+    margin: 0 0 1em 0;
+    padding: 0;
+    text-align: left;
+}
+
+.js-pacman-playground .main-menu .control-info {
+    margin-left: 0.5em;
+}
+
+.js-pacman-playground .main-menu .control-item {
+    margin-bottom: 0.8em;
+}
+
+.js-pacman-playground .main-menu .control-item strong {
+    color: var(--color-accent-cyan);
+    display: block;
+    margin-bottom: 0.3em;
+}
+
+.js-pacman-playground .main-menu .control-details {
+    margin-left: 0.8em;
+    color: var(--color-text-primary);
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+.js-pacman-playground .main-menu .control-details span {
+    color: var(--color-accent-yellow);
+    font-weight: bold;
+}
+
+.js-pacman-playground .main-menu .option-item {
+    margin-bottom: 1.2em;
+    margin-left: 0.5em;
+}
+
+.js-pacman-playground .main-menu .checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--color-text-primary);
+    font-size: 1.1em;
+    user-select: none;
+}
+
+.js-pacman-playground .main-menu .checkbox-label:hover {
+    color: var(--color-accent-yellow);
+}
+
+.js-pacman-playground .main-menu .menu-checkbox {
+    margin-right: 0.5em;
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+    accent-color: var(--color-accent-yellow);
+}
+
+.js-pacman-playground .main-menu .menu-button {
+    background-color: var(--color-bg-primary);
+    border: 2px solid var(--color-border-white);
+    color: var(--color-text-white);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9em;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    text-transform: uppercase;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.js-pacman-playground .main-menu .menu-button:hover {
+    background-color: var(--color-accent-yellow);
+    color: var(--color-bg-primary);
+    border-color: var(--color-accent-yellow);
+}
+
+.js-pacman-playground .main-menu .menu-button:active {
+    background-color: var(--color-text-white);
+    color: var(--color-bg-primary);
+    border-color: var(--color-text-white);
+}

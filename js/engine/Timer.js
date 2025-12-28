@@ -1,0 +1,1 @@
+export const ts=()=>(new Date).getTime();class Timer{constructor(t){this.time=t,this.start=ts()}pause(){this.pauseTime=ts()}resume(){this.start+=ts()-this.pauseTime}getElapsed(){return ts()-this.start}isElapsed(t=this.time){return this.getElapsed()>1e3*t}}export default Timer;
