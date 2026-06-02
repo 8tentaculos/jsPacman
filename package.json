@@ -1,43 +1,43 @@
 {
-  "name": "jsPacman",
-  "version": "0.3.0",
-  "description": "JavaScript DOM based remake of the classic Ms. Pac-Man game",
-  "type": "module",
-  "main": "dist/index.html",
-  "scripts": {
-    "start": "node scripts/server.js",
-    "preview": "node scripts/server.js --prod",
-    "lint": "eslint src test",
-    "test": "mocha --require jsdom-global/register --reporter nyan test/*.js",
-    "posttest": "npm run lint",
-    "clean": "node -e \"import('fs').then(fs => fs.rmSync('dist', {recursive: true, force: true}))\"",
-    "build": "dotenv node scripts/build.js",
-    "prepare": "npm run clean && npm run test && npm run build",
-    "demo:publish": "npm run prepare && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
-  },
-  "repository": "github:8tentaculos/jsPacman",
-  "homepage": "https://pacman.js.org",
-  "bugs": "https://github.com/8tentaculos/jsPacman/issues",
-  "keywords": [
-    "game",
-    "javascript",
-    "dom",
-    "css",
-    "pacman"
-  ],
-  "author": "Alberto Masuelli <alberto.masuelli@gmail.com> (https://github.com/8tentaculos)",
-  "license": "MIT",
-  "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "chai": "^4.5.0",
-    "dotenv-cli": "^7.4.2",
-    "eslint": "^9.39.2",
-    "globals": "^16.5.0",
-    "jsdom": "^25.0.1",
-    "jsdom-global": "3.0.2",
-    "mocha": "^10.7.3",
-    "rasti": "4.0.0",
-    "sirv": "^2.0.3",
-    "terser": "^5.36.0"
-  }
+    "name": "jsPacman",
+    "version": "0.3.0",
+    "description": "JavaScript DOM based remake of the classic Ms. Pac-Man game",
+    "type": "module",
+    "main": "dist/index.html",
+    "scripts": {
+        "start": "node scripts/server.js",
+        "preview": "node scripts/server.js --prod",
+        "lint": "eslint src test",
+        "test": "mocha --require jsdom-global/register --reporter nyan test/*.js",
+        "posttest": "npm run lint",
+        "clean": "node -e \"import('fs').then(fs => fs.rmSync('dist', {recursive: true, force: true}))\"",
+        "build": "dotenv node scripts/build.js",
+        "prepare": "npm run clean && npm run test && npm run build",
+        "demo:publish": "npm run prepare && cd dist && git init && git commit --allow-empty -m 'Update demo' && git checkout -b gh-pages && git add . && git commit -m 'Update demo' && git push git@github.com:8tentaculos/jsPacman.git gh-pages --force"
+    },
+    "repository": "github:8tentaculos/jsPacman",
+    "homepage": "https://pacman.js.org",
+    "bugs": "https://github.com/8tentaculos/jsPacman/issues",
+    "keywords": [
+        "game",
+        "javascript",
+        "dom",
+        "css",
+        "pacman"
+    ],
+    "author": "Alberto Masuelli <alberto.masuelli@gmail.com> (https://github.com/8tentaculos)",
+    "license": "MIT",
+    "devDependencies": {
+        "@eslint/js": "10.0.1",
+        "chai": "6.2.2",
+        "dotenv-cli": "11.0.0",
+        "eslint": "10.4.1",
+        "globals": "17.6.0",
+        "jsdom": "29.1.1",
+        "jsdom-global": "3.0.2",
+        "mocha": "11.7.6",
+        "rasti": "4.0.1",
+        "sirv": "3.0.2",
+        "terser": "5.48.0"
+    }
 }
