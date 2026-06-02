@@ -1,74 +1,68 @@
-import chai from 'chai';
+import { expect } from 'chai';
 import Animation from '../src/js/engine/Animation.js';
 import Map from '../src/js/Map.js';
 import map1 from '../src/js/maps/map-1.js';
 import Item from '../src/js/Item.js';
 import makeMsPacman from '../src/js/factory/makeMsPacman.js';
 
-const should = chai.should();
-
 let map;
 
 document.body.innerHTML = '<div id="playground"></div>';
 
-describe('Map', function() {
-
-    it('Should exist and be initialized', function() {
-        should.exist(Map);
+describe('Map', () => {
+    it('Should exist and be initialized', () => {
+        expect(Map).to.exist;
 
         map = new Map(map1);
 
-        should.exist(map);
+        expect(map).to.exist;
     });
 
-    it('Should have correct tiles length', function() {
-        map.should.have.property('tiles');
-        map.tiles.length.should.equal(1008);
+    it('Should have correct tiles length', () => {
+        expect(map).to.have.property('tiles');
+        expect(map.tiles).to.have.lengthOf(1008);
     });
 
-    it('Should get tile', function() {
+    it('Should get tile', () => {
         let tile = map.getTile(0, 0);
 
-        should.exist(tile);
+        expect(tile).to.exist;
 
-        tile.getD().should.be.an('object');
+        expect(tile.getD()).to.be.an('object');
 
-        tile.getD().getU().should.equal(tile);
+        expect(tile.getD().getU()).to.equal(tile);
 
-        tile.getR().getL().should.equal(tile);
+        expect(tile.getR().getL()).to.equal(tile);
     });
 
-    it('Should get negative positioned tile', function() {
+    it('Should get negative positioned tile', () => {
         let tileA = map.getTile(-1, 0);
 
-        should.exist(tileA);
+        expect(tileA).to.exist;
 
         let tileB = map.getTile(27, 0);
 
-        should.exist(tileB);
+        expect(tileB).to.exist;
 
-        tileA.should.equal(tileB);
+        expect(tileA).to.equal(tileB);
     });
 
-    it('Shorthand code methods should work as espected', function() {
-
+    it('Shorthand code methods should work as espected', () => {
         for (let i = 0; i < map.tiles.length; i++) {
             let t = map.tiles[i];
-            if (t.code === 'h') t.isHouse().should.be.true;
-            if (t.code === '>') t.isOnlyRight().should.be.true;
-            if (t.code === '<') t.isOnlyLeft().should.be.true;
-            if (t.code === 'e') t.isExit().should.be.true;
-            if (t.code === '=') t.isWall().should.be.true;
+            if (t.code === 'h') expect(t.isHouse()).to.be.true;
+            if (t.code === '>') expect(t.isOnlyRight()).to.be.true;
+            if (t.code === '<') expect(t.isOnlyLeft()).to.be.true;
+            if (t.code === 'e') expect(t.isExit()).to.be.true;
+            if (t.code === '=') expect(t.isWall()).to.be.true;
         }
-
     });
-
 });
 
-describe('Item', function() {
+describe('Item', () => {
     let item;
 
-    it('Should exist and be initialized', function() {
+    it('Should exist and be initialized', () => {
         item = new Item({
             map,
             width : 4,
@@ -85,27 +79,26 @@ describe('Item', function() {
             }
         });
 
-        should.exist(item);
+        expect(item).to.exist;
 
-        item.should.have.property('el');
+        expect(item).to.have.property('el');
 
     });
 
-    it('Should be in a tile', function() {
-        item.getTile().should.be.an('object');
+    it('Should be in a tile', () => {
+        expect(item.getTile()).to.be.an('object');
     });
 
-    it('Should bind/trigger events', function(done) {
-        item.on('custom-event', function() { done(); });
+    it('Should bind/trigger events', (done) => {
+        item.on('custom-event', () => { done(); });
         item.emit('custom-event');
     });
-
 });
 
-describe('Pacman', function() {
+describe('Pacman', () => {
     let pacman;
 
-    it('Should exist and be initialized', function() {
+    it('Should exist and be initialized', () => {
         pacman = makeMsPacman({
             map,
             speed : 50,
@@ -114,31 +107,30 @@ describe('Pacman', function() {
             addGameGhostModeFrightenedExit : () => {}
         });
 
-        should.exist(pacman);
+        expect(pacman).to.exist;
 
-        pacman.should.have.property('animations');
-        pacman.should.have.property('el');
+        expect(pacman).to.have.property('animations');
+        expect(pacman).to.have.property('el');
 
     });
 
-    it('Should be centered', function() {
+    it('Should be centered', () => {
         pacman.x = 16;
         pacman.y = 20;
         pacman.update();
 
-        pacman._isCentered().should.equal(true);
+        expect(pacman._isCentered()).to.equal(true);
     });
 
-    it('Should get step', function() {
+    it('Should get step', () => {
         pacman.step = 10;
 
-        pacman.getStep().should.equal(5);
+        expect(pacman.getStep()).to.equal(5);
     });
 
-    it('Should get min', function() {
-        pacman.getMin(4, 2, 1).should.equal(1);
-        pacman.getMin(4, 0, 1).should.equal(0);
-        pacman.getMin(4, -2, 1).should.equal(-2);
+    it('Should get min', () => {
+        expect(pacman.getMin(4, 2, 1)).to.equal(1);
+        expect(pacman.getMin(4, 0, 1)).to.equal(0);
+        expect(pacman.getMin(4, -2, 1)).to.equal(-2);
     });
-
 });
