@@ -1,0 +1,1 @@
+import Pacman from"../Pacman.js";export const SPRITE_MS_PACMAN="SPRITE_MS_PACMAN";export default P=>new Pacman({x:452,y:848,type:SPRITE_MS_PACMAN,...P});

@@ -1,0 +1,1 @@
+const getDistance=(t,e)=>{const a=t.x,n=e.x,o=t.y,s=e.y;return Math.sqrt(Math.pow(a-n,2)+Math.pow(o-s,2))};export default getDistance;

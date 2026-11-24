@@ -1,0 +1,1 @@
+import Model from"rasti/Model.js";class ModelLocalStorage extends Model{constructor(o){super(o)}fetch(){if(this.url&&window.localStorage){const o=window.localStorage.getItem(this.url);o&&this.set(JSON.parse(o))}}save(){this.url&&window.localStorage&&window.localStorage.setItem(this.url,JSON.stringify(this))}}export default ModelLocalStorage;

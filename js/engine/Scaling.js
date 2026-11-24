@@ -1,0 +1,1 @@
+class Scaling{constructor(i,t){this.originalWidth=this.width=i,this.originalHeight=this.height=t,this.widthToHeight=i/t}resize(i,t){i/t>this.widthToHeight?(this.width=t*this.widthToHeight,this.height=t):(this.height=i/this.widthToHeight,this.width=i)}getFactor(){return this.width/this.originalWidth}}export default Scaling;
