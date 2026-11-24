@@ -1,14 +1,17 @@
 {
     "name": "jsPacman",
     "short_name": "jsPacman",
+    "description": "An open-source remake of the classic Ms. Pac-Man arcade game, built with vanilla JavaScript, HTML and CSS.",
+    "start_url": "./",
+    "scope": "./",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-256x256.png",
+            "src": "android-chrome-256x256.png",
             "sizes": "256x256",
             "type": "image/png"
         }

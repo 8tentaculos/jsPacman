@@ -24,6 +24,11 @@ if (process.env.JSPACMAN_HEAD_TAGS) {
     writeFileSync(htmlPath, html, 'utf8');
 }
 
+// Set the sitemap's last modification date to the build date.
+const sitemapPath = join(rootDir, 'dist', 'sitemap.xml');
+const today = new Date().toISOString().slice(0, 10);
+writeFileSync(sitemapPath, readFileSync(sitemapPath, 'utf8').replace(/<lastmod>.*<\/lastmod>/, `<lastmod>${today}</lastmod>`), 'utf8');
+
 // Minify JS files.
 console.log('Minifying JS files...');
 async function minifyDir(dir) {

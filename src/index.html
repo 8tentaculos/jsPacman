@@ -1,23 +1,37 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
-        
-        <meta name="description" content="A JavaScript DOM-based remake of the classic Ms. Pac-Man game. Play Ms. Pac-Man.">
+
+        <title>jsPacman - Ms. Pac-Man Remake in JavaScript</title>
+
+        <meta name="description" content="Play jsPacman in your browser: an open-source remake of the classic Ms. Pac-Man arcade game, built with vanilla JavaScript, HTML and CSS. Keyboard, gamepad and touch controls.">
+        <link rel="canonical" href="https://8tentaculos.github.io/jsPacman/">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="jsPacman">
+        <meta property="og:title" content="jsPacman - Ms. Pac-Man Remake in JavaScript">
+        <meta property="og:description" content="An open-source remake of the classic Ms. Pac-Man arcade game, built with vanilla JavaScript, HTML and CSS. Play it in your browser.">
+        <meta property="og:url" content="https://8tentaculos.github.io/jsPacman/">
+        <meta property="og:image" content="https://8tentaculos.github.io/jsPacman/img/stuff/art.png">
+        <meta property="og:image:width" content="895">
+        <meta property="og:image:height" content="546">
+        <meta property="og:image:alt" content="jsPacman title screen: HTML - CSS - JavaScript">
+        <meta name="twitter:card" content="summary_large_image">
 
         <meta name="apple-mobile-web-app-title" content="jsPacman">
         <meta name="application-name" content="jsPacman">
-        <meta name="msapplication-TileColor" content="#222222">
         <meta name="theme-color" content="#222222">
 
-        <title>jsPacman - Ms. Pac-Man Remake</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+        <link rel="manifest" href="./site.webmanifest">
+        <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#222222">
 
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#222222">
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preload" href="./fonts/press-start-2p-v9-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
 
         <link rel="stylesheet" href="./styles.css">
 
@@ -30,17 +44,45 @@
         }
         </script>
 
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "VideoGame",
+            "name": "jsPacman",
+            "description": "An open-source remake of the classic Ms. Pac-Man arcade game, built with vanilla JavaScript, HTML and CSS.",
+            "url": "https://8tentaculos.github.io/jsPacman/",
+            "image": "https://8tentaculos.github.io/jsPacman/img/stuff/art.png",
+            "genre": ["Arcade", "Maze"],
+            "gamePlatform": "Web browser",
+            "applicationCategory": "Game",
+            "operatingSystem": "Any",
+            "playMode": "SinglePlayer",
+            "isAccessibleForFree": true,
+            "inLanguage": "en",
+            "author": {
+                "@type": "Person",
+                "name": "Alberto Masuelli",
+                "url": "https://github.com/8tentaculos"
+            },
+            "sameAs": "https://github.com/8tentaculos/jsPacman"
+        }
+        </script>
+
         <!-- HEAD_TAGS -->
     </head>
     <body>
-        <header style="display: none;">
+        <header class="visually-hidden">
             <h1>jsPacman</h1>
-            <h2>A JavaScript DOM-based remake of the classic Ms. Pac-Man game.</h2>
-            <h3>Play Ms. Pac-Man.</h3>
+            <p>An open-source remake of the classic Ms. Pac-Man arcade game, built with vanilla JavaScript, HTML and CSS. Sprites are DOM elements animated with CSS transforms and sound uses the Web Audio API.</p>
+            <p>Controls: arrow keys or swipe to move, Escape to pause and open the menu. Gamepads are supported (D-pad or analog stick, Start for the menu).</p>
+            <p>Source code on <a href="https://github.com/8tentaculos/jsPacman">GitHub</a>.</p>
         </header>
-        <div class="js-pacman-container">
+        <main class="js-pacman-container">
             <div class="js-pacman-playground"></div>
-        </div>
+        </main>
+        <noscript>
+            <p>jsPacman needs JavaScript to run. The source code is available on <a href="https://github.com/8tentaculos/jsPacman">GitHub</a>.</p>
+        </noscript>
         <script type="module" src="./index.js"></script>
     </body>
 </html>

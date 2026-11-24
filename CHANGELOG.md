@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Moved the demo to GitHub Pages: https://8tentaculos.github.io/jsPacman/
+- Removed `CNAME`, `robots.txt` and the Windows tile files (`browserconfig.xml`, `mstile-150x150.png`)
+- Made icon and manifest paths relative so they resolve under the `/jsPacman/` path
+- Improved SEO metadata: canonical URL, Open Graph and Twitter tags, JSON-LD structured data, crawlable page description and `noscript` fallback
+- Set the sitemap's `lastmod` to the build date
 - Updated modules, including major version bumps for mocha, chai, eslint, dotenv-cli, jsdom, and sirv
 - Pinned all dev dependency versions (removed semver ranges)
 - Updated menu markup and styles
