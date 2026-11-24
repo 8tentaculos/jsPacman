@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved SEO metadata: canonical URL, Open Graph and Twitter tags, JSON-LD structured data, crawlable page description and `noscript` fallback
 - Set the sitemap's `lastmod` to the build date
 - Updated rasti to 5.0.0-alpha.7
+- Added a `version` npm hook that moves the `[Unreleased]` changelog section to the new version
 - Clarified in the README that the MIT License covers only the source code, and credited the origin of each asset
 - Updated modules, including major version bumps for mocha, chai, eslint, dotenv-cli, jsdom, and sirv
 - Pinned all dev dependency versions (removed semver ranges)
