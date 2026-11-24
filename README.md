@@ -12,7 +12,7 @@ Supports keyboard, gamepad (Gamepad API), and touch input. High scores and setti
 
 ## Play Demo
 
-**[https://pacman.js.org](https://pacman.js.org/)**
+**[https://8tentaculos.github.io/jsPacman/](https://8tentaculos.github.io/jsPacman/)**
 
 ## Features
 
@@ -30,8 +30,11 @@ Supports keyboard, gamepad (Gamepad API), and touch input. High scores and setti
 
 ## Credits
 
-* Game algorithm is based on [The Pac-Man Dossier](https://pacman.holenet.info/).
-* Sprites are from [spriters-resource](http://www.spriters-resource.com/game_boy_advance/namcomuseum/sheet/22732).
+* Game algorithm is based on [The Pac-Man Dossier](https://pacman.holenet.info/) by Jamey Pittman.
+* Sprites are from [The Spriters Resource](https://www.spriters-resource.com/game_boy_advance/namcomuseum/sheet/22732/) (Namco Museum, Game Boy Advance).
+* Sound effects reproduce the original game's audio.
+* Font is [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) by CodeMan38, licensed under the [SIL Open Font License](src/fonts/OFL.txt).
+* Built on [rasti](https://github.com/8tentaculos/rasti).
 
 ## History
 
@@ -76,7 +79,11 @@ The project uses native ES modules with import maps, so no bundler is required d
 
 ## License
 
-Source code is open-source and available under the [MIT License](LICENSE).
+The MIT [License](LICENSE) covers only the source code written for this project.
+
+It does not cover the game design, characters, names, artwork, sprites, or sounds. *Pac-Man* and *Ms. Pac-Man* are trademarks of Bandai Namco Entertainment Inc., and all related assets are the property of their respective owners. They are included here solely for non-commercial, educational purposes. This project is not affiliated with or endorsed by Bandai Namco.
+
+The Press Start 2P font is distributed under its own license ([OFL](src/fonts/OFL.txt)).
 
 ## Contributing
 
