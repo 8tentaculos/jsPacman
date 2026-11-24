@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-24
+
 ### Changed
 
 - Moved the demo to GitHub Pages: https://8tentaculos.github.io/jsPacman/
@@ -115,7 +117,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial GitHub release. The project originated in 2014 and was previously hosted on Bitbucket. This tag marks the state of the codebase at the time of migration.
 
-[unreleased]: https://github.com/8tentaculos/jsPacman/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/8tentaculos/jsPacman/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/8tentaculos/jsPacman/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/8tentaculos/jsPacman/compare/v0.2.5...v0.3.0
 [0.2.5]: https://github.com/8tentaculos/jsPacman/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/8tentaculos/jsPacman/compare/v0.2.3...v0.2.4
